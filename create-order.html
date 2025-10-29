@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Order - Tweak Order Online</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <button class="btn btn-back" onclick="navigateTo('index.html')">← Back to Home</button>
+        
+        <h1>Create New Order</h1>
+        
+        <!-- Step 1: Select Products -->
+        <div id="step1" class="order-step">
+            <h2>Step 1: Select Products</h2>
+            <div class="product-grid" id="productGrid">
+                <div class="loading">Loading products...</div>
+            </div>
+            <button class="btn" onclick="goToStep2()" style="margin-top: 20px;">Next: Confirm Selection</button>
+        </div>
+        
+        <!-- Step 2: Confirm Selection -->
+        <div id="step2" class="order-step hidden">
+            <h2>Step 2: Confirm Your Selection</h2>
+            <div class="order-summary" id="orderSummary"></div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-secondary" onclick="goToStep1()">← Back</button>
+                <button class="btn" onclick="goToStep3()">Next: Select Client</button>
+            </div>
+        </div>
+        
+        <!-- Step 3: Select Client -->
+        <div id="step3" class="order-step hidden">
+            <h2>Step 3: Select Client</h2>
+            <button class="btn btn-secondary" onclick="openModal('newClientModal')" style="margin-bottom: 20px;">+ Add New Client</button>
+            <div class="client-list" id="clientList">
+                <div class="loading">Loading clients...</div>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn btn-secondary" onclick="goToStep2()">← Back</button>
+                <button class="btn" onclick="goToStep4()">Next: Fulfillment Status</button>
+            </div>
+        </div>
+        
+        <!-- Step 4: Fulfillment Status -->
+        <div id="step4" class="order-step hidden">
+            <h2>Step 4: Order Status</h2>
+            <div class="order-summary" id="finalSummary"></div>
+            <div class="form-group">
+                <label>Order Status</label>
+                <div style="display: flex; gap: 20px; margin-top: 10px;">
+                    <button class="btn btn-success" onclick="createOrder('fulfilled')">Mark as Fulfilled</button>
+                    <button class="btn btn-secondary" onclick="createOrder('waiting')">Waiting for Supplies</button>
+                </div>
+            </div>
+            <button class="btn btn-back" onclick="goToStep3()" style="margin-top: 20px;">← Back</button>
+        </div>
+    </div>
+    
+    <!-- New Client Modal -->
+    <div id="newClientModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close-modal" onclick="closeModal('newClientModal')">×</span>
+                <h2>Add New Client</h2>
+            </div>
+            <form id="newClientForm">
+                <div class="form-group">
+                    <label for="client_first_name">First Name *</label>
+                    <input type="text" id="client_first_name" name="first_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="client_last_name">Last Name *</label>
+                    <input type="text" id="client_last_name" name="last_name" required>
+                </div>
+                <button type="submit" class="btn">Save Client</button>
+            </form>
+        </div>
+    </div>
+    
+    <script src="assets/js/app.js"></script>
+    <script>
+        let products = [];
+        let selectedProducts = {};
+        let clients = [];
+        let selectedClient = null;
+        
+        // Load products
+        function loadProducts() {
+            ajax('api/products.php', 'GET', null, function(err, response) {
+                if (err || !response.success) {
+                    document.getElementById('productGrid').innerHTML = '<p>Error loading products</p>';
+                    return;
+                }
+                
+                products = response.data;
+                displayProducts();
+            });
+        }
+        
+        // Display products as widgets
+        function displayProducts() {
+            const grid = document.getElementById('productGrid');
+            if (products.length === 0) {
+                grid.innerHTML = '<p>No products available. Please add products first.</p>';
+                return;
+            }
+            
+            grid.innerHTML = products.map((product, index) => `
+                <div class="product-widget ${product.background_color}" 
+                     onclick="selectProduct(${product.id})"
+                     style="animation-delay: ${index * 0.05}s">
+                    ${product.image ? `<img src="${product.image}" alt="${product.name}">` : ''}
+                    <h3>${product.name}</h3>
+                    ${selectedProducts[product.id] ? `<div class="product-count">${selectedProducts[product.id]}</div>` : ''}
+                </div>
+            `).join('');
+        }
+        
+        // Select product
+        function selectProduct(productId) {
+            if (!selectedProducts[productId]) {
+                selectedProducts[productId] = 0;
+            }
+            selectedProducts[productId]++;
+            displayProducts();
+        }
+        
+        // Go to step 2
+        function goToStep2() {
+            const hasSelection = Object.keys(selectedProducts).some(id => selectedProducts[id] > 0);
+            if (!hasSelection) {
+                showAlert('Please select at least one product', 'error');
+                return;
+            }
+            
+            showStep('step2');
+            displayOrderSummary();
+        }
+        
+        // Display order summary
+        function displayOrderSummary() {
+            const summary = document.getElementById('orderSummary');
+            let html = '<h3>Selected Items:</h3>';
+            
+            for (const [productId, quantity] of Object.entries(selectedProducts)) {
+                if (quantity > 0) {
+                    const product = products.find(p => p.id == productId);
+                    html += `
+                        <div class="order-item">
+                            <span><strong>${product.name}</strong></span>
+                            <span>Quantity: ${quantity}</span>
+                        </div>
+                    `;
+                }
+            }
+            
+            summary.innerHTML = html;
+        }
+        
+        // Go back to step 1
+        function goToStep1() {
+            showStep('step1');
+        }
+        
+        // Go to step 3
+        function goToStep3() {
+            showStep('step3');
+            loadClients();
+        }
+        
+        // Load clients
+        function loadClients() {
+            ajax('api/clients.php', 'GET', null, function(err, response) {
+                if (err || !response.success) {
+                    document.getElementById('clientList').innerHTML = '<p>Error loading clients</p>';
+                    return;
+                }
+                
+                clients = response.data;
+                displayClients();
+            });
+        }
+        
+        // Display clients
+        function displayClients() {
+            const list = document.getElementById('clientList');
+            if (clients.length === 0) {
+                list.innerHTML = '<p>No clients available. Please add a new client.</p>';
+                return;
+            }
+            
+            list.innerHTML = clients.map(client => `
+                <div class="client-card ${selectedClient && selectedClient.id == client.id ? 'selected' : ''}" 
+                     onclick="selectClient(${client.id})">
+                    <h3>${client.first_name} ${client.last_name}</h3>
+                </div>
+            `).join('');
+        }
+        
+        // Select client
+        function selectClient(clientId) {
+            selectedClient = clients.find(c => c.id == clientId);
+            displayClients();
+        }
+        
+        // Go to step 4
+        function goToStep4() {
+            if (!selectedClient) {
+                showAlert('Please select a client', 'error');
+                return;
+            }
+            
+            showStep('step4');
+            displayFinalSummary();
+        }
+        
+        // Display final summary
+        function displayFinalSummary() {
+            const summary = document.getElementById('finalSummary');
+            let html = `<h3>Order Summary</h3>`;
+            html += `<p><strong>Client:</strong> ${selectedClient.first_name} ${selectedClient.last_name}</p>`;
+            html += `<h4>Items:</h4>`;
+            
+            for (const [productId, quantity] of Object.entries(selectedProducts)) {
+                if (quantity > 0) {
+                    const product = products.find(p => p.id == productId);
+                    html += `
+                        <div class="order-item">
+                            <span><strong>${product.name}</strong></span>
+                            <span>Quantity: ${quantity}</span>
+                        </div>
+                    `;
+                }
+            }
+            
+            summary.innerHTML = html;
+        }
+        
+        // Create order
+        function createOrder(status) {
+            const items = [];
+            for (const [productId, quantity] of Object.entries(selectedProducts)) {
+                if (quantity > 0) {
+                    items.push({ product_id: parseInt(productId), quantity: quantity });
+                }
+            }
+            
+            const formData = new URLSearchParams();
+            formData.append('client_id', selectedClient.id);
+            formData.append('status', status);
+            formData.append('items', JSON.stringify(items));
+            
+            ajax('api/orders.php', 'POST', formData.toString(), function(err, response) {
+                if (err || !response.success) {
+                    showAlert(response?.message || 'Failed to create order', 'error');
+                    return;
+                }
+                
+                showAlert('Order created successfully!', 'success');
+                setTimeout(() => navigateTo('index.html'), 1500);
+            });
+        }
+        
+        // Show specific step
+        function showStep(stepId) {
+            document.querySelectorAll('.order-step').forEach(step => step.classList.add('hidden'));
+            document.getElementById(stepId).classList.remove('hidden');
+        }
+        
+        // New client form submission
+        document.getElementById('newClientForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = new URLSearchParams(formData).toString();
+            
+            ajax('api/clients.php', 'POST', data, function(err, response) {
+                if (err || !response.success) {
+                    showAlert(response?.message || 'Failed to add client', 'error');
+                    return;
+                }
+                
+                showAlert('Client added successfully!', 'success');
+                closeModal('newClientModal');
+                document.getElementById('newClientForm').reset();
+                loadClients();
+                
+                // Auto-select the new client
+                setTimeout(() => {
+                    selectedClient = { 
+                        id: response.id, 
+                        first_name: formData.get('first_name'),
+                        last_name: formData.get('last_name')
+                    };
+                    displayClients();
+                }, 500);
+            });
+        });
+        
+        // Initialize
+        loadProducts();
+    </script>
+</body>
+</html>

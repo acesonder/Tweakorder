@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tweak Order Online - Demo</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .demo-notice {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            animation: slideIn 0.5s ease-out;
+        }
+        .feature-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            animation: scaleIn 0.5s ease-out;
+        }
+        .feature-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        .feature-card-content {
+            padding: 20px;
+        }
+        .feature-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        .demo-products {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="demo-notice">
+            <strong>🎨 Interactive Demo</strong> - Showcasing the Tweak Order Online application features
+        </div>
+        
+        <h1>Tweak Order Online</h1>
+        
+        <h2>Application Features</h2>
+        
+        <div class="nav-grid">
+            <div class="nav-card">
+                <h3>📦 Add Product</h3>
+                <p>Create products with images, descriptions, inventory tracking, and beautiful gradient backgrounds</p>
+            </div>
+            
+            <div class="nav-card">
+                <h3>👤 Add Worker</h3>
+                <p>Quick worker registration with first and last name</p>
+            </div>
+            
+            <div class="nav-card">
+                <h3>🛒 Create Order</h3>
+                <p>Multi-step order flow: Select products → Confirm → Choose client → Set status</p>
+            </div>
+            
+            <div class="nav-card">
+                <h3>📋 Open Orders</h3>
+                <p>View all orders waiting for supplies</p>
+            </div>
+            
+            <div class="nav-card">
+                <h3>📊 All Orders</h3>
+                <p>Complete order history with status tracking</p>
+            </div>
+            
+            <div class="nav-card">
+                <h3>✏️ Edit Orders</h3>
+                <p>Update order fulfillment status</p>
+            </div>
+        </div>
+        
+        <h2 style="margin-top: 40px;">Sample Product Widgets</h2>
+        <p>Products display with custom gradient backgrounds - click to add to order</p>
+        
+        <div class="demo-products">
+            <div class="product-widget gradient-1">
+                <h3>Widget 1</h3>
+                <div class="product-count">2</div>
+            </div>
+            <div class="product-widget gradient-2">
+                <h3>Widget 2</h3>
+            </div>
+            <div class="product-widget gradient-3">
+                <h3>Widget 3</h3>
+                <div class="product-count">1</div>
+            </div>
+            <div class="product-widget gradient-4">
+                <h3>Widget 4</h3>
+            </div>
+            <div class="product-widget gradient-5">
+                <h3>Widget 5</h3>
+            </div>
+            <div class="product-widget gradient-6">
+                <h3>Widget 6</h3>
+            </div>
+            <div class="product-widget gradient-7">
+                <h3>Widget 7</h3>
+            </div>
+            <div class="product-widget gradient-8">
+                <h3>Widget 8</h3>
+            </div>
+        </div>
+        
+        <h2 style="margin-top: 40px;">Sample Order Card</h2>
+        
+        <div class="orders-list">
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <h3>Order #001</h3>
+                        <p><strong>Client:</strong> John Doe</p>
+                        <p><small>2025-10-29 9:30 PM</small></p>
+                    </div>
+                    <span class="order-status waiting">waiting</span>
+                </div>
+                <div class="order-items">
+                    <h4>Items:</h4>
+                    <div class="order-item">
+                        <span>Product A</span>
+                        <span>Quantity: 2</span>
+                    </div>
+                    <div class="order-item">
+                        <span>Product B</span>
+                        <span>Quantity: 1</span>
+                    </div>
+                </div>
+                <div style="margin-top: 15px; display: flex; gap: 10px;">
+                    <button class="btn btn-success">Mark as Fulfilled</button>
+                </div>
+            </div>
+            
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <h3>Order #002</h3>
+                        <p><strong>Client:</strong> Jane Smith</p>
+                        <p><small>2025-10-29 8:15 PM</small></p>
+                    </div>
+                    <span class="order-status fulfilled">fulfilled</span>
+                </div>
+                <div class="order-items">
+                    <h4>Items:</h4>
+                    <div class="order-item">
+                        <span>Product C</span>
+                        <span>Quantity: 3</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <h2 style="margin-top: 40px;">Technical Details</h2>
+        
+        <div class="feature-showcase">
+            <div class="feature-card">
+                <div class="feature-card-content">
+                    <h3>🎨 Design Features</h3>
+                    <ul style="padding-left: 20px;">
+                        <li>15 gradient color options</li>
+                        <li>Smooth animations & transitions</li>
+                        <li>Mobile-responsive layout</li>
+                        <li>Professional UI/UX</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-card-content">
+                    <h3>⚙️ Technology Stack</h3>
+                    <ul style="padding-left: 20px;">
+                        <li>PHP 8.3+ backend</li>
+                        <li>MySQL database</li>
+                        <li>Ajax for dynamic updates</li>
+                        <li>Pure CSS animations</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-card-content">
+                    <h3>🚀 Key Features</h3>
+                    <ul style="padding-left: 20px;">
+                        <li>No authentication needed</li>
+                        <li>Image upload support</li>
+                        <li>Multi-step order flow</li>
+                        <li>Real-time status updates</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+            <h3>🔧 Setup Instructions</h3>
+            <ol style="padding-left: 20px;">
+                <li>Import <code>database.sql</code> to MySQL</li>
+                <li>Configure database credentials in <code>config/database.php</code></li>
+                <li>Ensure <code>assets/uploads/</code> directory is writable</li>
+                <li>Start PHP server: <code>php -S localhost:8000</code></li>
+                <li>Navigate to the application pages to start using the system</li>
+            </ol>
+        </div>
+        
+        <div style="margin-top: 20px; text-align: center;">
+            <button class="btn" onclick="window.location.href='index.html'">Go to Main Application</button>
+        </div>
+    </div>
+    
+    <script>
+        // Add click animation to product widgets
+        document.querySelectorAll('.demo-products .product-widget').forEach(widget => {
+            widget.addEventListener('click', function() {
+                this.style.transform = 'scale(1.1)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 300);
+            });
+        });
+    </script>
+</body>
+</html>

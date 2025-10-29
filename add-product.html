@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Product - Tweak Order Online</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <button class="btn btn-back" onclick="navigateTo('index.html')">← Back to Home</button>
+        
+        <h1>Add New Product</h1>
+        
+        <form id="productForm" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name">Product Name *</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="image">Product Image</label>
+                <input type="file" id="image" name="image" accept="image/*">
+                <div id="imagePreview" style="margin-top: 10px;"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="inventory">Inventory</label>
+                <input type="number" id="inventory" name="inventory" value="100" min="0">
+            </div>
+            
+            <div class="form-group">
+                <label>Background Color</label>
+                <div class="color-selector" id="colorSelector">
+                    <div class="color-option gradient-1" data-color="gradient-1"></div>
+                    <div class="color-option gradient-2" data-color="gradient-2"></div>
+                    <div class="color-option gradient-3" data-color="gradient-3"></div>
+                    <div class="color-option gradient-4" data-color="gradient-4"></div>
+                    <div class="color-option gradient-5" data-color="gradient-5"></div>
+                    <div class="color-option gradient-6" data-color="gradient-6"></div>
+                    <div class="color-option gradient-7" data-color="gradient-7"></div>
+                    <div class="color-option gradient-8" data-color="gradient-8"></div>
+                    <div class="color-option gradient-9" data-color="gradient-9"></div>
+                    <div class="color-option gradient-10" data-color="gradient-10"></div>
+                    <div class="color-option gradient-11" data-color="gradient-11"></div>
+                    <div class="color-option gradient-12" data-color="gradient-12"></div>
+                    <div class="color-option gradient-13" data-color="gradient-13"></div>
+                    <div class="color-option gradient-14" data-color="gradient-14"></div>
+                    <div class="color-option gradient-15" data-color="gradient-15"></div>
+                </div>
+                <input type="hidden" id="background_color" name="background_color" value="gradient-1">
+            </div>
+            
+            <button type="submit" class="btn">Add Product</button>
+        </form>
+    </div>
+    
+    <script src="assets/js/app.js"></script>
+    <script>
+        let selectedColor = 'gradient-1';
+        
+        // Image preview
+        document.getElementById('image').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imagePreview').innerHTML = 
+                        `<img src="${e.target.result}" style="max-width: 200px; border-radius: 10px;">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Color selection
+        document.querySelectorAll('.color-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.color-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedColor = this.getAttribute('data-color');
+                document.getElementById('background_color').value = selectedColor;
+            });
+        });
+        
+        // Set default selection
+        document.querySelector('.color-option').classList.add('selected');
+        
+        // Form submission
+        document.getElementById('productForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            
+            ajax('api/products.php', 'POST', formData, function(err, response) {
+                if (err) {
+                    showAlert('Error adding product', 'error');
+                    return;
+                }
+                
+                if (response.success) {
+                    showAlert('Product added successfully!', 'success');
+                    setTimeout(() => navigateTo('index.html'), 1500);
+                } else {
+                    showAlert(response.message || 'Failed to add product', 'error');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
