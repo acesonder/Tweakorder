@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Worker - Tweak Order Online</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <button class="btn btn-back" onclick="navigateTo('index.html')">← Back to Home</button>
+        
+        <h1>Add New Worker</h1>
+        
+        <form id="workerForm">
+            <div class="form-group">
+                <label for="first_name">First Name *</label>
+                <input type="text" id="first_name" name="first_name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="last_name">Last Name *</label>
+                <input type="text" id="last_name" name="last_name" required>
+            </div>
+            
+            <button type="submit" class="btn">Add Worker</button>
+        </form>
+    </div>
+    
+    <script src="assets/js/app.js"></script>
+    <script>
+        document.getElementById('workerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = new URLSearchParams(formData).toString();
+            
+            ajax('api/workers.php', 'POST', data, function(err, response) {
+                if (err) {
+                    showAlert('Error adding worker', 'error');
+                    return;
+                }
+                
+                if (response.success) {
+                    showAlert('Worker added successfully!', 'success');
+                    setTimeout(() => navigateTo('index.html'), 1500);
+                } else {
+                    showAlert(response.message || 'Failed to add worker', 'error');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

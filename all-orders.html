@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Orders - Tweak Order Online</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <button class="btn btn-back" onclick="navigateTo('index.html')">← Back to Home</button>
+        
+        <h1>All Orders</h1>
+        
+        <div class="orders-list" id="ordersList">
+            <div class="loading">Loading orders...</div>
+        </div>
+    </div>
+    
+    <script src="assets/js/app.js"></script>
+    <script>
+        function loadOrders() {
+            ajax('api/orders.php?status=all', 'GET', null, function(err, response) {
+                if (err || !response.success) {
+                    document.getElementById('ordersList').innerHTML = '<p>Error loading orders</p>';
+                    return;
+                }
+                
+                displayOrders(response.data);
+            });
+        }
+        
+        function displayOrders(orders) {
+            const list = document.getElementById('ordersList');
+            
+            if (orders.length === 0) {
+                list.innerHTML = '<p>No orders found.</p>';
+                return;
+            }
+            
+            list.innerHTML = orders.map(order => `
+                <div class="order-card">
+                    <div class="order-header">
+                        <div>
+                            <h3>Order #${order.id}</h3>
+                            <p><strong>Client:</strong> ${order.first_name} ${order.last_name}</p>
+                            <p><small>${formatDate(order.created_at)}</small></p>
+                        </div>
+                        <span class="order-status ${order.status}">${order.status}</span>
+                    </div>
+                    <div class="order-items">
+                        <h4>Items:</h4>
+                        ${order.items.map(item => `
+                            <div class="order-item">
+                                <span>${item.name}</span>
+                                <span>Quantity: ${item.quantity}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        loadOrders();
+    </script>
+</body>
+</html>
