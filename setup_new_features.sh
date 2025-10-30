@@ -10,10 +10,16 @@ echo "Tweakorder - New Features Setup"
 echo "========================================="
 echo ""
 
-# Database credentials
-DB_USER="root"
-DB_PASS=""
-DB_NAME="tweakorder"
+# Database credentials - read from environment or prompt
+DB_USER="${DB_USER:-root}"
+DB_NAME="${DB_NAME:-tweakorder}"
+
+# Prompt for password if not in environment
+if [ -z "$DB_PASS" ]; then
+    echo "Enter MySQL password for user '$DB_USER' (or press Enter if none):"
+    read -s DB_PASS
+    echo ""
+fi
 
 # Color codes
 GREEN='\033[0;32m'
@@ -34,9 +40,18 @@ print_error() {
     echo -e "${RED}✗${NC} $1"
 }
 
+# Function to execute MySQL commands
+mysql_exec() {
+    if [ -z "$DB_PASS" ]; then
+        mysql -u "$DB_USER" "$@"
+    else
+        mysql -u "$DB_USER" -p"$DB_PASS" "$@"
+    fi
+}
+
 # Check if MySQL is running
 print_status "Checking MySQL connection..."
-if ! mysql -u "$DB_USER" -p"$DB_PASS" -e "USE $DB_NAME;" 2>/dev/null; then
+if ! mysql_exec -e "USE $DB_NAME;" 2>/dev/null; then
     print_error "Cannot connect to MySQL database '$DB_NAME'"
     echo "Please ensure:"
     echo "  1. MySQL service is running"
@@ -48,7 +63,7 @@ print_success "MySQL connection successful"
 
 # Update database schema
 print_status "Updating database schema with new tables..."
-if mysql -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" < database.sql 2>/dev/null; then
+if mysql_exec "$DB_NAME" < database.sql 2>/dev/null; then
     print_success "Database schema updated"
 else
     print_error "Failed to update database schema"
@@ -57,7 +72,7 @@ fi
 
 # Load case templates
 print_status "Loading 50 case templates..."
-if mysql -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" < case_templates_data.sql 2>/dev/null; then
+if mysql_exec "$DB_NAME" < case_templates_data.sql 2>/dev/null; then
     print_success "Case templates loaded"
 else
     print_error "Failed to load case templates"
@@ -71,7 +86,7 @@ tables=("error_logs" "case_templates" "case_notes" "worker_preferences")
 all_tables_exist=true
 
 for table in "${tables[@]}"; do
-    if mysql -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" -e "DESCRIBE $table;" >/dev/null 2>&1; then
+    if mysql_exec "$DB_NAME" -e "DESCRIBE $table;" >/dev/null 2>&1; then
         print_success "Table '$table' exists"
     else
         print_error "Table '$table' not found"
@@ -85,12 +100,12 @@ if [ "$all_tables_exist" = false ]; then
 fi
 
 # Count templates
-template_count=$(mysql -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" -sN -e "SELECT COUNT(*) FROM case_templates;")
+template_count=$(mysql_exec "$DB_NAME" -sN -e "SELECT COUNT(*) FROM case_templates;")
 print_success "Found $template_count case templates"
 
 # Verify clients table updates
 print_status "Verifying clients table updates..."
-if mysql -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" -e "DESCRIBE clients phone;" >/dev/null 2>&1; then
+if mysql_exec "$DB_NAME" -e "DESCRIBE clients phone;" >/dev/null 2>&1; then
     print_success "Clients table has contact fields"
 else
     print_error "Clients table missing contact fields"

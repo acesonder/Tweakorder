@@ -10,7 +10,9 @@ function getDBConnection() {
     $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
     
     if ($conn->connect_error) {
-        die(json_encode(['success' => false, 'message' => 'Connection failed: ' . $conn->connect_error]));
+        // Log error server-side (in production, use proper logging)
+        error_log('Database connection failed: ' . $conn->connect_error);
+        die(json_encode(['success' => false, 'message' => 'Database connection failed. Please contact support.']));
     }
     
     $conn->set_charset("utf8mb4");
@@ -30,6 +32,8 @@ try {
         ]
     );
 } catch (PDOException $e) {
-    die(json_encode(['success' => false, 'message' => 'Connection failed: ' . $e->getMessage()]));
+    // Log error server-side (in production, use proper logging)
+    error_log('PDO connection failed: ' . $e->getMessage());
+    die(json_encode(['success' => false, 'message' => 'Database connection failed. Please contact support.']));
 }
 ?>
