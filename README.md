@@ -1,6 +1,6 @@
 # Tweak Order Online
 
-A professional, mobile-responsive web application for managing products, workers, clients, and orders with a streamlined user experience. Now featuring a complete **Client Portal** for customer self-service ordering!
+A professional, mobile-responsive web application for managing products, workers, clients, and orders with a streamlined user experience. Now featuring a complete **Client Portal** for customer self-service ordering, **Mobile Order Systems**, and **Case Management** for outreach workers!
 
 ## 🌟 Features
 
@@ -11,6 +11,35 @@ A professional, mobile-responsive web application for managing products, workers
 - **View Open Orders** - Monitor orders waiting for supplies
 - **View All Orders** - Complete order history
 - **Edit Orders** - Update order status with 11+ status options
+
+### 🆕 Mobile Order Systems
+- **Primary Mobile Flow** - Streamlined single-page order creation optimized for mobile
+- **Client Quick-Add** - Inline client creation with contact information
+- **Smart Product Selection** - Alphabetically sorted with quantity badges
+- **Order Confirmation** - Tap-to-remove single items, swipe-to-remove all
+- **5 Alternative UI Styles** - Different layouts for different workflows:
+  - Card-Based: Vibrant gradient cards for visual workflows
+  - List View: Compact list with inline +/- controls
+  - Grid Categories: Dark theme with category filtering
+  - Compact: Minimal single-column with FAB
+  - Tabbed: Three-step guided process
+
+### 📋 Case Management System
+- **50+ Pre-built Templates** for case documentation:
+  - 15 Addiction Support templates
+  - 15 Homelessness Services templates
+  - 20 Mental Health templates
+- **Case Notes** - Document client interactions with template support
+- **Follow-up Tracking** - Set and track follow-up dates
+- **Confidential Notes** - Mark sensitive information
+- **Category Filtering** - Filter by Addiction, Homelessness, Mental Health, General, or Referral
+
+### ⚠️ Error Logging & Monitoring
+- **Real-time Error Dashboard** - Monitor system errors as they occur
+- **Severity Levels** - Critical, High, Medium, Low prioritization
+- **Error Statistics** - Visual dashboard of error trends
+- **Resolution Tracking** - Mark errors as resolved
+- **Auto-refresh** - Stay updated with 30-second refresh
 
 ### 🆕 Client Portal
 - **Client Registration** - Self-service account creation with unique username generation
@@ -25,7 +54,7 @@ A professional, mobile-responsive web application for managing products, workers
 
 ## Technology Stack
 
-- **Backend**: PHP, MySQL
+- **Backend**: PHP, MySQL (MySQLi + PDO)
 - **Frontend**: HTML5, CSS3, JavaScript
 - **Features**: Ajax for smooth interactions, responsive design, smooth animations, session-based authentication
 
@@ -50,34 +79,47 @@ A professional, mobile-responsive web application for managing products, workers
    mysql -u root -p < database.sql
    ```
 
-3. **Add sample data (optional)**
+3. **Load case management templates (NEW)**
+   ```bash
+   mysql -u root -p < case_templates_data.sql
+   ```
+   
+   Or use the automated setup script:
+   ```bash
+   bash setup_new_features.sh
+   ```
+
+4. **Add sample data (optional)**
    ```bash
    mysql -u root -p < sample_data.sql
    ```
 
-4. **Configure database connection**
+5. **Configure database connection**
    - Edit `config/database.php` with your MySQL credentials
    - Default settings: host=localhost, user=root, password='', database=tweakorder
 
-5. **Grant database privileges**
+6. **Grant database privileges**
    ```bash
    mysql -u root -p -e "GRANT ALL PRIVILEGES ON tweakorder.* TO 'root'@'localhost'; FLUSH PRIVILEGES;"
    ```
 
-6. **Set up file permissions**
+7. **Set up file permissions**
    ```bash
    chmod 755 assets/uploads
    ```
 
-7. **Start your web server**
+8. **Start your web server**
    - Point your web server document root to the project directory
    - For development, you can use PHP's built-in server:
      ```bash
      php -S localhost:8000
      ```
 
-8. **Access the application**
+9. **Access the application**
    - **Staff Portal**: `http://localhost:8000/index.html`
+   - **Mobile Order**: `http://localhost:8000/mobile-order.html`
+   - **Case Management**: `http://localhost:8000/case-management.html`
+   - **Error Logs**: `http://localhost:8000/error-logs.html`
    - **Client Portal**: `http://localhost:8000/client-portal.html`
 
 ## Database Configuration
@@ -103,6 +145,20 @@ To modify these settings, edit `config/database.php`.
 2. **Confirm Selection** - Review selected items
 3. **Select Client** - Choose existing client or add new one
 4. **Set Status** - Choose from multiple status options
+
+### Mobile Order Creation Flow (NEW)
+1. **Select Client** - Choose from dropdown or tap "+" to create new client
+2. **Add Products** - Tap product tiles to add (shows quantity badge)
+3. **Tap Next** - Review order on confirmation page
+4. **Remove Items** - Tap to remove one, swipe right-to-left to remove all
+5. **Confirm Order** - Submit order to system
+
+### Case Management Workflow (NEW)
+1. **Select Client** - Filter notes by client or category
+2. **Choose Template** - Browse 50+ templates organized by category
+3. **Create Note** - Use template or write custom note
+4. **Set Follow-up** - Optional follow-up date tracking
+5. **Mark Confidential** - Flag sensitive information
 
 ### Client Order Creation Flow
 1. **Select Products** - Click product cards to add items
@@ -140,6 +196,7 @@ The application is fully responsive and works seamlessly on:
 
 ## User Guides
 
+- [**Mobile Features Guide**](MOBILE_FEATURES_GUIDE.md) - Complete guide for new mobile and case management features
 - [**Client Portal User Guide**](CLIENT_PORTAL_GUIDE.md) - Complete guide for customers
 - [**Staff Workflow Guide**](WORKFLOW_GUIDE.md) - Guide for staff users
 
@@ -153,9 +210,16 @@ The application is fully responsive and works seamlessly on:
 
 ### Staff APIs
 - `GET/POST/PUT/DELETE /api/products.php` - Product management
-- `GET/POST /api/clients.php` - Client management
+- `GET/POST /api/clients.php` - Client management (now includes contact fields)
 - `GET/POST /api/workers.php` - Worker management
 - `GET/POST/PUT /api/orders.php` - Order management
+
+### NEW - Case Management APIs
+- `GET/POST /api/case-notes.php` - Case note management
+- `GET/POST /api/case-templates.php` - Template management
+
+### NEW - Error Logging API
+- `GET/POST/PUT /api/error-logs.php` - Error log management
 
 ## Design Features
 
@@ -166,12 +230,16 @@ The application is fully responsive and works seamlessly on:
 - Secure authentication system
 - Client-specific order viewing
 - Comprehensive order status tracking
+- **NEW**: Touch-optimized mobile interfaces
+- **NEW**: Swipe gestures for item removal
+- **NEW**: Case note templates for faster documentation
+- **NEW**: Error monitoring and tracking
 
 ## Database Schema
 
 The application includes tables for:
 - **products** - Product catalog with categories and SKUs
-- **clients** - Client accounts with authentication
+- **clients** - Client accounts with authentication and contact information (phone, email, address)
 - **users** - Staff user accounts (Admin, Manager, Worker, Viewer)
 - **workers** - Worker registry
 - **orders** - Order records with enhanced status options
@@ -180,6 +248,10 @@ The application includes tables for:
 - **schedule_availability** - Time slot management
 - **notifications** - Notification system (future use)
 - **sessions** - Session management
+- **NEW: error_logs** - System error tracking with severity levels
+- **NEW: case_templates** - 50+ pre-built case management templates
+- **NEW: case_notes** - Client case documentation and notes
+- **NEW: worker_preferences** - User UI style preferences
 - **audit_log** - Change tracking (future use)
 - **product_categories** - Product categorization (future use)
 
