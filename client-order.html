@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Place Order - Tweak Order Online</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .order-page {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .order-page {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .order-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .order-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+        
+        .product-grid-small {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .product-widget-small {
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .product-widget-small:hover {
+            transform: translateY(-5px);
+            border-color: white;
+        }
+        
+        .product-widget-small h4 {
+            font-size: 14px;
+            margin: 0;
+            color: white;
+        }
+        
+        .product-widget-small .product-count {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: white;
+            color: #667eea;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        
+        .order-summary-list {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+        
+        .summary-item button {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .location-option {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .location-option:hover {
+            border-color: #667eea;
+        }
+        
+        .location-option.selected {
+            border-color: #667eea;
+            background: #667eea10;
+        }
+        
+        .location-option h4 {
+            margin: 0 0 5px 0;
+            color: #333;
+        }
+        
+        .location-option p {
+            margin: 0;
+            color: #999;
+            font-size: 14px;
+        }
+        
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .time-slot {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .time-slot:hover {
+            border-color: #667eea;
+        }
+        
+        .time-slot.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        
+        .delivery-type-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .delivery-type-btn {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .delivery-type-btn:hover {
+            border-color: #667eea;
+        }
+        
+        .delivery-type-btn.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        
+        .empty-cart {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="btn btn-back" onclick="navigateTo('client-dashboard.html')">← Back to Dashboard</button>
+        
+        <h1>Place New Order</h1>
+        
+        <div class="order-page">
+            <!-- Left Column: Product Selection & Order Summary -->
+            <div>
+                <div class="order-section">
+                    <h3>📦 Select Products</h3>
+                    <div class="product-grid-small" id="productGrid">
+                        <div class="loading">Loading products...</div>
+                    </div>
+                </div>
+                
+                <div class="order-section" style="margin-top: 20px;">
+                    <h3>🛒 Your Order</h3>
+                    <div id="orderSummary">
+                        <div class="empty-cart">
+                            <p>Click on products above to add them to your order</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column: Delivery Details -->
+            <div>
+                <div class="order-section">
+                    <h3>🚚 Pickup or Dropoff</h3>
+                    <div class="delivery-type-selector">
+                        <button class="delivery-type-btn selected" onclick="selectDeliveryType('pickup')">
+                            📍 Pickup
+                        </button>
+                        <button class="delivery-type-btn" onclick="selectDeliveryType('dropoff')">
+                            🚗 Dropoff
+                        </button>
+                    </div>
+                    
+                    <div id="locationsList">
+                        <div class="loading">Loading locations...</div>
+                    </div>
+                </div>
+                
+                <div class="order-section" style="margin-top: 20px;">
+                    <h3>📅 Schedule (Optional)</h3>
+                    <div class="form-group">
+                        <label>Select Date & Time</label>
+                        <input type="datetime-local" id="scheduledTime" class="form-control">
+                    </div>
+                </div>
+                
+                <div class="order-section" style="margin-top: 20px;">
+                    <h3>📝 Additional Instructions</h3>
+                    <div class="form-group">
+                        <textarea id="otherInstructions" rows="4" placeholder="Enter any special delivery instructions, contact information, or other details..."></textarea>
+                    </div>
+                </div>
+                
+                <button class="btn btn-primary" onclick="placeOrder()" style="width: 100%; margin-top: 20px; font-size: 18px; padding: 15px;">
+                    Place Order
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="assets/js/app.js"></script>
+    <script>
+        let products = [];
+        let selectedProducts = {};
+        let locations = [];
+        let selectedLocation = null;
+        let deliveryType = 'pickup';
+        
+        // Check authentication
+        ajax('api/auth.php', 'GET', null, function(err, response) {
+            if (err || !response.success || !response.logged_in) {
+                window.location.href = 'client-portal.html';
+                return;
+            }
+            
+            initOrderPage();
+        });
+        
+        function initOrderPage() {
+            loadProducts();
+            loadLocations();
+        }
+        
+        // Load products
+        function loadProducts() {
+            ajax('api/products.php', 'GET', null, function(err, response) {
+                if (err || !response.success) {
+                    document.getElementById('productGrid').innerHTML = '<p>Error loading products</p>';
+                    return;
+                }
+                
+                products = response.data;
+                displayProducts();
+            });
+        }
+        
+        // Display products
+        function displayProducts() {
+            const grid = document.getElementById('productGrid');
+            if (products.length === 0) {
+                grid.innerHTML = '<p>No products available at this time.</p>';
+                return;
+            }
+            
+            grid.innerHTML = products.map(product => `
+                <div class="product-widget-small ${product.background_color || 'gradient-1'}" 
+                     onclick="selectProduct(${product.id})">
+                    <h4>${product.name}</h4>
+                    ${selectedProducts[product.id] ? `<div class="product-count">${selectedProducts[product.id]}</div>` : ''}
+                </div>
+            `).join('');
+        }
+        
+        // Select product
+        function selectProduct(productId) {
+            if (!selectedProducts[productId]) {
+                selectedProducts[productId] = 0;
+            }
+            selectedProducts[productId]++;
+            displayProducts();
+            displayOrderSummary();
+        }
+        
+        // Remove product
+        function removeProduct(productId) {
+            delete selectedProducts[productId];
+            displayProducts();
+            displayOrderSummary();
+        }
+        
+        // Update quantity
+        function updateQuantity(productId, change) {
+            selectedProducts[productId] = Math.max(1, selectedProducts[productId] + change);
+            displayProducts();
+            displayOrderSummary();
+        }
+        
+        // Display order summary
+        function displayOrderSummary() {
+            const summary = document.getElementById('orderSummary');
+            const hasItems = Object.keys(selectedProducts).some(id => selectedProducts[id] > 0);
+            
+            if (!hasItems) {
+                summary.innerHTML = `
+                    <div class="empty-cart">
+                        <p>Click on products above to add them to your order</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '<div class="order-summary-list">';
+            
+            for (const [productId, quantity] of Object.entries(selectedProducts)) {
+                if (quantity > 0) {
+                    const product = products.find(p => p.id == productId);
+                    html += `
+                        <div class="summary-item">
+                            <div>
+                                <strong>${product.name}</strong><br>
+                                <small>
+                                    <button onclick="updateQuantity(${productId}, -1)" style="background: #667eea; margin-right: 5px;">-</button>
+                                    Qty: ${quantity}
+                                    <button onclick="updateQuantity(${productId}, 1)" style="background: #667eea; margin-left: 5px;">+</button>
+                                </small>
+                            </div>
+                            <button onclick="removeProduct(${productId})">Remove</button>
+                        </div>
+                    `;
+                }
+            }
+            
+            html += '</div>';
+            summary.innerHTML = html;
+        }
+        
+        // Load locations
+        function loadLocations() {
+            ajax('api/locations.php?type=' + deliveryType, 'GET', null, function(err, response) {
+                if (err || !response.success) {
+                    document.getElementById('locationsList').innerHTML = '<p>No locations available</p>';
+                    return;
+                }
+                
+                locations = response.data;
+                displayLocations();
+            });
+        }
+        
+        // Display locations
+        function displayLocations() {
+            const list = document.getElementById('locationsList');
+            
+            if (locations.length === 0) {
+                list.innerHTML = '<p>No locations available for ' + deliveryType + '</p>';
+                return;
+            }
+            
+            list.innerHTML = locations.map(location => `
+                <div class="location-option ${selectedLocation && selectedLocation.id == location.id ? 'selected' : ''}" 
+                     onclick="selectLocation(${location.id})">
+                    <h4>${location.name}</h4>
+                    ${location.address ? `<p>${location.address}</p>` : ''}
+                </div>
+            `).join('');
+        }
+        
+        // Select location
+        function selectLocation(locationId) {
+            selectedLocation = locations.find(l => l.id == locationId);
+            displayLocations();
+        }
+        
+        // Select delivery type
+        function selectDeliveryType(type) {
+            deliveryType = type;
+            selectedLocation = null;
+            
+            // Update UI
+            document.querySelectorAll('.delivery-type-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+            
+            // Reload locations
+            loadLocations();
+        }
+        
+        // Place order
+        function placeOrder() {
+            // Validate
+            const hasItems = Object.keys(selectedProducts).some(id => selectedProducts[id] > 0);
+            if (!hasItems) {
+                showAlert('Please select at least one product', 'error');
+                return;
+            }
+            
+            if (!selectedLocation) {
+                showAlert('Please select a ' + deliveryType + ' location', 'error');
+                return;
+            }
+            
+            // Prepare order data
+            const items = [];
+            for (const [productId, quantity] of Object.entries(selectedProducts)) {
+                if (quantity > 0) {
+                    items.push({ product_id: parseInt(productId), quantity: quantity });
+                }
+            }
+            
+            const formData = new URLSearchParams();
+            formData.append('items', JSON.stringify(items));
+            formData.append('pickup_or_dropoff', deliveryType);
+            formData.append('location_id', selectedLocation.id);
+            
+            const scheduledTime = document.getElementById('scheduledTime').value;
+            if (scheduledTime) {
+                formData.append('scheduled_time', scheduledTime);
+            }
+            
+            const instructions = document.getElementById('otherInstructions').value.trim();
+            if (instructions) {
+                formData.append('other_instructions', instructions);
+            }
+            
+            // Submit order
+            ajax('api/client-orders.php', 'POST', formData.toString(), function(err, response) {
+                if (err || !response.success) {
+                    showAlert(response?.message || 'Failed to place order', 'error');
+                    return;
+                }
+                
+                showAlert('Order placed successfully! Your order is being processed.', 'success');
+                setTimeout(() => {
+                    window.location.href = 'client-dashboard.html';
+                }, 1500);
+            });
+        }
+    </script>
+</body>
+</html>
