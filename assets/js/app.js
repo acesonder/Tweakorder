@@ -38,8 +38,14 @@ function showAlert(message, type) {
     alertDiv.className = `alert alert-${type}`;
     alertDiv.textContent = message;
     
-    const container = document.querySelector('.container');
-    container.insertBefore(alertDiv, container.firstChild);
+    const container = document.querySelector('.container') || document.querySelector('.auth-container') || document.body;
+    if (container && container.firstChild) {
+        container.insertBefore(alertDiv, container.firstChild);
+    } else if (container) {
+        container.appendChild(alertDiv);
+    } else {
+        document.body.appendChild(alertDiv);
+    }
     
     setTimeout(() => {
         alertDiv.style.animation = 'fadeOut 0.5s ease-out';

@@ -5,6 +5,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Orders - Tweak Order Online</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .order-status.processing { background: #ffd93d; color: #000; }
+        .order-status.accepted { background: #6bcf7f; color: white; }
+        .order-status.waiting_for_supplies { background: #ff6b6b; color: white; }
+        .order-status.waiting_for_customer { background: #ffa502; color: white; }
+        .order-status.further_info_needed { background: #e67e22; color: white; }
+        .order-status.problems_unknown { background: #c0392b; color: white; }
+        .order-status.ready_for_pickup { background: #4834df; color: white; }
+        .order-status.ready_for_dropoff { background: #0abde3; color: white; }
+        .order-status.awaiting_scheduled_time { background: #30336b; color: white; }
+        .order-status.fulfilled { background: #26de81; color: white; }
+        .order-status.cancelled { background: #95a5a6; color: white; }
+        .order-status.waiting { background: #ff6b6b; color: white; }
+        
+        .status-selector {
+            margin-top: 15px;
+        }
+        
+        .status-selector select {
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 100%;
+            max-width: 300px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -19,6 +46,21 @@
     
     <script src="assets/js/app.js"></script>
     <script>
+        const statusOptions = [
+            { value: 'processing', label: 'Processing' },
+            { value: 'accepted', label: 'Accepted - Waiting to be Fulfilled' },
+            { value: 'waiting_for_supplies', label: 'Waiting for Supplies' },
+            { value: 'waiting_for_customer', label: 'Waiting to Hear Back from Customer' },
+            { value: 'further_info_needed', label: 'Further Information Needed' },
+            { value: 'problems_unknown', label: 'Problems Unknown' },
+            { value: 'ready_for_pickup', label: 'Ready for Pickup' },
+            { value: 'ready_for_dropoff', label: 'Ready for Dropoff' },
+            { value: 'awaiting_scheduled_time', label: 'Awaiting Scheduled Order Delivery/Pickup Time' },
+            { value: 'fulfilled', label: 'Order Fulfilled' },
+            { value: 'cancelled', label: 'Cancelled' },
+            { value: 'waiting', label: 'Waiting (Legacy)' }
+        ];
+        
         function loadOrders() {
             ajax('api/orders.php?status=all', 'GET', null, function(err, response) {
                 if (err || !response.success) {
@@ -44,9 +86,11 @@
                         <div>
                             <h3>Order #${order.id}</h3>
                             <p><strong>Client:</strong> ${order.first_name} ${order.last_name}</p>
-                            <p><small>${formatDate(order.created_at)}</small></p>
+                            ${order.pickup_or_dropoff ? `<p><strong>Type:</strong> ${order.pickup_or_dropoff === 'pickup' ? 'Pickup' : 'Dropoff'}</p>` : ''}
+                            ${order.scheduled_time ? `<p><strong>Scheduled:</strong> ${formatDate(order.scheduled_time)}</p>` : ''}
+                            <p><small>Created: ${formatDate(order.created_at)}</small></p>
                         </div>
-                        <span class="order-status ${order.status}">${order.status}</span>
+                        <span class="order-status ${order.status}">${getStatusLabel(order.status)}</span>
                     </div>
                     <div class="order-items">
                         <h4>Items:</h4>
@@ -57,18 +101,31 @@
                             </div>
                         `).join('')}
                     </div>
-                    <div style="margin-top: 15px; display: flex; gap: 10px;">
-                        ${order.status === 'waiting' ? 
-                            `<button class="btn btn-success" onclick="updateOrderStatus(${order.id}, 'fulfilled')">Mark as Fulfilled</button>` :
-                            `<button class="btn btn-secondary" onclick="updateOrderStatus(${order.id}, 'waiting')">Mark as Waiting</button>`
-                        }
+                    ${order.other_instructions ? `
+                        <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                            <strong>Instructions:</strong> ${order.other_instructions}
+                        </div>
+                    ` : ''}
+                    <div class="status-selector">
+                        <label><strong>Update Status:</strong></label>
+                        <select id="status_${order.id}" onchange="updateOrderStatus(${order.id})">
+                            ${statusOptions.map(opt => `
+                                <option value="${opt.value}" ${order.status === opt.value ? 'selected' : ''}>${opt.label}</option>
+                            `).join('')}
+                        </select>
                     </div>
                 </div>
             `).join('');
         }
         
-        function updateOrderStatus(orderId, status) {
-            const data = `id=${orderId}&status=${status}`;
+        function getStatusLabel(status) {
+            const option = statusOptions.find(opt => opt.value === status);
+            return option ? option.label : status.replace(/_/g, ' ');
+        }
+        
+        function updateOrderStatus(orderId) {
+            const newStatus = document.getElementById('status_' + orderId).value;
+            const data = `id=${orderId}&status=${newStatus}`;
             
             ajax('api/orders.php', 'PUT', data, function(err, response) {
                 if (err || !response.success) {
@@ -76,7 +133,7 @@
                     return;
                 }
                 
-                showAlert('Order updated successfully!', 'success');
+                showAlert('Order status updated successfully!', 'success');
                 setTimeout(() => loadOrders(), 1000);
             });
         }
