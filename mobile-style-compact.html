@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Style 4: Compact Single-Column</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background: #fafafa; font-family: -apple-system, sans-serif; padding-bottom: 70px; }
+        .sticky-header { position: sticky; top: 0; background: white; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,0.1); padding: 10px 15px; }
+        .client-row { display: flex; gap: 8px; align-items: center; }
+        .client-row select { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 15px; }
+        .client-row button { padding: 10px 15px; background: #007aff; color: white; border: none; border-radius: 6px; font-weight: 600; }
+        .compact-list { padding: 10px 15px; }
+        .compact-item { background: white; padding: 12px 15px; margin-bottom: 8px; border-radius: 10px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .item-left { flex: 1; }
+        .item-title { font-size: 15px; font-weight: 600; color: #000; }
+        .item-subtitle { font-size: 13px; color: #666; margin-top: 2px; }
+        .item-right { display: flex; gap: 8px; align-items: center; }
+        .mini-btn { width: 32px; height: 32px; border-radius: 6px; border: none; background: #007aff; color: white; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .mini-btn.minus { background: #ff3b30; }
+        .count { font-size: 16px; font-weight: 700; color: #007aff; min-width: 24px; text-align: center; }
+        .fab { position: fixed; bottom: 15px; right: 15px; width: 60px; height: 60px; border-radius: 30px; background: #007aff; color: white; border: none; font-size: 24px; box-shadow: 0 4px 12px rgba(0,122,255,0.4); cursor: pointer; z-index: 200; }
+        .order-count { position: absolute; top: -5px; right: -5px; background: #ff3b30; color: white; width: 24px; height: 24px; border-radius: 12px; font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+    <div class="sticky-header">
+        <div class="client-row">
+            <select id="clientSelect">
+                <option>Loading...</option>
+            </select>
+            <button onclick="alert('+')">+</button>
+        </div>
+    </div>
+    
+    <div class="compact-list" id="productList"></div>
+    
+    <button class="fab" onclick="submitOrder()">
+        ✓
+        <div class="order-count" id="orderCount" style="display:none;"></div>
+    </button>
+    
+    <script src="assets/js/app.js"></script>
+    <script>
+        let cart = {};
+        let products = [];
+        
+        function loadData() {
+            ajax('api/clients.php', 'GET', null, (e, r) => {
+                if (r.success) {
+                    document.getElementById('clientSelect').innerHTML = 
+                        '<option value="">Select...</option>' +
+                        r.data.map(c => `<option value="${c.id}">${c.first_name} ${c.last_name}</option>`).join('');
+                }
+            });
+            
+            ajax('api/products.php', 'GET', null, (e, r) => {
+                if (r.success) {
+                    products = r.data;
+                    displayProducts();
+                }
+            });
+        }
+        
+        function displayProducts() {
+            document.getElementById('productList').innerHTML = products.map(p => `
+                <div class="compact-item">
+                    <div class="item-left">
+                        <div class="item-title">${p.name}</div>
+                        <div class="item-subtitle">${p.description || 'Product'}</div>
+                    </div>
+                    <div class="item-right">
+                        ${cart[p.id] ? `<button class="mini-btn minus" onclick="adjust(${p.id}, -1)">−</button>` : ''}
+                        ${cart[p.id] ? `<div class="count">${cart[p.id]}</div>` : ''}
+                        <button class="mini-btn" onclick="adjust(${p.id}, 1)">+</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function adjust(id, delta) {
+            cart[id] = Math.max(0, (cart[id] || 0) + delta);
+            if (cart[id] === 0) delete cart[id];
+            displayProducts();
+            updateBadge();
+        }
+        
+        function updateBadge() {
+            const total = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+            const badge = document.getElementById('orderCount');
+            if (total > 0) {
+                badge.textContent = total;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+        
+        function submitOrder() {
+            const clientId = document.getElementById('clientSelect').value;
+            if (!clientId) return alert('Select client');
+            if (Object.keys(cart).length === 0) return alert('Add items');
+            
+            const items = Object.entries(cart).map(([id, qty]) => ({product_id: parseInt(id), quantity: qty}));
+            const data = new URLSearchParams();
+            data.append('client_id', clientId);
+            data.append('status', 'processing');
+            data.append('items', JSON.stringify(items));
+            
+            ajax('api/orders.php', 'POST', data.toString(), (e, r) => {
+                if (r.success) {
+                    alert('Submitted!');
+                    window.location.reload();
+                }
+            });
+        }
+        
+        loadData();
+    </script>
+</body>
+</html>

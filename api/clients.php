@@ -24,14 +24,18 @@ switch($_SERVER['REQUEST_METHOD']) {
         // Add new client
         $first_name = $_POST['first_name'] ?? '';
         $last_name = $_POST['last_name'] ?? '';
+        $phone = $_POST['phone'] ?? null;
+        $email = $_POST['email'] ?? null;
+        $address = $_POST['address'] ?? null;
+        $emergency_contact = $_POST['emergency_contact'] ?? null;
         
         if (empty($first_name) || empty($last_name)) {
             echo json_encode(['success' => false, 'message' => 'First name and last name are required']);
             exit;
         }
         
-        $stmt = $conn->prepare("INSERT INTO clients (first_name, last_name) VALUES (?, ?)");
-        $stmt->bind_param("ss", $first_name, $last_name);
+        $stmt = $conn->prepare("INSERT INTO clients (first_name, last_name, phone, email, address, emergency_contact) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssss", $first_name, $last_name, $phone, $email, $address, $emergency_contact);
         
         if ($stmt->execute()) {
             echo json_encode(['success' => true, 'message' => 'Client added successfully', 'id' => $stmt->insert_id]);

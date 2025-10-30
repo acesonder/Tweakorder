@@ -30,6 +30,10 @@ CREATE TABLE IF NOT EXISTS clients (
     first_name VARCHAR(100) NOT NULL,
     last_name VARCHAR(100) NOT NULL,
     date_of_birth DATE,
+    phone VARCHAR(20),
+    email VARCHAR(255),
+    address TEXT,
+    emergency_contact VARCHAR(255),
     username VARCHAR(50) UNIQUE,
     password_hash VARCHAR(255),
     security_question VARCHAR(255),
@@ -147,4 +151,64 @@ CREATE TABLE IF NOT EXISTS audit_log (
     new_value TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+-- Error Logs Table
+CREATE TABLE IF NOT EXISTS error_logs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    error_type VARCHAR(100) NOT NULL,
+    error_message TEXT NOT NULL,
+    error_details TEXT,
+    user_id INT,
+    client_id INT,
+    page_url VARCHAR(255),
+    severity ENUM('low', 'medium', 'high', 'critical') DEFAULT 'medium',
+    is_resolved BOOLEAN DEFAULT 0,
+    resolved_at TIMESTAMP NULL,
+    resolved_by INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (client_id) REFERENCES clients(id),
+    FOREIGN KEY (resolved_by) REFERENCES users(id)
+);
+
+-- Case Templates Table
+CREATE TABLE IF NOT EXISTS case_templates (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    category ENUM('addiction', 'homelessness', 'mental_health', 'general', 'referral') NOT NULL,
+    description TEXT,
+    template_content TEXT NOT NULL,
+    is_active BOOLEAN DEFAULT 1,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Case Notes Table
+CREATE TABLE IF NOT EXISTS case_notes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    client_id INT NOT NULL,
+    template_id INT,
+    note_content TEXT NOT NULL,
+    category ENUM('addiction', 'homelessness', 'mental_health', 'general', 'referral') NOT NULL,
+    created_by INT,
+    follow_up_date DATE,
+    is_confidential BOOLEAN DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE,
+    FOREIGN KEY (template_id) REFERENCES case_templates(id),
+    FOREIGN KEY (created_by) REFERENCES users(id)
+);
+
+-- Worker Preferences Table (for UI style preferences)
+CREATE TABLE IF NOT EXISTS worker_preferences (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL UNIQUE,
+    ui_style ENUM('default', 'card-based', 'list-view', 'grid-categories', 'compact', 'tabbed') DEFAULT 'default',
+    theme VARCHAR(50) DEFAULT 'light',
+    preferences_json TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Style 2: List View with Quick-Add</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        body { margin: 0; background: #f5f7fa; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        .header { background: white; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        .header h1 { margin: 0 0 15px 0; font-size: 24px; }
+        .client-bar { display: flex; gap: 10px; }
+        .client-bar select { flex: 1; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; }
+        .client-bar button { padding: 12px 20px; background: #667eea; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .content { padding: 20px; padding-bottom: 100px; }
+        .list-item { background: white; padding: 15px 20px; margin-bottom: 10px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .item-info { flex: 1; }
+        .item-name { font-size: 16px; font-weight: 700; color: #333; margin-bottom: 4px; }
+        .item-meta { font-size: 14px; color: #999; }
+        .qty-controls { display: flex; align-items: center; gap: 12px; }
+        .qty-btn { width: 36px; height: 36px; border-radius: 50%; background: #667eea; color: white; border: none; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .qty-display { font-size: 18px; font-weight: 700; color: #667eea; min-width: 30px; text-align: center; }
+        .footer { position: fixed; bottom: 0; left: 0; right: 0; background: white; padding: 20px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); }
+        .cart-summary { font-size: 14px; color: #666; margin-bottom: 10px; text-align: center; }
+        .btn-submit { width: 100%; padding: 16px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 12px; font-size: 18px; font-weight: 700; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Quick Order System</h1>
+        <div class="client-bar">
+            <select id="clientSelect">
+                <option>Loading...</option>
+            </select>
+            <button onclick="openNewClient()">+ New</button>
+        </div>
+    </div>
+    
+    <div class="content" id="productList"></div>
+    
+    <div class="footer">
+        <div class="cart-summary" id="cartSummary">0 items</div>
+        <button class="btn-submit" onclick="placeOrder()">Submit Order</button>
+    </div>
+    
+    <script src="assets/js/app.js"></script>
+    <script>
+        let cart = {};
+        let products = [];
+        
+        function loadData() {
+            ajax('api/clients.php', 'GET', null, (e, r) => {
+                if (r.success) {
+                    document.getElementById('clientSelect').innerHTML = 
+                        '<option value="">Select Client...</option>' +
+                        r.data.map(c => `<option value="${c.id}">${c.first_name} ${c.last_name}</option>`).join('');
+                }
+            });
+            
+            ajax('api/products.php', 'GET', null, (e, r) => {
+                if (r.success) {
+                    products = r.data.sort((a, b) => a.name.localeCompare(b.name));
+                    displayProducts();
+                }
+            });
+        }
+        
+        function displayProducts() {
+            document.getElementById('productList').innerHTML = products.map(p => `
+                <div class="list-item">
+                    <div class="item-info">
+                        <div class="item-name">${p.name}</div>
+                        <div class="item-meta">${p.description || 'Product'}</div>
+                    </div>
+                    <div class="qty-controls">
+                        ${cart[p.id] > 0 ? `<button class="qty-btn" onclick="updateQty(${p.id}, -1)">−</button>` : ''}
+                        ${cart[p.id] > 0 ? `<div class="qty-display">${cart[p.id]}</div>` : ''}
+                        <button class="qty-btn" onclick="updateQty(${p.id}, 1)">+</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function updateQty(id, change) {
+            cart[id] = Math.max(0, (cart[id] || 0) + change);
+            if (cart[id] === 0) delete cart[id];
+            displayProducts();
+            updateSummary();
+        }
+        
+        function updateSummary() {
+            const total = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+            document.getElementById('cartSummary').textContent = `${total} item${total !== 1 ? 's' : ''}`;
+        }
+        
+        function placeOrder() {
+            const clientId = document.getElementById('clientSelect').value;
+            if (!clientId) return alert('Select a client');
+            if (Object.keys(cart).length === 0) return alert('Add products');
+            
+            const items = Object.entries(cart).map(([id, qty]) => ({product_id: parseInt(id), quantity: qty}));
+            const data = new URLSearchParams();
+            data.append('client_id', clientId);
+            data.append('status', 'processing');
+            data.append('items', JSON.stringify(items));
+            
+            ajax('api/orders.php', 'POST', data.toString(), (e, r) => {
+                if (r.success) {
+                    alert('Order submitted successfully!');
+                    window.location.reload();
+                }
+            });
+        }
+        
+        function openNewClient() { alert('New client modal - integrate here'); }
+        
+        loadData();
+    </script>
+</body>
+</html>
