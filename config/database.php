@@ -1,8 +1,8 @@
 <?php
 // Database configuration
 define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+define('DB_USER', 'debian-sys-maint');
+define('DB_PASS', 'IXQHtvZHLjyf54Mk');
 define('DB_NAME', 'tweakorder');
 
 // Create connection
