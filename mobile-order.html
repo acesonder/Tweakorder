@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Order - Mobile</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* Mobile-first design */
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f5f7fa;
+        }
+
+        .mobile-container {
+            max-width: 100%;
+            min-height: 100vh;
+            padding: 15px;
+            background: #f5f7fa;
+        }
+
+        .client-selector-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .client-selector-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .client-dropdown {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+        }
+
+        .add-client-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-size: 28px;
+            font-weight: 300;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .add-client-btn:active {
+            transform: scale(0.95);
+        }
+
+        .products-section {
+            margin-bottom: 80px;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .product-grid-mobile {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .product-widget-mobile {
+            position: relative;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .product-widget-mobile:active {
+            transform: scale(0.95);
+        }
+
+        .product-widget-mobile img {
+            max-width: 50px;
+            max-height: 50px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+        }
+
+        .product-widget-mobile h3 {
+            font-size: 14px;
+            color: white;
+            margin: 0;
+            font-weight: 600;
+            text-align: center;
+            word-wrap: break-word;
+        }
+
+        .product-count-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: white;
+            color: #667eea;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 15px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .next-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .next-btn:disabled {
+            background: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            animation: fadeIn 0.3s;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-field {
+            margin-bottom: 16px;
+        }
+
+        .form-field label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .form-field input,
+        .form-field textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .form-field input:focus,
+        .form-field textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-submit {
+            flex: 1;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            padding: 14px;
+            background: #f0f0f0;
+            color: #666;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Success overlay */
+        .success-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(102, 126, 234, 0.95);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s;
+        }
+
+        .success-overlay.active {
+            display: flex;
+        }
+
+        .success-content {
+            text-align: center;
+            color: white;
+        }
+
+        .success-icon {
+            font-size: 72px;
+            margin-bottom: 20px;
+        }
+
+        .success-message {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        /* Confirmation page */
+        .confirmation-page {
+            display: none;
+            padding-bottom: 80px;
+        }
+
+        .confirmation-page.active {
+            display: block;
+        }
+
+        .order-item-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .order-item-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+
+        .item-quantity {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .swipe-indicator {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #ccc;
+            font-size: 20px;
+        }
+
+        .back-button {
+            background: #f0f0f0;
+            color: #666;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <!-- Product Selection Page -->
+        <div id="productSelectionPage">
+            <h1 style="margin-bottom: 20px; color: #333;">Create New Order</h1>
+            
+            <!-- Client Selection -->
+            <div class="client-selector-section">
+                <h3 class="section-title">Select Client</h3>
+                <div class="client-selector-header">
+                    <select id="clientDropdown" class="client-dropdown">
+                        <option value="">Loading clients...</option>
+                    </select>
+                    <button class="add-client-btn" onclick="openNewClientModal()">+</button>
+                </div>
+            </div>
+
+            <!-- Products Section -->
+            <div class="products-section">
+                <h3 class="section-title">Select Products</h3>
+                <div class="product-grid-mobile" id="productGrid">
+                    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #999;">
+                        Loading products...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Confirmation Page -->
+        <div id="confirmationPage" class="confirmation-page">
+            <button class="back-button" onclick="goBackToProducts()">← Back to Products</button>
+            <h1 style="margin-bottom: 20px; color: #333;">Confirm Order</h1>
+            
+            <div id="orderItemsList">
+                <!-- Order items will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <button id="nextBtn" class="next-btn" onclick="handleNextButton()" disabled>
+                Next
+            </button>
+        </div>
+    </div>
+
+    <!-- New Client Modal -->
+    <div id="newClientModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-header">Create New Client</div>
+            <form id="newClientForm" onsubmit="createNewClient(event)">
+                <div class="form-field">
+                    <label for="firstName">First Name *</label>
+                    <input type="text" id="firstName" required>
+                </div>
+                <div class="form-field">
+                    <label for="lastName">Last Name *</label>
+                    <input type="text" id="lastName" required>
+                </div>
+                <div class="form-field">
+                    <label for="phone">Phone (Optional)</label>
+                    <input type="tel" id="phone">
+                </div>
+                <div class="form-field">
+                    <label for="email">Email (Optional)</label>
+                    <input type="email" id="email">
+                </div>
+                <div class="form-field">
+                    <label for="address">Address (Optional)</label>
+                    <textarea id="address" rows="2"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="closeNewClientModal()">Cancel</button>
+                    <button type="submit" class="btn-submit">Create Client</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Overlay -->
+    <div id="successOverlay" class="success-overlay">
+        <div class="success-content">
+            <div class="success-icon">✓</div>
+            <div class="success-message" id="successMessage">Contact Saved!</div>
+        </div>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+        let products = [];
+        let clients = [];
+        let selectedProducts = {};
+        let selectedClientId = null;
+        let currentPage = 'products';
+
+        // Load initial data
+        function loadClients() {
+            ajax('api/clients.php', 'GET', null, function(err, response) {
+                if (err || !response.success) {
+                    console.error('Error loading clients:', err);
+                    return;
+                }
+                
+                clients = response.data;
+                updateClientDropdown();
+            });
+        }
+
+        function updateClientDropdown() {
+            const dropdown = document.getElementById('clientDropdown');
+            
+            if (clients.length === 0) {
+                dropdown.innerHTML = '<option value="">No clients - Create one using +</option>';
+                return;
+            }
+
+            dropdown.innerHTML = '<option value="">Select a client...</option>' +
+                clients.map(client => 
+                    `<option value="${client.id}">${client.first_name} ${client.last_name}</option>`
+                ).join('');
+
+            if (selectedClientId) {
+                dropdown.value = selectedClientId;
+            }
+
+            dropdown.onchange = function() {
+                selectedClientId = this.value;
+                updateNextButton();
+            };
+        }
+
+        function loadProducts() {
+            ajax('api/products.php', 'GET', null, function(err, response) {
+                if (err || !response.success) {
+                    console.error('Error loading products:', err);
+                    return;
+                }
+                
+                products = response.data.sort((a, b) => a.name.localeCompare(b.name));
+                displayProducts();
+            });
+        }
+
+        function displayProducts() {
+            const grid = document.getElementById('productGrid');
+            
+            if (products.length === 0) {
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #999;">No products available</div>';
+                return;
+            }
+
+            grid.innerHTML = products.map(product => `
+                <div class="product-widget-mobile ${product.background_color || 'gradient-1'}" 
+                     onclick="selectProduct(${product.id})"
+                     style="animation: fadeIn 0.3s ease-out;">
+                    ${product.image ? `<img src="${product.image}" alt="${product.name}">` : ''}
+                    <h3>${product.name}</h3>
+                    ${selectedProducts[product.id] ? 
+                        `<div class="product-count-badge">${selectedProducts[product.id]}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function selectProduct(productId) {
+            if (!selectedProducts[productId]) {
+                selectedProducts[productId] = 0;
+            }
+            selectedProducts[productId]++;
+            displayProducts();
+            updateNextButton();
+        }
+
+        function updateNextButton() {
+            const btn = document.getElementById('nextBtn');
+            const hasProducts = Object.keys(selectedProducts).some(id => selectedProducts[id] > 0);
+            const hasClient = selectedClientId && selectedClientId !== '';
+
+            if (currentPage === 'products') {
+                btn.textContent = 'Next';
+                btn.disabled = !hasProducts || !hasClient;
+            } else {
+                btn.textContent = 'Confirm Order';
+                btn.disabled = !hasProducts || !hasClient;
+            }
+        }
+
+        function handleNextButton() {
+            if (currentPage === 'products') {
+                showConfirmationPage();
+            } else {
+                confirmOrder();
+            }
+        }
+
+        function showConfirmationPage() {
+            currentPage = 'confirmation';
+            document.getElementById('productSelectionPage').style.display = 'none';
+            document.getElementById('confirmationPage').classList.add('active');
+            
+            displayOrderItems();
+            updateNextButton();
+        }
+
+        function goBackToProducts() {
+            currentPage = 'products';
+            document.getElementById('productSelectionPage').style.display = 'block';
+            document.getElementById('confirmationPage').classList.remove('active');
+            updateNextButton();
+        }
+
+        function displayOrderItems() {
+            const container = document.getElementById('orderItemsList');
+            const items = Object.entries(selectedProducts).filter(([id, qty]) => qty > 0);
+
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📦</div>
+                        <p>No items selected</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = items.map(([productId, quantity]) => {
+                const product = products.find(p => p.id == productId);
+                return `
+                    <div class="order-item-card" 
+                         ontouchstart="handleTouchStart(event, ${productId})"
+                         ontouchmove="handleTouchMove(event, ${productId})"
+                         ontouchend="handleTouchEnd(event, ${productId})"
+                         onclick="removeProduct(${productId})">
+                        <div class="order-item-content">
+                            <div>
+                                <div class="item-name">${product.name}</div>
+                                <div style="color: #999; font-size: 14px; margin-top: 4px;">
+                                    Tap to remove single item • Swipe to remove all
+                                </div>
+                            </div>
+                            <div class="item-quantity">x${quantity}</div>
+                        </div>
+                        <div class="swipe-indicator">›</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Touch handling for swipe-to-remove
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        function handleTouchStart(e, productId) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }
+
+        function handleTouchMove(e, productId) {
+            // Prevent default to allow swipe
+        }
+
+        function handleTouchEnd(e, productId) {
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = Math.abs(touchEndY - touchStartY);
+
+            // If swiped right-to-left significantly
+            if (deltaX < -100 && deltaY < 50) {
+                e.stopPropagation();
+                removeAllProduct(productId);
+            }
+        }
+
+        function removeProduct(productId) {
+            if (selectedProducts[productId]) {
+                selectedProducts[productId]--;
+                if (selectedProducts[productId] <= 0) {
+                    delete selectedProducts[productId];
+                }
+                displayOrderItems();
+                updateNextButton();
+            }
+        }
+
+        function removeAllProduct(productId) {
+            delete selectedProducts[productId];
+            displayOrderItems();
+            displayProducts();
+            updateNextButton();
+        }
+
+        function confirmOrder() {
+            const items = Object.entries(selectedProducts)
+                .filter(([id, qty]) => qty > 0)
+                .map(([id, qty]) => ({
+                    product_id: parseInt(id),
+                    quantity: qty
+                }));
+
+            const formData = new URLSearchParams();
+            formData.append('client_id', selectedClientId);
+            formData.append('status', 'processing');
+            formData.append('items', JSON.stringify(items));
+
+            ajax('api/orders.php', 'POST', formData.toString(), function(err, response) {
+                if (err || !response.success) {
+                    showError('Failed to create order: ' + (response?.message || 'Unknown error'));
+                    return;
+                }
+
+                showSuccess('Order Created Successfully!');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 2000);
+            });
+        }
+
+        // Modal functions
+        function openNewClientModal() {
+            document.getElementById('newClientModal').classList.add('active');
+        }
+
+        function closeNewClientModal() {
+            document.getElementById('newClientModal').classList.remove('active');
+            document.getElementById('newClientForm').reset();
+        }
+
+        function createNewClient(e) {
+            e.preventDefault();
+
+            const formData = new URLSearchParams();
+            formData.append('first_name', document.getElementById('firstName').value);
+            formData.append('last_name', document.getElementById('lastName').value);
+            
+            const phone = document.getElementById('phone').value;
+            if (phone) formData.append('phone', phone);
+            
+            const email = document.getElementById('email').value;
+            if (email) formData.append('email', email);
+            
+            const address = document.getElementById('address').value;
+            if (address) formData.append('address', address);
+
+            ajax('api/clients.php', 'POST', formData.toString(), function(err, response) {
+                if (err || !response.success) {
+                    showError('Failed to create client: ' + (response?.message || 'Unknown error'));
+                    return;
+                }
+
+                closeNewClientModal();
+                showSuccess('Contact Saved!');
+
+                // Reload clients and select the new one
+                setTimeout(() => {
+                    loadClients();
+                    selectedClientId = response.id;
+                    setTimeout(() => {
+                        document.getElementById('clientDropdown').value = response.id;
+                        updateNextButton();
+                    }, 100);
+                }, 1000);
+            });
+        }
+
+        function showSuccess(message) {
+            const overlay = document.getElementById('successOverlay');
+            document.getElementById('successMessage').textContent = message;
+            overlay.classList.add('active');
+            setTimeout(() => {
+                overlay.classList.remove('active');
+            }, 1500);
+        }
+
+        function showError(message) {
+            // Log error to server
+            logError('client_creation_error', message);
+            
+            // Show alert
+            alert(message);
+        }
+
+        function logError(type, message) {
+            const formData = new URLSearchParams();
+            formData.append('error_type', type);
+            formData.append('error_message', message);
+            formData.append('page_url', window.location.href);
+            formData.append('severity', 'medium');
+
+            // Fire and forget - don't wait for response
+            fetch('api/error-logs.php', {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            }).catch(err => console.error('Failed to log error:', err));
+        }
+
+        // Initialize
+        loadClients();
+        loadProducts();
+    </script>
+</body>
+</html>

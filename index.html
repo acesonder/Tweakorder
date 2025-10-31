@@ -28,7 +28,12 @@
             
             <div class="nav-card" onclick="navigateTo('create-order.html')">
                 <h3>🛒 Create Order</h3>
-                <p>Create a new order</p>
+                <p>Desktop order creation</p>
+            </div>
+            
+            <div class="nav-card" onclick="navigateTo('mobile-order.html')">
+                <h3>📱 Mobile Order</h3>
+                <p>Mobile-optimized order flow</p>
             </div>
             
             <div class="nav-card" onclick="navigateTo('open-orders.html')">
@@ -44,6 +49,28 @@
             <div class="nav-card" onclick="navigateTo('edit-orders.html')">
                 <h3>✏️ Edit Orders</h3>
                 <p>Modify existing orders</p>
+            </div>
+            
+            <div class="nav-card" onclick="navigateTo('case-management.html')">
+                <h3>📋 Case Management</h3>
+                <p>Case notes & templates</p>
+            </div>
+            
+            <div class="nav-card" onclick="navigateTo('error-logs.html')">
+                <h3>⚠️ Error Logs</h3>
+                <p>Monitor system errors</p>
+            </div>
+        </div>
+        
+        <div style="margin-top: 40px; padding: 20px; background: #f8f9fa; border-radius: 12px;">
+            <h3 style="color: #667eea; margin-bottom: 15px;">📱 Mobile Order Styles for Outreach</h3>
+            <p style="color: #666; margin-bottom: 15px;">Choose your preferred mobile ordering interface:</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                <button class="btn btn-secondary" onclick="navigateTo('mobile-style-card.html')">Card-Based</button>
+                <button class="btn btn-secondary" onclick="navigateTo('mobile-style-list.html')">List View</button>
+                <button class="btn btn-secondary" onclick="navigateTo('mobile-style-grid.html')">Grid Categories</button>
+                <button class="btn btn-secondary" onclick="navigateTo('mobile-style-compact.html')">Compact</button>
+                <button class="btn btn-secondary" onclick="navigateTo('mobile-style-tabbed.html')">Tabbed</button>
             </div>
         </div>
         

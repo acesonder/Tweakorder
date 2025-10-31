@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Management - Tweak Order Online</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .case-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 20px;
+            margin: -20px -20px 20px -20px;
+        }
+        
+        .case-header h1 {
+            margin: 0 0 10px 0;
+            color: white;
+        }
+        
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-bar select,
+        .filter-bar input {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        
+        .filter-bar select {
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .case-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        @media (max-width: 768px) {
+            .case-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .case-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .template-category {
+            margin-bottom: 20px;
+        }
+        
+        .category-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .template-list {
+            display: none;
+            padding: 10px;
+        }
+        
+        .template-list.active {
+            display: block;
+        }
+        
+        .template-item {
+            padding: 12px;
+            background: #f8f9fa;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        
+        .template-item:hover {
+            background: #e9ecef;
+            border-color: #667eea;
+        }
+        
+        .template-item-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .template-item-desc {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .case-note-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .note-meta {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .note-content {
+            white-space: pre-wrap;
+            line-height: 1.6;
+        }
+        
+        .category-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-addiction { background: #ffe0e0; color: #c41e3a; }
+        .badge-homelessness { background: #e0f0ff; color: #0066cc; }
+        .badge-mental_health { background: #e0ffe0; color: #2d6b2d; }
+        .badge-general { background: #f0f0f0; color: #666; }
+        .badge-referral { background: #fff0e0; color: #cc6600; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="btn btn-back" onclick="navigateTo('index.html')">← Back to Home</button>
+        
+        <div class="case-header">
+            <h1>📋 Case Management</h1>
+            <p>Manage case notes and templates for client support</p>
+        </div>
+        
+        <div class="filter-bar">
+            <select id="clientFilter" onchange="loadCaseNotes()">
+                <option value="">All Clients</option>
+            </select>
+            <select id="categoryFilter" onchange="loadCaseNotes()">
+                <option value="">All Categories</option>
+                <option value="addiction">Addiction</option>
+                <option value="homelessness">Homelessness</option>
+                <option value="mental_health">Mental Health</option>
+                <option value="general">General</option>
+                <option value="referral">Referral</option>
+            </select>
+            <button class="btn" onclick="showNewNoteModal()">+ New Case Note</button>
+        </div>
+        
+        <div class="case-grid">
+            <!-- Left: Case Notes -->
+            <div class="case-section">
+                <div class="section-title">📝 Recent Case Notes</div>
+                <div id="caseNotesList">
+                    <div class="loading">Loading case notes...</div>
+                </div>
+            </div>
+            
+            <!-- Right: Templates -->
+            <div class="case-section">
+                <div class="section-title">📑 Case Templates</div>
+                <div id="templatesList">
+                    <div class="loading">Loading templates...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- New Case Note Modal -->
+    <div id="newNoteModal" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <span class="close-modal" onclick="closeModal('newNoteModal')">×</span>
+                <h2>Create Case Note</h2>
+            </div>
+            <form id="newNoteForm">
+                <div class="form-group">
+                    <label for="note_client_id">Client *</label>
+                    <select id="note_client_id" name="client_id" required>
+                        <option value="">Select client...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="note_category">Category *</label>
+                    <select id="note_category" name="category" required onchange="loadTemplatesByCategory()">
+                        <option value="general">General</option>
+                        <option value="addiction">Addiction</option>
+                        <option value="homelessness">Homelessness</option>
+                        <option value="mental_health">Mental Health</option>
+                        <option value="referral">Referral</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="note_template_id">Use Template (Optional)</label>
+                    <select id="note_template_id" name="template_id" onchange="loadTemplateContent()">
+                        <option value="">None - Start from scratch</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="note_content">Case Note *</label>
+                    <textarea id="note_content" name="note_content" rows="12" required 
+                              placeholder="Enter case note details..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="follow_up_date">Follow-up Date (Optional)</label>
+                    <input type="date" id="follow_up_date" name="follow_up_date">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="is_confidential" name="is_confidential" value="1">
+                        Mark as confidential
+                    </label>
+                </div>
+                <button type="submit" class="btn">Save Case Note</button>
+            </form>
+        </div>
+    </div>
+    
+    <script src="assets/js/app.js"></script>
+    <script>
+        let templates = [];
+        let clients = [];
+        
+        // Load initial data
+        function init() {
+            loadClients();
+            loadTemplates();
+            loadCaseNotes();
+        }
+        
+        function loadClients() {
+            ajax('api/clients.php', 'GET', null, function(err, response) {
+                if (err || !response.success) return;
+                
+                clients = response.data;
+                
+                const clientFilter = document.getElementById('clientFilter');
+                const noteClient = document.getElementById('note_client_id');
+                
+                const options = response.data.map(c => 
+                    `<option value="${c.id}">${c.first_name} ${c.last_name}</option>`
+                ).join('');
+                
+                clientFilter.innerHTML += options;
+                noteClient.innerHTML += options;
+            });
+        }
+        
+        function loadTemplates() {
+            ajax('api/case-templates.php', 'GET', null, function(err, response) {
+                if (err || !response.success) {
+                    document.getElementById('templatesList').innerHTML = '<p>Error loading templates</p>';
+                    return;
+                }
+                
+                templates = response.data;
+                displayTemplates();
+            });
+        }
+        
+        function displayTemplates() {
+            const categories = {
+                'addiction': { name: 'Addiction Support', templates: [] },
+                'homelessness': { name: 'Homelessness Services', templates: [] },
+                'mental_health': { name: 'Mental Health', templates: [] },
+                'general': { name: 'General', templates: [] },
+                'referral': { name: 'Referrals', templates: [] }
+            };
+            
+            templates.forEach(t => {
+                if (categories[t.category]) {
+                    categories[t.category].templates.push(t);
+                }
+            });
+            
+            let html = '';
+            for (const [key, cat] of Object.entries(categories)) {
+                if (cat.templates.length > 0) {
+                    html += `
+                        <div class="template-category">
+                            <div class="category-header" onclick="toggleCategory('${key}')">
+                                <span>${cat.name}</span>
+                                <span id="toggle-${key}">▼</span>
+                            </div>
+                            <div class="template-list" id="category-${key}">
+                                ${cat.templates.map(t => `
+                                    <div class="template-item" onclick="useTemplate(${t.id})">
+                                        <div class="template-item-name">${t.name}</div>
+                                        <div class="template-item-desc">${t.description || ''}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            document.getElementById('templatesList').innerHTML = html;
+        }
+        
+        function toggleCategory(category) {
+            const list = document.getElementById('category-' + category);
+            const toggle = document.getElementById('toggle-' + category);
+            
+            if (list.classList.contains('active')) {
+                list.classList.remove('active');
+                toggle.textContent = '▼';
+            } else {
+                list.classList.add('active');
+                toggle.textContent = '▲';
+            }
+        }
+        
+        function useTemplate(templateId) {
+            const template = templates.find(t => t.id === templateId);
+            if (!template) return;
+            
+            document.getElementById('note_category').value = template.category;
+            document.getElementById('note_template_id').value = templateId;
+            document.getElementById('note_content').value = template.template_content;
+            
+            showNewNoteModal();
+        }
+        
+        function loadCaseNotes() {
+            const clientId = document.getElementById('clientFilter').value;
+            const category = document.getElementById('categoryFilter').value;
+            
+            let url = 'api/case-notes.php?';
+            if (clientId) url += 'client_id=' + clientId + '&';
+            if (category) url += 'category=' + category;
+            
+            ajax(url, 'GET', null, function(err, response) {
+                if (err || !response.success) {
+                    document.getElementById('caseNotesList').innerHTML = '<p>Error loading case notes</p>';
+                    return;
+                }
+                
+                displayCaseNotes(response.data);
+            });
+        }
+        
+        function displayCaseNotes(notes) {
+            const list = document.getElementById('caseNotesList');
+            
+            if (notes.length === 0) {
+                list.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No case notes found. Create your first case note!</p>';
+                return;
+            }
+            
+            list.innerHTML = notes.map(note => `
+                <div class="case-note-card">
+                    <div class="note-header">
+                        <div>
+                            <strong>${note.first_name} ${note.last_name}</strong>
+                            <span class="category-badge badge-${note.category}">
+                                ${note.category.replace('_', ' ')}
+                            </span>
+                        </div>
+                        <div class="note-meta">
+                            ${new Date(note.created_at).toLocaleDateString()}
+                        </div>
+                    </div>
+                    ${note.template_name ? `<div style="font-size: 13px; color: #667eea; margin-bottom: 10px;">📑 ${note.template_name}</div>` : ''}
+                    <div class="note-content">${note.note_content.substring(0, 200)}${note.note_content.length > 200 ? '...' : ''}</div>
+                    ${note.follow_up_date ? `<div style="margin-top: 10px; font-size: 13px; color: #666;">📅 Follow-up: ${note.follow_up_date}</div>` : ''}
+                </div>
+            `).join('');
+        }
+        
+        function showNewNoteModal() {
+            openModal('newNoteModal');
+        }
+        
+        function loadTemplatesByCategory() {
+            const category = document.getElementById('note_category').value;
+            const templateSelect = document.getElementById('note_template_id');
+            
+            const categoryTemplates = templates.filter(t => t.category === category);
+            
+            templateSelect.innerHTML = '<option value="">None - Start from scratch</option>' +
+                categoryTemplates.map(t => 
+                    `<option value="${t.id}">${t.name}</option>`
+                ).join('');
+        }
+        
+        function loadTemplateContent() {
+            const templateId = document.getElementById('note_template_id').value;
+            if (!templateId) return;
+            
+            const template = templates.find(t => t.id == templateId);
+            if (template) {
+                document.getElementById('note_content').value = template.template_content;
+            }
+        }
+        
+        // Form submission
+        document.getElementById('newNoteForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = new URLSearchParams(formData).toString();
+            
+            ajax('api/case-notes.php', 'POST', data, function(err, response) {
+                if (err || !response.success) {
+                    showAlert(response?.message || 'Failed to create case note', 'error');
+                    return;
+                }
+                
+                showAlert('Case note created successfully!', 'success');
+                closeModal('newNoteModal');
+                document.getElementById('newNoteForm').reset();
+                loadCaseNotes();
+            });
+        });
+        
+        // Initialize
+        init();
+    </script>
+</body>
+</html>

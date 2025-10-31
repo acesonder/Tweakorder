@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Style 5: Tabbed Interface</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #f0f0f0; font-family: -apple-system, sans-serif; }
+        .tabs { display: flex; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .tab { flex: 1; padding: 15px; text-align: center; border-bottom: 3px solid transparent; cursor: pointer; font-weight: 600; color: #666; }
+        .tab.active { color: #4CAF50; border-bottom-color: #4CAF50; }
+        .tab-content { display: none; padding: 15px; }
+        .tab-content.active { display: block; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 6px; color: #333; }
+        .form-group select, .form-group input { width: 100%; padding: 12px; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; }
+        .product-tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+        .tile { background: white; padding: 20px; border-radius: 12px; text-align: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: relative; }
+        .tile-name { font-weight: 700; font-size: 15px; color: #333; }
+        .tile-badge { position: absolute; top: 8px; right: 8px; background: #4CAF50; color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+        .review-item { background: white; padding: 15px; margin-bottom: 10px; border-radius: 10px; display: flex; justify-content: space-between; }
+        .btn { width: 100%; padding: 16px; background: #4CAF50; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: 700; cursor: pointer; margin-top: 15px; }
+        .btn-secondary { background: #2196F3; }
+    </style>
+</head>
+<body>
+    <div class="tabs">
+        <div class="tab active" onclick="showTab(0)">1. Client</div>
+        <div class="tab" onclick="showTab(1)">2. Items</div>
+        <div class="tab" onclick="showTab(2)">3. Review</div>
+    </div>
+    
+    <div class="tab-content active" id="tab0">
+        <div class="form-group">
+            <label>Select Client</label>
+            <select id="clientSelect">
+                <option>Loading...</option>
+            </select>
+        </div>
+        <button class="btn btn-secondary" onclick="alert('New client')">+ Add New Client</button>
+        <button class="btn" onclick="showTab(1)">Next: Select Items</button>
+    </div>
+    
+    <div class="tab-content" id="tab1">
+        <h3 style="margin-bottom: 15px;">Select Products</h3>
+        <div class="product-tiles" id="products"></div>
+        <button class="btn" onclick="showTab(2)" style="margin-top: 20px;">Next: Review Order</button>
+    </div>
+    
+    <div class="tab-content" id="tab2">
+        <h3 style="margin-bottom: 15px;">Review Your Order</h3>
+        <div id="review"></div>
+        <button class="btn" onclick="placeOrder()">Confirm & Submit</button>
+    </div>
+    
+    <script src="assets/js/app.js"></script>
+    <script>
+        let cart = {};
+        let products = [];
+        let currentTab = 0;
+        
+        function showTab(n) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById('tab' + n).classList.add('active');
+            document.querySelectorAll('.tab')[n].classList.add('active');
+            currentTab = n;
+            if (n === 2) displayReview();
+        }
+        
+        function loadData() {
+            ajax('api/clients.php', 'GET', null, (e, r) => {
+                if (r.success) {
+                    document.getElementById('clientSelect').innerHTML = 
+                        '<option value="">Select...</option>' +
+                        r.data.map(c => `<option value="${c.id}">${c.first_name} ${c.last_name}</option>`).join('');
+                }
+            });
+            
+            ajax('api/products.php', 'GET', null, (e, r) => {
+                if (r.success) {
+                    products = r.data;
+                    displayProducts();
+                }
+            });
+        }
+        
+        function displayProducts() {
+            document.getElementById('products').innerHTML = products.map(p => `
+                <div class="tile" onclick="add(${p.id})">
+                    <div class="tile-name">${p.name}</div>
+                    ${cart[p.id] ? `<div class="tile-badge">${cart[p.id]}</div>` : ''}
+                </div>
+            `).join('');
+        }
+        
+        function add(id) {
+            cart[id] = (cart[id] || 0) + 1;
+            displayProducts();
+        }
+        
+        function displayReview() {
+            const items = Object.entries(cart).filter(([id, qty]) => qty > 0);
+            if (items.length === 0) {
+                document.getElementById('review').innerHTML = '<p style="color: #999; text-align: center; padding: 40px;">No items selected</p>';
+                return;
+            }
+            document.getElementById('review').innerHTML = items.map(([id, qty]) => {
+                const p = products.find(p => p.id == id);
+                return `<div class="review-item"><strong>${p.name}</strong><span>x${qty}</span></div>`;
+            }).join('');
+        }
+        
+        function placeOrder() {
+            const clientId = document.getElementById('clientSelect').value;
+            if (!clientId) { showTab(0); return alert('Select client'); }
+            if (Object.keys(cart).length === 0) { showTab(1); return alert('Add items'); }
+            
+            const items = Object.entries(cart).map(([id, qty]) => ({product_id: parseInt(id), quantity: qty}));
+            const data = new URLSearchParams();
+            data.append('client_id', clientId);
+            data.append('status', 'processing');
+            data.append('items', JSON.stringify(items));
+            
+            ajax('api/orders.php', 'POST', data.toString(), (e, r) => {
+                if (r.success) {
+                    alert('Order placed!');
+                    window.location.reload();
+                }
+            });
+        }
+        
+        loadData();
+    </script>
+</body>
+</html>

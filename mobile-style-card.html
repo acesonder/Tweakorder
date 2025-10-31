@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Style 1: Card-Based Layout</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        body { margin: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; }
+        h1 { color: white; text-align: center; margin-bottom: 30px; }
+        .card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+        .card-title { font-size: 18px; font-weight: 700; margin-bottom: 15px; color: #333; }
+        .client-select { width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 16px; margin-bottom: 10px; }
+        .product-card { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); border-radius: 15px; padding: 20px; margin-bottom: 12px; color: white; cursor: pointer; transition: all 0.3s; position: relative; }
+        .product-card:active { transform: scale(0.98); }
+        .product-name { font-size: 18px; font-weight: 700; margin-bottom: 5px; }
+        .product-desc { font-size: 14px; opacity: 0.9; }
+        .quick-add { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); background: white; color: #f5576c; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700; }
+        .cart-badge { background: white; color: #667eea; padding: 8px 16px; border-radius: 20px; display: inline-block; margin-top: 10px; font-weight: 700; }
+        .btn-submit { width: 100%; padding: 18px; background: white; color: #667eea; border: none; border-radius: 15px; font-size: 18px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📦 Quick Order</h1>
+        
+        <div class="card">
+            <div class="card-title">Select Client</div>
+            <select class="client-select" id="clientSelect">
+                <option>Loading...</option>
+            </select>
+            <button onclick="openNewClient()" style="background: #667eea; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; width: 100%;">+ New Client</button>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">Select Products</div>
+            <div id="products"></div>
+        </div>
+        
+        <div class="card">
+            <div class="card-title">Cart Summary</div>
+            <div id="cart">No items selected</div>
+        </div>
+        
+        <button class="btn-submit" onclick="placeOrder()">Place Order</button>
+    </div>
+    
+    <script src="assets/js/app.js"></script>
+    <script>
+        let cart = {};
+        let products = [];
+        
+        function loadData() {
+            ajax('api/clients.php', 'GET', null, (e, r) => {
+                if (r.success) {
+                    document.getElementById('clientSelect').innerHTML = 
+                        '<option value="">Select...</option>' +
+                        r.data.map(c => `<option value="${c.id}">${c.first_name} ${c.last_name}</option>`).join('');
+                }
+            });
+            
+            ajax('api/products.php', 'GET', null, (e, r) => {
+                if (r.success) {
+                    products = r.data;
+                    displayProducts();
+                }
+            });
+        }
+        
+        function displayProducts() {
+            document.getElementById('products').innerHTML = products.map(p => `
+                <div class="product-card" onclick="addToCart(${p.id})">
+                    <div class="product-name">${p.name}</div>
+                    <div class="product-desc">${p.description || 'Tap to add'}</div>
+                    <div class="quick-add">+</div>
+                </div>
+            `).join('');
+        }
+        
+        function addToCart(id) {
+            cart[id] = (cart[id] || 0) + 1;
+            updateCart();
+        }
+        
+        function updateCart() {
+            const items = Object.entries(cart).filter(([id, qty]) => qty > 0);
+            if (items.length === 0) {
+                document.getElementById('cart').innerHTML = 'No items selected';
+                return;
+            }
+            document.getElementById('cart').innerHTML = items.map(([id, qty]) => {
+                const p = products.find(p => p.id == id);
+                return `<div style="margin-bottom: 8px;"><strong>${p.name}</strong> <span class="cart-badge">x${qty}</span></div>`;
+            }).join('');
+        }
+        
+        function placeOrder() {
+            const clientId = document.getElementById('clientSelect').value;
+            if (!clientId) return alert('Select a client');
+            if (Object.keys(cart).length === 0) return alert('Add products');
+            
+            const items = Object.entries(cart).map(([id, qty]) => ({product_id: parseInt(id), quantity: qty}));
+            const data = new URLSearchParams();
+            data.append('client_id', clientId);
+            data.append('status', 'processing');
+            data.append('items', JSON.stringify(items));
+            
+            ajax('api/orders.php', 'POST', data.toString(), (e, r) => {
+                if (r.success) {
+                    alert('Order placed!');
+                    window.location.reload();
+                }
+            });
+        }
+        
+        function openNewClient() { alert('New client feature - integrate modal here'); }
+        
+        loadData();
+    </script>
+</body>
+</html>
