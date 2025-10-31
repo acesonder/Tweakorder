@@ -2,6 +2,10 @@
 assets/uploads/*
 !assets/uploads/.gitkeep
 
+# Local configuration files
+config/database.local.php
+.env
+
 # IDE and editor files
 .vscode/
 .idea/

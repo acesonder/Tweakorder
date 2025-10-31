@@ -39,8 +39,26 @@ A professional, mobile-responsive web application for managing products, workers
    ```
 
 3. **Configure database connection**
-   - Edit `config/database.php` with your MySQL credentials
-   - Default settings: host=localhost, user=root, password='', database=tweakorder
+   
+   **Option 1: Using environment variables (recommended for production)**
+   ```bash
+   export DB_HOST=localhost
+   export DB_USER=your_username
+   export DB_PASS=your_password
+   export DB_NAME=tweakorder
+   ```
+   
+   **Option 2: Using local configuration file (recommended for development)**
+   ```bash
+   cp config/database.local.php.example config/database.local.php
+   # Edit config/database.local.php with your MySQL credentials
+   ```
+   
+   Default settings (if neither environment variables nor local config are set):
+   - Host: localhost
+   - Username: root
+   - Password: (empty)
+   - Database: tweakorder
 
 4. **Set up file permissions**
    ```bash
@@ -59,13 +77,29 @@ A professional, mobile-responsive web application for managing products, workers
 
 ## Database Configuration
 
-The default database configuration is:
+The application supports multiple ways to configure database credentials:
+
+**1. Environment Variables (Recommended for Production)**
+```bash
+export DB_HOST=localhost
+export DB_USER=your_username
+export DB_PASS=your_password
+export DB_NAME=tweakorder
+```
+
+**2. Local Configuration File (Recommended for Development)**
+- Copy `config/database.local.php.example` to `config/database.local.php`
+- Update the credentials in `config/database.local.php`
+- This file is excluded from version control for security
+
+**3. Default Values**
+If neither environment variables nor local config file are present:
 - Host: localhost
 - Username: root
 - Password: (empty)
 - Database: tweakorder
 
-To modify these settings, edit `config/database.php`.
+**Security Note:** Never commit database credentials to version control. Use environment variables or the local configuration file approach.
 
 ## Features Overview
 
