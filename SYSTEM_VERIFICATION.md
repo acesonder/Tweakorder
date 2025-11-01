@@ -29,7 +29,6 @@ Comprehensive testing has been completed on the Tweakorder system. All features 
 | error_logs | 1+ | ✅ Operational |
 | sessions | Active | ✅ Operational |
 | users | Ready | ✅ Operational |
-| workers | 3 | ✅ Operational |
 | audit_log | Ready | ✅ Operational |
 | product_categories | Ready | ✅ Operational |
 | worker_preferences | Ready | ✅ Operational |
