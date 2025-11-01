@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <rect width="100" height="100" fill="#FCBAD3" rx="10"/>
+  <g fill="white">
+    <ellipse cx="50" cy="45" rx="20" ry="15"/>
+    <rect x="48" y="55" width="4" height="15" rx="1"/>
+    <text x="50" y="85" font-family="Arial, sans-serif" font-size="9" font-weight="bold" text-anchor="middle" fill="white">COOKER</text>
+  </g>
+</svg>

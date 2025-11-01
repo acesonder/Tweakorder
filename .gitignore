@@ -1,6 +1,8 @@
 # Uploads directory
 assets/uploads/*
 !assets/uploads/.gitkeep
+!assets/uploads/harm-reduction-icons/
+!assets/uploads/harm-reduction-icons/*.svg
 
 # IDE and editor files
 .vscode/

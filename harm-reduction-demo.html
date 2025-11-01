@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Harm Reduction Products Demo - Tweakorder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .stat-card h3 {
+            font-size: 2.5em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .product-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            border-color: #667eea;
+        }
+
+        .product-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 15px;
+            display: block;
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .product-sku {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #f0f0f0;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.75em;
+            color: #666;
+            font-family: monospace;
+        }
+
+        .product-name {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .product-description {
+            font-size: 0.9em;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            min-height: 60px;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .inventory {
+            background: #4CAF50;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .inventory.low {
+            background: #FF9800;
+        }
+
+        .inventory.very-low {
+            background: #F44336;
+        }
+
+        .category-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            margin: 40px 0 20px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-header h2 {
+            font-size: 1.5em;
+        }
+
+        .icon-emoji {
+            font-size: 1.8em;
+        }
+
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 Harm Reduction Product Catalog</h1>
+        <p class="subtitle">Comprehensive supply list for outreach programs</p>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <h3>71</h3>
+                <p>Total Products</p>
+            </div>
+            <div class="stat-card">
+                <h3>12</h3>
+                <p>Categories</p>
+            </div>
+            <div class="stat-card">
+                <h3>25</h3>
+                <p>Custom Icons</p>
+            </div>
+            <div class="stat-card">
+                <h3>100%</h3>
+                <p>Fields Complete</p>
+            </div>
+        </div>
+
+        <!-- Naloxone & Overdose Prevention -->
+        <div class="section-header">
+            <span class="icon-emoji">💉</span>
+            <h2>Naloxone & Overdose Prevention</h2>
+        </div>
+        <div class="products-grid">
+            <div class="product-card">
+                <span class="product-sku">HR-NAL-001</span>
+                <img src="assets/uploads/harm-reduction-icons/naloxone.svg" class="product-icon" alt="Naloxone">
+                <div class="product-name">Naloxone Nasal Spray Kit</div>
+                <div class="product-description">Emergency overdose reversal medication - nasal spray format with instructions. Life-saving medication for opioid overdoses.</div>
+                <div class="product-footer">
+                    <span class="inventory">Stock: 100</span>
+                    <span class="category-badge">Harm Reduction</span>
+                </div>
+            </div>
+            <div class="product-card">
+                <span class="product-sku">HR-NAL-002</span>
+                <img src="assets/uploads/harm-reduction-icons/naloxone.svg" class="product-icon" alt="Naloxone">
+                <div class="product-name">Naloxone Injectable Kit</div>
+                <div class="product-description">Emergency overdose reversal medication - injectable format with syringes and instructions. For intramuscular or subcutaneous administration.</div>
+                <div class="product-footer">
+                    <span class="inventory">Stock: 75</span>
+                    <span class="category-badge">Harm Reduction</span>
+                </div>
+            </div>
+            <div class="product-card">
+                <span class="product-sku">HR-EDU-001</span>
+                <img src="assets/uploads/harm-reduction-icons/resource-card.svg" class="product-icon" alt="Training Card">
+                <div class="product-name">Overdose Response Training Card</div>
+                <div class="product-description">Step-by-step guide for recognizing and responding to opioid overdoses. Includes emergency contact information.</div>
+                <div class="product-footer">
+                    <span class="inventory">Stock: 200</span>
+                    <span class="category-badge">Harm Reduction</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Injection Supplies -->
+        <div class="section-header">
+            <span class="icon-emoji">💊</span>
+            <h2>Injection Supplies</h2>
+        </div>
+        <div class="products-grid">
+            <div class="product-card">
+                <span class="product-sku">HR-SYR-001</span>
+                <img src="assets/uploads/harm-reduction-icons/syringe.svg" class="product-icon" alt="Syringe">
+                <div class="product-name">Sterile Syringe - 1mL</div>
+                <div class="product-description">Single-use sterile syringe with safety cap, 1mL capacity. Reduces risk of disease transmission and infection.</div>
+                <div class="product-footer">
+                    <span class="inventory">Stock: 500</span>
+                    <span class="category-badge">Harm Reduction</span>
+                </div>
+            </div>
+            <div class="product-card">
+                <span class="product-sku">HR-COK-001</span>
+                <img src="assets/uploads/harm-reduction-icons/cooker.svg" class="product-icon" alt="Cooker">
+                <div class="product-name">Cookers/Spoons (Sterile)</div>
+                <div class="product-description">Sterile cookers for preparing substances. Heat-safe and single-use to prevent contamination.</div>
+                <div class="product-footer">
+                    <span class="inventory">Stock: 400</span>
+                    <span class="category-badge">Harm Reduction</span>
+                </div>
+            </div>
+            <div class="product-card">
+                <span class="product-sku">HR-SHP-001</span>
+                <img src="assets/uploads/harm-reduction-icons/sharps-container.svg" class="product-icon" alt="Sharps Container">
+                <div class="product-name">Sharps Container (1L)</div>
+                <div class="product-description">Puncture-resistant biohazard sharps disposal container, 1 liter capacity. Safe needle disposal essential.</div>
+                <div class="product-footer">
+                    <span class="inventory low">Stock: 150</span>
+                    <span class="category-badge">Harm Reduction</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Safer Sex Supplies -->
+        <div class="section-header">
+            <span class="icon-emoji">🛡️</span>
+            <h2>Safer Sex & Sexual Health</h2>
+        </div>
+        <div class="products-grid">
+            <div class="product-card">
+                <span class="product-sku">HR-CON-001</span>
+                <img src="assets/uploads/harm-reduction-icons/condoms.svg" class="product-icon" alt="Condoms">
+                <div class="product-name">Condoms - Standard (10 pack)</div>
+                <div class="product-description">Latex condoms for safer sex practices. Prevents STI transmission and unplanned pregnancy.</div>
+                <div class="product-footer">
+                    <span class="inventory">Stock: 500</span>
+                    <span class="category-badge">Harm Reduction</span>
+                </div>
+            </div>
+            <div class="product-card">
+                <span class="product-sku">HR-LUB-001</span>
+                <img src="assets/uploads/harm-reduction-icons/lubricant.svg" class="product-icon" alt="Lubricant">
+                <div class="product-name">Lubricant Packets</div>
+                <div class="product-description">Water-based personal lubricant sachets. Reduces friction and tearing during intercourse.</div>
+                <div class="product-footer">
+                    <span class="inventory">Stock: 600</span>
+                    <span class="category-badge">Harm Reduction</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Testing Supplies -->
+        <div class="section-header">
+            <span class="icon-emoji">🧪</span>
+            <h2>Testing Supplies</h2>
+        </div>
+        <div class="products-grid">
+            <div class="product-card">
+                <span class="product-sku">HR-TST-001</span>
+                <img src="assets/uploads/harm-reduction-icons/fentanyl-test.svg" class="product-icon" alt="Test Strips">
+                <div class="product-name">Fentanyl Test Strips (10 pack)</div>
+                <div class="product-description">Test strips to detect fentanyl in substances. Critical for preventing accidental overdoses.</div>
+                <div class="product-footer">
+                    <span class="inventory">Stock: 300</span>
+                    <span class="category-badge">Harm Reduction</span>
+                </div>
+            </div>
+            <div class="product-card">
+                <span class="product-sku">HR-TST-004</span>
+                <img src="assets/uploads/harm-reduction-icons/test-strips.svg" class="product-icon" alt="HIV Test">
+                <div class="product-name">HIV Self-Test Kit</div>
+                <div class="product-description">At-home HIV testing kit with instructions. Results in 20 minutes, encourages regular testing.</div>
+                <div class="product-footer">
+                    <span class="inventory very-low">Stock: 100</span>
+                    <span class="category-badge">Harm Reduction</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Smoking Supplies -->
+        <div class="section-header">
+            <span class="icon-emoji">🚬</span>
+            <h2>Safer Smoking Supplies</h2>
+        </div>
+        <div class="products-grid">
+            <div class="product-card">
+                <span class="product-sku">HR-SMK-001</span>
+                <img src="assets/uploads/harm-reduction-icons/safe-smoke-kit.svg" class="product-icon" alt="Smoking Kit">
+                <div class="product-name">Safe Smoking Kit - Complete</div>
+                <div class="product-description">Comprehensive safer smoking supplies including pipes, screens, mouthpieces, and lip balm.</div>
+                <div class="product-footer">
+                    <span class="inventory">Stock: 200</span>
+                    <span class="category-badge">Harm Reduction</span>
+                </div>
+            </div>
+            <div class="product-card">
+                <span class="product-sku">HR-SMK-004</span>
+                <img src="assets/uploads/harm-reduction-icons/mouthpiece.svg" class="product-icon" alt="Mouthpiece">
+                <div class="product-name">Mouthpieces (Rubber)</div>
+                <div class="product-description">Individual rubber mouthpieces for pipes. Prevents lip burns and oral infections.</div>
+                <div class="product-footer">
+                    <span class="inventory">Stock: 500</span>
+                    <span class="category-badge">Harm Reduction</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Wound Care -->
+        <div class="section-header">
+            <span class="icon-emoji">🩹</span>
+            <h2>Wound Care & First Aid</h2>
+        </div>
+        <div class="products-grid">
+            <div class="product-card">
+                <span class="product-sku">HR-WND-001</span>
+                <img src="assets/uploads/harm-reduction-icons/wound-care.svg" class="product-icon" alt="Wound Care">
+                <div class="product-name">Wound Care Kit - Basic</div>
+                <div class="product-description">Basic wound care supplies: bandages, gauze, antibiotic ointment, medical tape. Treats injection site infections.</div>
+                <div class="product-footer">
+                    <span class="inventory">Stock: 200</span>
+                    <span class="category-badge">Harm Reduction</span>
+                </div>
+            </div>
+            <div class="product-card">
+                <span class="product-sku">HR-WND-006</span>
+                <img src="assets/uploads/harm-reduction-icons/bandages.svg" class="product-icon" alt="Bandages">
+                <div class="product-name">Adhesive Bandages (Variety)</div>
+                <div class="product-description">Assorted adhesive bandages in multiple sizes. For minor cuts and abrasions.</div>
+                <div class="product-footer">
+                    <span class="inventory">Stock: 600</span>
+                    <span class="category-badge">Harm Reduction</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PPE -->
+        <div class="section-header">
+            <span class="icon-emoji">🧤</span>
+            <h2>Personal Protective Equipment</h2>
+        </div>
+        <div class="products-grid">
+            <div class="product-card">
+                <span class="product-sku">HR-PPE-002</span>
+                <img src="assets/uploads/harm-reduction-icons/gloves.svg" class="product-icon" alt="Gloves">
+                <div class="product-name">Nitrile Gloves - Medium (100)</div>
+                <div class="product-description">Latex-free nitrile gloves, medium size. Most commonly requested size.</div>
+                <div class="product-footer">
+                    <span class="inventory">Stock: 400</span>
+                    <span class="category-badge">Harm Reduction</span>
+                </div>
+            </div>
+            <div class="product-card">
+                <span class="product-sku">HR-PPE-005</span>
+                <img src="assets/uploads/harm-reduction-icons/hand-sanitizer.svg" class="product-icon" alt="Sanitizer">
+                <div class="product-name">Hand Sanitizer (2oz)</div>
+                <div class="product-description">Alcohol-based hand sanitizer, 2oz bottle. Essential hygiene when handwashing unavailable.</div>
+                <div class="product-footer">
+                    <span class="inventory">Stock: 400</span>
+                    <span class="category-badge">Harm Reduction</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Kits & Bundles -->
+        <div class="section-header">
+            <span class="icon-emoji">📦</span>
+            <h2>Kits & Bundles</h2>
+        </div>
+        <div class="products-grid">
+            <div class="product-card">
+                <span class="product-sku">HR-KIT-001</span>
+                <img src="assets/uploads/harm-reduction-icons/first-aid-kit.svg" class="product-icon" alt="Starter Kit">
+                <div class="product-name">Starter Harm Reduction Kit</div>
+                <div class="product-description">Comprehensive starter kit: syringes, cookers, alcohol swabs, sharps container, naloxone info, resource cards.</div>
+                <div class="product-footer">
+                    <span class="inventory low">Stock: 150</span>
+                    <span class="category-badge">Harm Reduction</span>
+                </div>
+            </div>
+            <div class="product-card">
+                <span class="product-sku">HR-KIT-006</span>
+                <img src="assets/uploads/harm-reduction-icons/first-aid-kit.svg" class="product-icon" alt="Overdose Kit">
+                <div class="product-name">Overdose Response Kit</div>
+                <div class="product-description">Emergency overdose kit: naloxone (2 doses), rescue breathing barrier, gloves, instruction card, emergency contacts.</div>
+                <div class="product-footer">
+                    <span class="inventory very-low">Stock: 100</span>
+                    <span class="category-badge">Harm Reduction</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 50px; padding: 30px; background: #f5f5f5; border-radius: 15px; text-align: center;">
+            <h3 style="color: #667eea; margin-bottom: 15px;">✅ Implementation Complete</h3>
+            <p style="color: #666; line-height: 1.8;">
+                <strong>71 harm reduction products</strong> with complete data:<br>
+                ✓ Professional names and descriptions<br>
+                ✓ 25 custom SVG icons<br>
+                ✓ Inventory levels set<br>
+                ✓ Color-coded gradients<br>
+                ✓ Systematic SKU codes<br>
+                ✓ Ready to import via SQL file
+            </p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <rect width="100" height="100" fill="#4D96FF" rx="10"/>
+  <g fill="white">
+    <circle cx="50" cy="40" r="15"/>
+    <rect x="40" y="50" width="20" height="15" rx="2"/>
+    <rect x="48" y="42" width="4" height="6"/>
+    <text x="50" y="85" font-family="Arial, sans-serif" font-size="8" font-weight="bold" text-anchor="middle" fill="white">TOURNIQUET</text>
+  </g>
+</svg>
