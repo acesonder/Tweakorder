@@ -21,8 +21,8 @@ Created custom SVG icons for all harm reduction product categories:
   - Disposal & safety
   - Educational materials
 
-### 2. Comprehensive Product Database (75 Products)
-Created SQL file with 75 harm reduction products: `harm_reduction_products.sql`
+### 2. Comprehensive Product Database (71 Products)
+Created SQL file with 71 harm reduction products: `harm_reduction_products.sql`
 
 All fields populated for each product:
 - **Name**: Clear, professional product names
@@ -40,7 +40,7 @@ All fields populated for each product:
 - Injectable naloxone kits
 - Overdose response training cards
 
-#### Injection Supplies (14 products)
+#### Injection Supplies (12 products)
 - Sterile syringes (multiple sizes)
 - Sterile needles (multiple gauges)
 - Cookers/spoons
@@ -50,7 +50,7 @@ All fields populated for each product:
 - Sharps containers (multiple sizes)
 - Sterile water vials
 
-#### Safer Sex & Sexual Health (7 products)
+#### Safer Sex & Sexual Health (6 products)
 - Condoms (multiple types and sizes)
 - Lubricant packets
 - Dental dams
@@ -180,7 +180,7 @@ After installation, verify the products:
 ```sql
 SELECT COUNT(*) FROM products WHERE category = 'Harm Reduction';
 ```
-Should return: 75 products
+Should return: 71 products
 
 2. **View sample products**:
 ```sql
