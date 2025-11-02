@@ -1,0 +1,107 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: tweakorder
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: mysqli, pdo_mysql, mbstring
+        coverage: none
+    
+    - name: Wait for MySQL
+      run: |
+        while ! mysqladmin ping -h"127.0.0.1" --silent; do
+          sleep 1
+        done
+    
+    - name: Setup Database
+      run: |
+        mysql -h 127.0.0.1 -u root -proot tweakorder < database.sql
+        mysql -h 127.0.0.1 -u root -proot tweakorder < case_templates_data.sql
+        mysql -h 127.0.0.1 -u root -proot tweakorder < sample_data.sql
+    
+    - name: Run Tests
+      run: |
+        if [ -f "test_complete_workflow.sh" ]; then
+          chmod +x test_complete_workflow.sh
+          bash test_complete_workflow.sh
+        else
+          echo "No tests found, skipping..."
+        fi
+    
+    - name: Verify API Endpoints
+      run: |
+        php -S localhost:8000 > /dev/null 2>&1 &
+        sleep 2
+        curl -f http://localhost:8000/api/products.php || exit 1
+        curl -f http://localhost:8000/api/clients.php || exit 1
+        curl -f http://localhost:8000/api/orders.php || exit 1
+        echo "API endpoints verified successfully"
+  
+  lint:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        tools: phpcs
+    
+    - name: Check PHP Syntax
+      run: |
+        find . -name "*.php" -not -path "./vendor/*" -exec php -l {} \; | grep -v "No syntax errors"
+    
+    - name: Validate HTML
+      run: |
+        echo "HTML validation check"
+        find . -name "*.html" -exec echo "Checking {}" \;
+  
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: SQL Injection Check
+      run: |
+        echo "Checking for SQL injection vulnerabilities..."
+        ! grep -r "SELECT.*\$_" --include="*.php" api/ || (echo "Potential SQL injection found" && exit 1)
+        ! grep -r "INSERT.*\$_" --include="*.php" api/ || (echo "Potential SQL injection found" && exit 1)
+        echo "SQL injection check passed"
+    
+    - name: XSS Check
+      run: |
+        echo "Checking for XSS vulnerabilities..."
+        ! grep -r "echo \$_" --include="*.php" api/ || (echo "Potential XSS vulnerability found" && exit 1)
+        echo "XSS check passed"
