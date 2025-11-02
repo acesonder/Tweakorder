@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Import/Export - Tweakorder</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .import-export-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section-card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+
+        .section-card h2 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .action-item {
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .action-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .action-item h3 {
+            margin-top: 0;
+            font-size: 1.3em;
+        }
+
+        .action-item p {
+            opacity: 0.9;
+            font-size: 0.95em;
+        }
+
+        .file-upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            background: #f8f9fa;
+            margin: 20px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-area:hover {
+            background: #e9ecef;
+            border-color: #764ba2;
+        }
+
+        .file-upload-area.dragover {
+            background: #e7e9fc;
+            border-color: #667eea;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .template-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .template-section h4 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        .template-info {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+            display: none;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .result-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .result-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .result-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background: #5568d3;
+        }
+
+        .data-preview {
+            max-height: 300px;
+            overflow-y: auto;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .data-preview table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-preview th, .data-preview td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .data-preview th {
+            background: #f8f9fa;
+            font-weight: bold;
+            position: sticky;
+            top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="import-export-container">
+        <a href="index.html" class="back-btn">← Back to Home</a>
+        
+        <h1>📊 Bulk Import/Export</h1>
+
+        <!-- Export Section -->
+        <div class="section-card">
+            <h2>📤 Export Data</h2>
+            <p>Download your data as CSV files for backup or external analysis.</p>
+            
+            <div class="action-grid">
+                <div class="action-item" onclick="exportData('products')">
+                    <h3>📦 Export Products</h3>
+                    <p>Download all products with details, inventory, and pricing</p>
+                </div>
+
+                <div class="action-item" onclick="exportData('clients')">
+                    <h3>👥 Export Clients</h3>
+                    <p>Download client list with contact information</p>
+                </div>
+
+                <div class="action-item" onclick="exportData('orders')">
+                    <h3>🛒 Export Orders</h3>
+                    <p>Download complete order history</p>
+                </div>
+
+                <div class="action-item" onclick="exportData('workers')">
+                    <h3>👤 Export Workers</h3>
+                    <p>Download worker registry</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Import Section -->
+        <div class="section-card">
+            <h2>📥 Import Data</h2>
+            <p>Upload CSV files to add multiple items at once.</p>
+
+            <div class="template-section">
+                <h4>📝 CSV Templates</h4>
+                <div class="template-info">
+                    <strong>Products Template:</strong> name, description, inventory, category, sku<br>
+                    <button class="btn btn-secondary" onclick="downloadTemplate('products')">Download Template</button>
+                </div>
+                <div class="template-info">
+                    <strong>Clients Template:</strong> first_name, last_name, phone, email, address<br>
+                    <button class="btn btn-secondary" onclick="downloadTemplate('clients')">Download Template</button>
+                </div>
+                <div class="template-info">
+                    <strong>Orders Template:</strong> client_id, worker_id, product_ids, status<br>
+                    <button class="btn btn-secondary" onclick="downloadTemplate('orders')">Download Template</button>
+                </div>
+            </div>
+
+            <div class="file-upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
+                <div style="font-size: 3em; margin-bottom: 10px;">📁</div>
+                <h3>Click to select file or drag & drop</h3>
+                <p>Supported formats: CSV</p>
+                <input type="file" id="fileInput" class="file-input" accept=".csv" onchange="handleFileSelect(event)">
+            </div>
+
+            <div class="data-preview" id="dataPreview"></div>
+
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill">0%</div>
+            </div>
+
+            <div class="result-message" id="resultMessage"></div>
+
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-success" id="importBtn" style="display: none;" onclick="processImport()">
+                    ✓ Import Data
+                </button>
+                <button class="btn btn-secondary" id="cancelBtn" style="display: none;" onclick="cancelImport()">
+                    ✗ Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedFile = null;
+        let parsedData = null;
+        let importType = null;
+
+        // Drag and drop functionality
+        const uploadArea = document.getElementById('uploadArea');
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        });
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+
+        function handleFile(file) {
+            if (!file.name.endsWith('.csv')) {
+                showMessage('error', 'Please select a CSV file');
+                return;
+            }
+
+            selectedFile = file;
+            const reader = new FileReader();
+
+            reader.onload = (e) => {
+                const content = e.target.result;
+                parseCSV(content);
+            };
+
+            reader.readAsText(file);
+        }
+
+        function parseCSV(content) {
+            const lines = content.split('\n').filter(line => line.trim());
+            if (lines.length < 2) {
+                showMessage('error', 'CSV file is empty or invalid');
+                return;
+            }
+
+            const headers = lines[0].split(',').map(h => h.trim());
+            const data = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const values = lines[i].split(',').map(v => v.trim());
+                const row = {};
+                headers.forEach((header, index) => {
+                    row[header] = values[index] || '';
+                });
+                data.push(row);
+            }
+
+            parsedData = data;
+            
+            // Detect import type based on headers
+            if (headers.includes('name') && headers.includes('inventory')) {
+                importType = 'products';
+            } else if (headers.includes('first_name') && headers.includes('last_name')) {
+                importType = 'clients';
+            } else if (headers.includes('client_id') && headers.includes('product_ids')) {
+                importType = 'orders';
+            } else {
+                showMessage('error', 'Unable to detect data type. Please use the provided templates.');
+                return;
+            }
+
+            displayPreview(headers, data);
+            document.getElementById('importBtn').style.display = 'inline-block';
+            document.getElementById('cancelBtn').style.display = 'inline-block';
+        }
+
+        function displayPreview(headers, data) {
+            const preview = document.getElementById('dataPreview');
+            const maxRows = Math.min(data.length, 10);
+
+            let html = '<table><thead><tr>';
+            headers.forEach(header => {
+                html += `<th>${header}</th>`;
+            });
+            html += '</tr></thead><tbody>';
+
+            for (let i = 0; i < maxRows; i++) {
+                html += '<tr>';
+                headers.forEach(header => {
+                    html += `<td>${data[i][header]}</td>`;
+                });
+                html += '</tr>';
+            }
+
+            html += '</tbody></table>';
+            
+            if (data.length > 10) {
+                html = `<p style="padding: 10px; background: #fff3cd; color: #856404;">Showing first 10 of ${data.length} rows</p>` + html;
+            }
+
+            preview.innerHTML = html;
+            preview.style.display = 'block';
+        }
+
+        async function processImport() {
+            if (!parsedData || !importType) {
+                showMessage('error', 'No data to import');
+                return;
+            }
+
+            const progressBar = document.getElementById('progressBar');
+            const progressFill = document.getElementById('progressFill');
+            progressBar.style.display = 'block';
+
+            let endpoint = '';
+            switch(importType) {
+                case 'products':
+                    endpoint = 'api/products.php';
+                    break;
+                case 'clients':
+                    endpoint = 'api/clients.php';
+                    break;
+                case 'orders':
+                    endpoint = 'api/orders.php';
+                    break;
+            }
+
+            let successCount = 0;
+            let errorCount = 0;
+
+            for (let i = 0; i < parsedData.length; i++) {
+                const progress = ((i + 1) / parsedData.length * 100).toFixed(0);
+                progressFill.style.width = progress + '%';
+                progressFill.textContent = progress + '%';
+
+                try {
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(parsedData[i])
+                    });
+
+                    const result = await response.json();
+                    if (result.success) {
+                        successCount++;
+                    } else {
+                        errorCount++;
+                    }
+                } catch (error) {
+                    errorCount++;
+                }
+
+                // Small delay to prevent overwhelming the server
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+
+            progressBar.style.display = 'none';
+            
+            if (errorCount === 0) {
+                showMessage('success', `Successfully imported ${successCount} ${importType}!`);
+            } else {
+                showMessage('error', `Imported ${successCount} ${importType}. ${errorCount} failed.`);
+            }
+
+            cancelImport();
+        }
+
+        function cancelImport() {
+            selectedFile = null;
+            parsedData = null;
+            importType = null;
+            document.getElementById('fileInput').value = '';
+            document.getElementById('dataPreview').style.display = 'none';
+            document.getElementById('importBtn').style.display = 'none';
+            document.getElementById('cancelBtn').style.display = 'none';
+        }
+
+        function showMessage(type, message) {
+            const msgElement = document.getElementById('resultMessage');
+            msgElement.className = `result-message ${type}`;
+            msgElement.textContent = message;
+            msgElement.style.display = 'block';
+
+            setTimeout(() => {
+                msgElement.style.display = 'none';
+            }, 5000);
+        }
+
+        async function exportData(type) {
+            let endpoint = '';
+            let filename = '';
+
+            switch(type) {
+                case 'products':
+                    endpoint = 'api/products.php';
+                    filename = 'products.csv';
+                    break;
+                case 'clients':
+                    endpoint = 'api/clients.php';
+                    filename = 'clients.csv';
+                    break;
+                case 'orders':
+                    endpoint = 'api/orders.php';
+                    filename = 'orders.csv';
+                    break;
+                case 'workers':
+                    endpoint = 'api/workers.php';
+                    filename = 'workers.csv';
+                    break;
+            }
+
+            try {
+                const response = await fetch(endpoint);
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    const csv = convertToCSV(result.data);
+                    downloadCSV(csv, filename);
+                    showMessage('success', `${type} exported successfully!`);
+                } else {
+                    showMessage('error', 'Failed to export data');
+                }
+            } catch (error) {
+                showMessage('error', 'Error exporting data: ' + error.message);
+            }
+        }
+
+        function convertToCSV(data) {
+            if (data.length === 0) return '';
+
+            const headers = Object.keys(data[0]);
+            let csv = headers.join(',') + '\n';
+
+            data.forEach(row => {
+                const values = headers.map(header => {
+                    const value = row[header] || '';
+                    // Escape commas and quotes
+                    return `"${String(value).replace(/"/g, '""')}"`;
+                });
+                csv += values.join(',') + '\n';
+            });
+
+            return csv;
+        }
+
+        function downloadCSV(csv, filename) {
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        function downloadTemplate(type) {
+            let csv = '';
+            let filename = '';
+
+            switch(type) {
+                case 'products':
+                    csv = 'name,description,inventory,category,sku\n';
+                    csv += 'Sample Product,Product description,100,Supplies,SKU001\n';
+                    filename = 'products_template.csv';
+                    break;
+                case 'clients':
+                    csv = 'first_name,last_name,phone,email,address\n';
+                    csv += 'John,Doe,555-0100,john@example.com,123 Main St\n';
+                    filename = 'clients_template.csv';
+                    break;
+                case 'orders':
+                    csv = 'client_id,worker_id,product_ids,status\n';
+                    csv += '1,1,"1,2,3",Processing\n';
+                    filename = 'orders_template.csv';
+                    break;
+            }
+
+            downloadCSV(csv, filename);
+            showMessage('success', 'Template downloaded!');
+        }
+    </script>
+</body>
+</html>
