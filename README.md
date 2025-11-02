@@ -1,8 +1,73 @@
-# Tweak Order Online
+# Tweak Order Online v2.0
 
-A professional, mobile-responsive web application for managing products, workers, clients, and orders with a streamlined user experience. Now featuring a complete **Client Portal** for customer self-service ordering, **Mobile Order Systems**, and **Case Management** for outreach workers!
+A professional, enterprise-grade web application for managing products, workers, clients, and orders with comprehensive analytics, authentication, and automation. Now featuring **Analytics Dashboard**, **Staff Authentication**, **Bulk Import/Export**, **Calendar View**, **Interactive Tutorials**, and much more!
 
 ## 🌟 Features
+
+### 🆕 **NEW in v2.0**
+
+#### Staff Authentication & Security
+- **Multi-User Authentication** - Role-based access control (Admin, Manager, Worker, Viewer)
+- **Staff Dashboard** - Personalized portal with quick actions and recent activity
+- **Activity Logging** - Complete audit trail of all user actions
+- **Secure Sessions** - Password hashing and session management
+- **Demo Accounts** - Pre-configured for testing (admin/admin123, manager/manager123, worker/worker123)
+
+#### Analytics & Reporting
+- **Visual Analytics Dashboard** - Real-time statistics with interactive charts
+- **Order Trends** - Line charts showing order patterns over time
+- **Status Distribution** - Pie charts for order status breakdown
+- **Top Products** - Bar charts highlighting popular items
+- **Client Activity** - Track client engagement and patterns
+- **Key Insights** - Automatic insight generation and recommendations
+- **Time Filters** - View data by today, week, month, year, or custom range
+- **Export Reports** - Download reports for external analysis
+
+#### Bulk Operations
+- **Import/Export System** - CSV import/export for products, clients, orders, workers
+- **Drag & Drop Upload** - Easy file uploads with preview
+- **Data Validation** - Preview data before importing
+- **Progress Tracking** - Visual progress bars for bulk operations
+- **CSV Templates** - Downloadable templates with sample data
+- **Batch Processing** - Handle large datasets efficiently
+
+#### Calendar & Scheduling
+- **Order Calendar** - Visual monthly calendar view of orders
+- **Color-Coded** - Different colors for pickup, dropoff, and fulfilled orders
+- **List View** - Alternative chronological list display
+- **Day Details** - Click any day to see order details
+- **Order Count Badges** - See number of orders at a glance
+- **Navigation** - Easy month-to-month navigation
+
+#### Interactive Tutorials
+- **Welcome Tour** - Step-by-step introduction for new users
+- **Feature Guides** - Tutorials for orders, clients, mobile, analytics, case management
+- **Progress Indicators** - Visual progress through tutorial steps
+- **Quick Tips** - Helpful tips and keyboard shortcuts
+- **First-Visit Prompt** - Automatic tutorial offer for new users
+
+#### Notifications Center
+- **In-App Notifications** - Real-time notification feed
+- **Email Notifications** - Configurable email alerts
+- **Push Notifications** - Browser push notifications support
+- **SMS Framework** - Foundation for SMS notifications (Twilio, AWS SNS ready)
+- **Notification Settings** - Granular control over notification preferences
+- **Filter & Organize** - Filter by type (orders, clients, system)
+- **Unread Tracking** - Clear unread count and status
+
+#### CI/CD & Automation
+- **GitHub Actions** - Automated testing pipeline
+- **Syntax Checking** - PHP syntax validation
+- **API Testing** - Automated API endpoint verification
+- **Security Scanning** - SQL injection and XSS detection
+- **Database Tests** - Automated schema validation
+
+#### API Documentation
+- **Complete API Reference** - Full documentation of all endpoints
+- **Request/Response Examples** - Code examples for each endpoint
+- **Authentication Guide** - Security and auth documentation
+- **Error Handling** - Comprehensive error response guide
+- **Integration Guide** - Third-party integration instructions
 
 ### Staff Portal
 - **Add Products** - Create products with images, descriptions, inventory, and custom gradient backgrounds
@@ -54,8 +119,11 @@ A professional, mobile-responsive web application for managing products, workers
 
 ## Technology Stack
 
-- **Backend**: PHP, MySQL (MySQLi + PDO)
-- **Frontend**: HTML5, CSS3, JavaScript
+- **Backend**: PHP 7.4+, MySQL 5.7+ (MySQLi + PDO)
+- **Frontend**: HTML5, CSS3, JavaScript (ES6+)
+- **Charts**: Chart.js for data visualization
+- **Testing**: GitHub Actions CI/CD
+- **Security**: bcrypt password hashing, prepared statements, CSRF protection
 - **Features**: Ajax for smooth interactions, responsive design, smooth animations, session-based authentication
 
 ## Installation

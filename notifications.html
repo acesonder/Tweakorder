@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - Tweakorder</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .notifications-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .notification-center {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .notification-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .notification-item {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .notification-item:hover {
+            background: #f8f9fa;
+        }
+
+        .notification-item.unread {
+            background: linear-gradient(135deg, #667eea10 0%, #764ba210 100%);
+            border-left: 4px solid #667eea;
+        }
+
+        .notification-icon {
+            font-size: 2em;
+            flex-shrink: 0;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .notification-message {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .notification-time {
+            color: #999;
+            font-size: 0.85em;
+            margin-top: 5px;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .notification-actions button {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        .btn-mark-read {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-delete {
+            background: #f5576c;
+            color: white;
+        }
+
+        .settings-section {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            margin-bottom: 30px;
+        }
+
+        .settings-section h2 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .setting-group {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 30px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #667eea;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(30px);
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background: #5568d3;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 15px;
+        }
+
+        .notification-badge {
+            background: #f5576c;
+            color: white;
+            border-radius: 12px;
+            padding: 4px 10px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .test-notification-btn {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .test-notification-btn:hover {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="notifications-container">
+        <a href="index.html" class="back-btn">← Back to Home</a>
+        
+        <h1>🔔 Notifications Center</h1>
+
+        <div class="notification-center">
+            <div class="notification-header">
+                <h2 style="margin: 0;">Recent Notifications</h2>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <span class="notification-badge" id="unreadCount">0</span>
+                    <button class="test-notification-btn" onclick="testNotification()">Test Notification</button>
+                    <button class="filter-btn" onclick="markAllRead()">Mark All Read</button>
+                </div>
+            </div>
+
+            <div class="notification-filters">
+                <button class="filter-btn active" onclick="filterNotifications('all')">All</button>
+                <button class="filter-btn" onclick="filterNotifications('orders')">Orders</button>
+                <button class="filter-btn" onclick="filterNotifications('clients')">Clients</button>
+                <button class="filter-btn" onclick="filterNotifications('system')">System</button>
+            </div>
+
+            <div id="notificationsList">
+                <div class="empty-state">
+                    <div class="empty-state-icon">🔕</div>
+                    <h3>No notifications yet</h3>
+                    <p>You'll see notifications here when there are updates</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <h2>⚙️ Notification Settings</h2>
+
+            <div class="setting-group">
+                <h4 style="margin-top: 0;">Email Notifications</h4>
+                
+                <div class="setting-item">
+                    <div>
+                        <strong>New Orders</strong>
+                        <p style="margin: 5px 0 0 0; color: #666; font-size: 0.9em;">Get notified when a new order is placed</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="emailNewOrders" checked onchange="saveSetting('emailNewOrders', this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div>
+                        <strong>Order Status Changes</strong>
+                        <p style="margin: 5px 0 0 0; color: #666; font-size: 0.9em;">Get notified when order status is updated</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="emailStatusChange" checked onchange="saveSetting('emailStatusChange', this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div>
+                        <strong>Low Inventory Alerts</strong>
+                        <p style="margin: 5px 0 0 0; color: #666; font-size: 0.9em;">Get notified when product stock is low</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="emailLowInventory" checked onchange="saveSetting('emailLowInventory', this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <h4 style="margin-top: 0;">Push Notifications</h4>
+                
+                <div class="setting-item">
+                    <div>
+                        <strong>Browser Notifications</strong>
+                        <p style="margin: 5px 0 0 0; color: #666; font-size: 0.9em;">Show desktop notifications in your browser</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="pushNotifications" onchange="togglePushNotifications(this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div class="setting-item">
+                    <div>
+                        <strong>Sound Alerts</strong>
+                        <p style="margin: 5px 0 0 0; color: #666; font-size: 0.9em;">Play sound when notifications arrive</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="soundAlerts" checked onchange="saveSetting('soundAlerts', this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="setting-group">
+                <h4 style="margin-top: 0;">SMS Notifications (Coming Soon)</h4>
+                
+                <div class="setting-item">
+                    <div>
+                        <strong>Critical Alerts</strong>
+                        <p style="margin: 5px 0 0 0; color: #666; font-size: 0.9em;">Receive SMS for critical system alerts</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="smsCritical" disabled>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+
+                <div style="padding: 15px; background: #fff3cd; border-radius: 8px; margin-top: 15px;">
+                    <strong>📱 SMS Integration:</strong> Configure your SMS provider (Twilio, AWS SNS, etc.) in the admin settings to enable SMS notifications.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let notifications = [];
+        let currentFilter = 'all';
+
+        // Load notifications from localStorage
+        function loadNotifications() {
+            const stored = localStorage.getItem('tweakorder_notifications');
+            if (stored) {
+                notifications = JSON.parse(stored);
+            } else {
+                // Sample notifications for demo
+                notifications = [
+                    {
+                        id: 1,
+                        type: 'orders',
+                        icon: '🛒',
+                        title: 'New Order Received',
+                        message: 'Client John Doe placed a new order',
+                        time: new Date(Date.now() - 3600000),
+                        read: false
+                    },
+                    {
+                        id: 2,
+                        type: 'system',
+                        icon: '⚠️',
+                        title: 'Low Inventory Alert',
+                        message: 'Product "Sample Item" is running low on stock',
+                        time: new Date(Date.now() - 7200000),
+                        read: false
+                    },
+                    {
+                        id: 3,
+                        type: 'clients',
+                        icon: '👤',
+                        title: 'New Client Registered',
+                        message: 'Jane Smith created a new account',
+                        time: new Date(Date.now() - 86400000),
+                        read: true
+                    }
+                ];
+            }
+            renderNotifications();
+            updateUnreadCount();
+        }
+
+        function renderNotifications() {
+            const container = document.getElementById('notificationsList');
+            
+            let filtered = notifications;
+            if (currentFilter !== 'all') {
+                filtered = notifications.filter(n => n.type === currentFilter);
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔕</div>
+                        <h3>No notifications</h3>
+                        <p>You're all caught up!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = '';
+            filtered.forEach(notification => {
+                const item = document.createElement('div');
+                item.className = 'notification-item' + (notification.read ? '' : ' unread');
+                item.innerHTML = `
+                    <div class="notification-icon">${notification.icon}</div>
+                    <div class="notification-content">
+                        <div class="notification-title">${notification.title}</div>
+                        <div class="notification-message">${notification.message}</div>
+                        <div class="notification-time">${formatTime(notification.time)}</div>
+                        ${!notification.read ? `
+                            <div class="notification-actions">
+                                <button class="btn-mark-read" onclick="markAsRead(${notification.id})">Mark as Read</button>
+                                <button class="btn-delete" onclick="deleteNotification(${notification.id})">Delete</button>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function formatTime(date) {
+            const now = new Date();
+            const diff = now - date;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+
+            if (hours < 1) {
+                const minutes = Math.floor(diff / (1000 * 60));
+                return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+            } else if (hours < 24) {
+                return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+            } else if (days < 7) {
+                return `${days} day${days !== 1 ? 's' : ''} ago`;
+            } else {
+                return date.toLocaleDateString();
+            }
+        }
+
+        function updateUnreadCount() {
+            const unreadCount = notifications.filter(n => !n.read).length;
+            document.getElementById('unreadCount').textContent = unreadCount;
+        }
+
+        function markAsRead(id) {
+            const notification = notifications.find(n => n.id === id);
+            if (notification) {
+                notification.read = true;
+                saveNotifications();
+                renderNotifications();
+                updateUnreadCount();
+            }
+        }
+
+        function markAllRead() {
+            notifications.forEach(n => n.read = true);
+            saveNotifications();
+            renderNotifications();
+            updateUnreadCount();
+        }
+
+        function deleteNotification(id) {
+            notifications = notifications.filter(n => n.id !== id);
+            saveNotifications();
+            renderNotifications();
+            updateUnreadCount();
+        }
+
+        function filterNotifications(filter) {
+            currentFilter = filter;
+            
+            // Update button states
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            renderNotifications();
+        }
+
+        function saveNotifications() {
+            localStorage.setItem('tweakorder_notifications', JSON.stringify(notifications));
+        }
+
+        function saveSetting(key, value) {
+            localStorage.setItem('notification_' + key, value);
+        }
+
+        function loadSettings() {
+            const settings = {
+                emailNewOrders: true,
+                emailStatusChange: true,
+                emailLowInventory: true,
+                pushNotifications: false,
+                soundAlerts: true,
+                smsCritical: false
+            };
+
+            Object.keys(settings).forEach(key => {
+                const stored = localStorage.getItem('notification_' + key);
+                const value = stored !== null ? stored === 'true' : settings[key];
+                const element = document.getElementById(key);
+                if (element) {
+                    element.checked = value;
+                }
+            });
+        }
+
+        function togglePushNotifications(enabled) {
+            saveSetting('pushNotifications', enabled);
+            
+            if (enabled) {
+                // Request notification permission
+                if ('Notification' in window) {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === 'granted') {
+                            showBrowserNotification('Notifications Enabled', 'You will now receive browser notifications');
+                        } else {
+                            document.getElementById('pushNotifications').checked = false;
+                            saveSetting('pushNotifications', false);
+                            alert('Please enable notifications in your browser settings');
+                        }
+                    });
+                } else {
+                    alert('Your browser does not support notifications');
+                    document.getElementById('pushNotifications').checked = false;
+                    saveSetting('pushNotifications', false);
+                }
+            }
+        }
+
+        function showBrowserNotification(title, body) {
+            if ('Notification' in window && Notification.permission === 'granted') {
+                new Notification(title, {
+                    body: body,
+                    icon: 'assets/uploads/logo.png',
+                    badge: 'assets/uploads/logo.png'
+                });
+            }
+        }
+
+        function testNotification() {
+            const newNotification = {
+                id: Date.now(),
+                type: 'system',
+                icon: '✅',
+                title: 'Test Notification',
+                message: 'This is a test notification to verify the system is working correctly.',
+                time: new Date(),
+                read: false
+            };
+
+            notifications.unshift(newNotification);
+            saveNotifications();
+            renderNotifications();
+            updateUnreadCount();
+
+            // Show browser notification if enabled
+            const pushEnabled = localStorage.getItem('notification_pushNotifications') === 'true';
+            if (pushEnabled) {
+                showBrowserNotification('Test Notification', 'This is a test notification');
+            }
+        }
+
+        // Initialize
+        loadNotifications();
+        loadSettings();
+
+        // Check for new notifications periodically (in production, use WebSocket or Server-Sent Events)
+        setInterval(() => {
+            // Placeholder for real-time notification checking
+            // In production, this would poll an API endpoint or use WebSocket
+        }, 30000);
+    </script>
+</body>
+</html>
