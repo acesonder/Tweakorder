@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutorial - Tweakorder</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .tutorial-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tutorial-modal {
+            background: white;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            padding: 40px;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tutorial-icon {
+            text-align: center;
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .tutorial-title {
+            text-align: center;
+            color: #333;
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .tutorial-content {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .tutorial-content ul {
+            margin: 15px 0;
+            padding-left: 25px;
+        }
+
+        .tutorial-content li {
+            margin: 8px 0;
+        }
+
+        .tutorial-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .tutorial-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-skip {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-skip:hover {
+            background: #5a6268;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 1;
+        }
+
+        .btn-next:hover {
+            opacity: 0.9;
+        }
+
+        .progress-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ddd;
+            transition: all 0.3s;
+        }
+
+        .dot.active {
+            background: #667eea;
+            width: 30px;
+            border-radius: 6px;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .feature-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .feature-item-icon {
+            font-size: 2em;
+            margin-bottom: 8px;
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 20px;
+        }
+
+        .back-btn:hover {
+            background: #5568d3;
+        }
+
+        .tutorial-list {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .tutorial-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .tutorial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .tutorial-card h3 {
+            color: #667eea;
+            margin-top: 0;
+        }
+
+        .quick-tips {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+
+        .tip-item {
+            padding: 12px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-left: 4px solid #38ef7d;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">← Back to Home</a>
+
+    <div class="tutorial-list">
+        <h1 style="text-align: center; color: #333;">🎓 Interactive Tutorials</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 40px;">Learn how to use Tweakorder effectively</p>
+
+        <div class="tutorial-card" onclick="startTutorial('welcome')">
+            <h3>🎉 Welcome Tour</h3>
+            <p>New to Tweakorder? Start here! Learn about the main features and how to navigate the system.</p>
+        </div>
+
+        <div class="tutorial-card" onclick="startTutorial('orders')">
+            <h3>🛒 Creating Orders</h3>
+            <p>Learn how to create orders, manage inventory, and track fulfillment.</p>
+        </div>
+
+        <div class="tutorial-card" onclick="startTutorial('clients')">
+            <h3>👥 Client Management</h3>
+            <p>Understand how to add clients, track their orders, and manage contact information.</p>
+        </div>
+
+        <div class="tutorial-card" onclick="startTutorial('mobile')">
+            <h3>📱 Mobile Ordering</h3>
+            <p>Discover the mobile-optimized order flow and different UI styles for field work.</p>
+        </div>
+
+        <div class="tutorial-card" onclick="startTutorial('analytics')">
+            <h3>📈 Analytics & Reports</h3>
+            <p>Learn how to view analytics, generate reports, and export data.</p>
+        </div>
+
+        <div class="tutorial-card" onclick="startTutorial('case')">
+            <h3>📋 Case Management</h3>
+            <p>Use templates to document client interactions and track follow-ups.</p>
+        </div>
+
+        <div class="quick-tips">
+            <h3 style="color: #667eea; margin-top: 0;">💡 Quick Tips</h3>
+            <div class="tip-item">
+                <strong>Keyboard Shortcuts:</strong> Press <kbd>Ctrl+/</kbd> to view all keyboard shortcuts
+            </div>
+            <div class="tip-item">
+                <strong>Bulk Operations:</strong> Use the Import/Export feature for adding multiple products or clients at once
+            </div>
+            <div class="tip-item">
+                <strong>Order Status:</strong> Update order status to keep clients informed of their delivery progress
+            </div>
+            <div class="tip-item">
+                <strong>Calendar View:</strong> Use the calendar to visualize order schedules and deadlines
+            </div>
+            <div class="tip-item">
+                <strong>Mobile Access:</strong> The system works on phones and tablets - perfect for field workers
+            </div>
+        </div>
+    </div>
+
+    <!-- Tutorial Overlay (hidden by default) -->
+    <div id="tutorialOverlay" class="tutorial-overlay" style="display: none;">
+        <div class="tutorial-modal">
+            <div class="progress-dots" id="progressDots"></div>
+            <div class="tutorial-icon" id="tutorialIcon">🎓</div>
+            <h2 class="tutorial-title" id="tutorialTitle">Welcome!</h2>
+            <div class="tutorial-content" id="tutorialContent">
+                <!-- Content will be dynamically inserted -->
+            </div>
+            <div class="tutorial-buttons">
+                <button class="tutorial-btn btn-skip" onclick="skipTutorial()">Skip</button>
+                <button class="tutorial-btn btn-next" id="nextBtn" onclick="nextStep()">Next →</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tutorials = {
+            welcome: [
+                {
+                    icon: '🎉',
+                    title: 'Welcome to Tweakorder!',
+                    content: `
+                        <p>Thank you for choosing Tweakorder - your complete solution for managing products, orders, and clients.</p>
+                        <p>This quick tour will help you get started with the key features.</p>
+                        <div class="highlight-box">
+                            <strong>What you'll learn:</strong>
+                            <ul>
+                                <li>Main navigation and features</li>
+                                <li>Creating your first order</li>
+                                <li>Managing clients and products</li>
+                                <li>Using advanced features</li>
+                            </ul>
+                        </div>
+                    `
+                },
+                {
+                    icon: '🏠',
+                    title: 'Dashboard & Navigation',
+                    content: `
+                        <p>The main dashboard provides quick access to all features:</p>
+                        <div class="feature-grid">
+                            <div class="feature-item">
+                                <div class="feature-item-icon">📦</div>
+                                <strong>Add Products</strong>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-item-icon">🛒</div>
+                                <strong>Create Orders</strong>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-item-icon">👥</div>
+                                <strong>Manage Clients</strong>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-item-icon">📈</div>
+                                <strong>View Analytics</strong>
+                            </div>
+                        </div>
+                        <p>Each section is clearly labeled and easy to access.</p>
+                    `
+                },
+                {
+                    icon: '✨',
+                    title: 'Key Features',
+                    content: `
+                        <p>Tweakorder offers powerful features to streamline your workflow:</p>
+                        <ul>
+                            <li><strong>Mobile Ordering:</strong> 5 different UI styles optimized for field workers</li>
+                            <li><strong>Client Portal:</strong> Customers can place orders and track deliveries</li>
+                            <li><strong>Case Management:</strong> 50+ templates for documenting client interactions</li>
+                            <li><strong>Analytics:</strong> Visual reports and insights dashboard</li>
+                            <li><strong>Bulk Import/Export:</strong> CSV import for adding multiple items quickly</li>
+                            <li><strong>Calendar View:</strong> Visualize order schedules and deadlines</li>
+                        </ul>
+                    `
+                },
+                {
+                    icon: '🎯',
+                    title: 'Getting Started',
+                    content: `
+                        <p>Here's how to get started:</p>
+                        <div class="highlight-box">
+                            <strong>First Steps:</strong>
+                            <ol>
+                                <li>Add products to your inventory</li>
+                                <li>Register clients in the system</li>
+                                <li>Create your first order</li>
+                                <li>Explore the analytics dashboard</li>
+                            </ol>
+                        </div>
+                        <p>Don't worry - you can always return to these tutorials from the help menu!</p>
+                    `
+                }
+            ],
+            orders: [
+                {
+                    icon: '🛒',
+                    title: 'Creating Orders',
+                    content: `
+                        <p>Orders are the heart of Tweakorder. Here's how to create one:</p>
+                        <ol>
+                            <li>Click "Create Order" from the main menu</li>
+                            <li>Select products by clicking on product widgets</li>
+                            <li>Confirm your product selection</li>
+                            <li>Choose or add a client</li>
+                            <li>Set the order status and submit</li>
+                        </ol>
+                    `
+                },
+                {
+                    icon: '📱',
+                    title: 'Mobile Ordering',
+                    content: `
+                        <p>For field workers, we offer a streamlined mobile order flow:</p>
+                        <ul>
+                            <li>Single-page design for quick ordering</li>
+                            <li>Inline client creation</li>
+                            <li>Visual product selection with quantity badges</li>
+                            <li>Swipe gestures for easy removal</li>
+                            <li>5 different UI styles to choose from</li>
+                        </ul>
+                    `
+                },
+                {
+                    icon: '✏️',
+                    title: 'Managing Orders',
+                    content: `
+                        <p>Track and update orders throughout their lifecycle:</p>
+                        <ul>
+                            <li>View all orders or filter by status</li>
+                            <li>Update order status in real-time</li>
+                            <li>Track fulfillment progress</li>
+                            <li>Schedule pickup/dropoff times</li>
+                            <li>Add special instructions</li>
+                        </ul>
+                    `
+                }
+            ],
+            clients: [
+                {
+                    icon: '👥',
+                    title: 'Client Management',
+                    content: `
+                        <p>Manage your client relationships effectively:</p>
+                        <ul>
+                            <li>Add clients with full contact information</li>
+                            <li>Track order history per client</li>
+                            <li>Quick inline client creation during orders</li>
+                            <li>View client statistics and activity</li>
+                        </ul>
+                    `
+                },
+                {
+                    icon: '🔐',
+                    title: 'Client Portal',
+                    content: `
+                        <p>Clients can access their own portal to:</p>
+                        <ul>
+                            <li>Create an account with unique username</li>
+                            <li>Place orders self-service</li>
+                            <li>Track order status in real-time</li>
+                            <li>View order history</li>
+                            <li>Update delivery preferences</li>
+                        </ul>
+                        <div class="highlight-box">
+                            Empower your clients with self-service ordering!
+                        </div>
+                    `
+                }
+            ],
+            mobile: [
+                {
+                    icon: '📱',
+                    title: 'Mobile Order Systems',
+                    content: `
+                        <p>Tweakorder offers 5 mobile UI styles optimized for different workflows:</p>
+                        <div class="feature-grid">
+                            <div class="feature-item">
+                                <div class="feature-item-icon">🎴</div>
+                                <strong>Card-Based</strong>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-item-icon">📋</div>
+                                <strong>List View</strong>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-item-icon">⊞</div>
+                                <strong>Grid</strong>
+                            </div>
+                            <div class="feature-item">
+                                <div class="feature-item-icon">📱</div>
+                                <strong>Compact</strong>
+                            </div>
+                        </div>
+                        <p>Each style is optimized for specific use cases and preferences.</p>
+                    `
+                }
+            ],
+            analytics: [
+                {
+                    icon: '📈',
+                    title: 'Analytics Dashboard',
+                    content: `
+                        <p>Gain insights into your operations with visual analytics:</p>
+                        <ul>
+                            <li>Order trends over time</li>
+                            <li>Order status distribution</li>
+                            <li>Top products and clients</li>
+                            <li>Fulfillment rate tracking</li>
+                            <li>Client activity patterns</li>
+                        </ul>
+                    `
+                },
+                {
+                    icon: '📊',
+                    title: 'Reports & Export',
+                    content: `
+                        <p>Generate and export reports for analysis:</p>
+                        <ul>
+                            <li>Filter by date range</li>
+                            <li>Export to CSV format</li>
+                            <li>Customizable report parameters</li>
+                            <li>Bulk data import/export</li>
+                        </ul>
+                    `
+                }
+            ],
+            case: [
+                {
+                    icon: '📋',
+                    title: 'Case Management',
+                    content: `
+                        <p>Document client interactions with professional templates:</p>
+                        <ul>
+                            <li>50+ pre-built templates</li>
+                            <li>Organized by category (Addiction, Homelessness, Mental Health)</li>
+                            <li>Track follow-up dates</li>
+                            <li>Mark confidential notes</li>
+                            <li>Filter and search notes</li>
+                        </ul>
+                    `
+                }
+            ]
+        };
+
+        let currentTutorial = null;
+        let currentStep = 0;
+
+        function startTutorial(tutorialName) {
+            currentTutorial = tutorials[tutorialName];
+            currentStep = 0;
+            
+            if (!currentTutorial) {
+                alert('Tutorial not found');
+                return;
+            }
+
+            showTutorialStep();
+            document.getElementById('tutorialOverlay').style.display = 'flex';
+        }
+
+        function showTutorialStep() {
+            const step = currentTutorial[currentStep];
+            
+            document.getElementById('tutorialIcon').textContent = step.icon;
+            document.getElementById('tutorialTitle').textContent = step.title;
+            document.getElementById('tutorialContent').innerHTML = step.content;
+
+            // Update progress dots
+            const dotsContainer = document.getElementById('progressDots');
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < currentTutorial.length; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'dot' + (i === currentStep ? ' active' : '');
+                dotsContainer.appendChild(dot);
+            }
+
+            // Update button text
+            const nextBtn = document.getElementById('nextBtn');
+            if (currentStep === currentTutorial.length - 1) {
+                nextBtn.textContent = 'Finish ✓';
+            } else {
+                nextBtn.textContent = 'Next →';
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < currentTutorial.length - 1) {
+                currentStep++;
+                showTutorialStep();
+            } else {
+                skipTutorial();
+            }
+        }
+
+        function skipTutorial() {
+            document.getElementById('tutorialOverlay').style.display = 'none';
+            currentTutorial = null;
+            currentStep = 0;
+        }
+
+        // Check if this is first visit
+        if (!localStorage.getItem('tweakorder_tutorial_seen')) {
+            setTimeout(() => {
+                if (confirm('Would you like to take a quick tour of Tweakorder?')) {
+                    startTutorial('welcome');
+                }
+                localStorage.setItem('tweakorder_tutorial_seen', 'true');
+            }, 1000);
+        }
+    </script>
+</body>
+</html>
