@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Calendar - Tweakorder</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .calendar-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .calendar-nav button {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .calendar-nav button:hover {
+            background: #5568d3;
+        }
+
+        .current-month {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .view-switcher {
+            display: flex;
+            gap: 5px;
+        }
+
+        .view-btn {
+            padding: 8px 16px;
+            background: #f0f0f0;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .view-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            font-weight: bold;
+            padding: 15px 10px;
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .calendar-day {
+            min-height: 120px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .calendar-day:hover {
+            background: #e9ecef;
+            transform: scale(1.02);
+        }
+
+        .calendar-day.other-month {
+            opacity: 0.3;
+        }
+
+        .calendar-day.today {
+            background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%);
+            border: 2px solid #667eea;
+        }
+
+        .day-number {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .order-badge {
+            font-size: 0.75em;
+            padding: 4px 8px;
+            background: #667eea;
+            color: white;
+            border-radius: 12px;
+            margin: 2px 0;
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .order-badge.pickup {
+            background: #38ef7d;
+        }
+
+        .order-badge.dropoff {
+            background: #f5576c;
+        }
+
+        .order-badge.fulfilled {
+            background: #6c757d;
+        }
+
+        .order-count {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #f5576c;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .list-view {
+            display: none;
+            max-width: 1200px;
+        }
+
+        .list-view.active {
+            display: block;
+        }
+
+        .day-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .day-section h3 {
+            margin-top: 0;
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .order-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin: 10px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background: #5568d3;
+        }
+
+        .legend {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .close-modal {
+            font-size: 2em;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="calendar-container">
+        <a href="index.html" class="back-btn">← Back to Home</a>
+        
+        <h1>📅 Order Calendar</h1>
+
+        <div class="legend">
+            <strong>Legend:</strong>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #667eea;"></div>
+                <span>Processing</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #38ef7d;"></div>
+                <span>Pickup</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #f5576c;"></div>
+                <span>Dropoff</span>
+            </div>
+            <div class="legend-item">
+                <div class="legend-color" style="background: #6c757d;"></div>
+                <span>Fulfilled</span>
+            </div>
+        </div>
+
+        <div class="calendar-header">
+            <div class="calendar-nav">
+                <button onclick="previousMonth()">← Previous</button>
+                <div class="current-month" id="currentMonth">Loading...</div>
+                <button onclick="nextMonth()">Next →</button>
+            </div>
+            <div class="view-switcher">
+                <button class="view-btn active" id="calendarViewBtn" onclick="switchView('calendar')">📅 Calendar</button>
+                <button class="view-btn" id="listViewBtn" onclick="switchView('list')">📋 List</button>
+            </div>
+        </div>
+
+        <div id="calendarView" class="calendar-view">
+            <div class="calendar-grid" id="calendarGrid">
+                <div class="loading" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                    Loading calendar...
+                </div>
+            </div>
+        </div>
+
+        <div id="listView" class="list-view">
+            <div id="listContainer">
+                <div class="loading" style="text-align: center; padding: 40px;">
+                    Loading orders...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div id="orderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Orders for Date</h2>
+                <span class="close-modal" onclick="closeModal()">×</span>
+            </div>
+            <div id="modalBody">
+                <!-- Order details will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentDate = new Date();
+        let ordersData = [];
+        let currentView = 'calendar';
+
+        const monthNames = ["January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"];
+
+        async function loadOrders() {
+            try {
+                const response = await fetch('api/orders.php');
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    ordersData = result.data;
+                    renderCalendar();
+                    if (currentView === 'list') {
+                        renderListView();
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading orders:', error);
+            }
+        }
+
+        function renderCalendar() {
+            const year = currentDate.getFullYear();
+            const month = currentDate.getMonth();
+
+            document.getElementById('currentMonth').textContent = 
+                `${monthNames[month]} ${year}`;
+
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            const prevLastDay = new Date(year, month, 0);
+
+            const firstDayWeek = firstDay.getDay();
+            const lastDayDate = lastDay.getDate();
+            const prevLastDayDate = prevLastDay.getDate();
+
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+
+            // Day headers
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            days.forEach(day => {
+                const header = document.createElement('div');
+                header.className = 'calendar-day-header';
+                header.textContent = day;
+                grid.appendChild(header);
+            });
+
+            // Previous month days
+            for (let i = firstDayWeek - 1; i >= 0; i--) {
+                const day = createDayElement(
+                    prevLastDayDate - i,
+                    new Date(year, month - 1, prevLastDayDate - i),
+                    true
+                );
+                grid.appendChild(day);
+            }
+
+            // Current month days
+            for (let i = 1; i <= lastDayDate; i++) {
+                const date = new Date(year, month, i);
+                const day = createDayElement(i, date, false);
+                grid.appendChild(day);
+            }
+
+            // Next month days
+            const remainingCells = 42 - (firstDayWeek + lastDayDate);
+            for (let i = 1; i <= remainingCells; i++) {
+                const day = createDayElement(
+                    i,
+                    new Date(year, month + 1, i),
+                    true
+                );
+                grid.appendChild(day);
+            }
+        }
+
+        function createDayElement(dayNumber, date, otherMonth) {
+            const dayEl = document.createElement('div');
+            dayEl.className = 'calendar-day';
+            
+            if (otherMonth) {
+                dayEl.classList.add('other-month');
+            }
+
+            // Check if today
+            const today = new Date();
+            if (date.toDateString() === today.toDateString()) {
+                dayEl.classList.add('today');
+            }
+
+            // Day number
+            const numberEl = document.createElement('div');
+            numberEl.className = 'day-number';
+            numberEl.textContent = dayNumber;
+            dayEl.appendChild(numberEl);
+
+            // Find orders for this day
+            const dayOrders = getOrdersForDate(date);
+            
+            if (dayOrders.length > 0) {
+                // Show up to 3 orders
+                dayOrders.slice(0, 3).forEach(order => {
+                    const badge = document.createElement('div');
+                    badge.className = 'order-badge';
+                    
+                    if (order.status === 'fulfilled') {
+                        badge.classList.add('fulfilled');
+                    } else if (order.pickup_or_dropoff === 'pickup' || order.status === 'ready_for_pickup') {
+                        badge.classList.add('pickup');
+                    } else if (order.pickup_or_dropoff === 'dropoff' || order.status === 'ready_for_dropoff') {
+                        badge.classList.add('dropoff');
+                    }
+                    
+                    badge.textContent = order.client_name || 'Order';
+                    dayEl.appendChild(badge);
+                });
+
+                // Show count if more than 3
+                if (dayOrders.length > 3) {
+                    const count = document.createElement('div');
+                    count.className = 'order-count';
+                    count.textContent = dayOrders.length;
+                    dayEl.appendChild(count);
+                }
+            }
+
+            // Click handler
+            dayEl.onclick = () => showDayDetails(date, dayOrders);
+
+            return dayEl;
+        }
+
+        function getOrdersForDate(date) {
+            return ordersData.filter(order => {
+                if (order.scheduled_time) {
+                    const orderDate = new Date(order.scheduled_time);
+                    return orderDate.toDateString() === date.toDateString();
+                } else {
+                    const createdDate = new Date(order.created_at);
+                    return createdDate.toDateString() === date.toDateString();
+                }
+            });
+        }
+
+        function showDayDetails(date, orders) {
+            const modal = document.getElementById('orderModal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+
+            title.textContent = `Orders for ${date.toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            })}`;
+
+            if (orders.length === 0) {
+                body.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No orders for this date</p>';
+            } else {
+                body.innerHTML = '';
+                orders.forEach(order => {
+                    const orderDiv = document.createElement('div');
+                    orderDiv.className = 'order-item';
+                    orderDiv.innerHTML = `
+                        <div>
+                            <strong>${order.client_name || 'Unknown Client'}</strong>
+                            <p style="margin: 5px 0; color: #666;">${order.products || 'No products'}</p>
+                            <small style="color: #999;">
+                                ${order.scheduled_time ? new Date(order.scheduled_time).toLocaleString() : 'No time set'}
+                            </small>
+                        </div>
+                        <div>
+                            <span style="padding: 6px 15px; background: #667eea; color: white; border-radius: 20px; font-size: 0.9em;">
+                                ${formatStatus(order.status)}
+                            </span>
+                        </div>
+                    `;
+                    body.appendChild(orderDiv);
+                });
+            }
+
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('orderModal').classList.remove('active');
+        }
+
+        function formatStatus(status) {
+            if (!status) return 'Processing';
+            return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        function previousMonth() {
+            currentDate.setMonth(currentDate.getMonth() - 1);
+            renderCalendar();
+        }
+
+        function nextMonth() {
+            currentDate.setMonth(currentDate.getMonth() + 1);
+            renderCalendar();
+        }
+
+        function switchView(view) {
+            currentView = view;
+
+            if (view === 'calendar') {
+                document.getElementById('calendarView').style.display = 'block';
+                document.getElementById('listView').classList.remove('active');
+                document.getElementById('calendarViewBtn').classList.add('active');
+                document.getElementById('listViewBtn').classList.remove('active');
+            } else {
+                document.getElementById('calendarView').style.display = 'none';
+                document.getElementById('listView').classList.add('active');
+                document.getElementById('calendarViewBtn').classList.remove('active');
+                document.getElementById('listViewBtn').classList.add('active');
+                renderListView();
+            }
+        }
+
+        function renderListView() {
+            const container = document.getElementById('listContainer');
+            container.innerHTML = '';
+
+            // Group orders by date
+            const ordersByDate = {};
+            ordersData.forEach(order => {
+                const date = order.scheduled_time 
+                    ? new Date(order.scheduled_time).toDateString()
+                    : new Date(order.created_at).toDateString();
+                
+                if (!ordersByDate[date]) {
+                    ordersByDate[date] = [];
+                }
+                ordersByDate[date].push(order);
+            });
+
+            // Sort dates
+            const sortedDates = Object.keys(ordersByDate).sort((a, b) => {
+                return new Date(a) - new Date(b);
+            });
+
+            // Render each day
+            sortedDates.forEach(dateStr => {
+                const section = document.createElement('div');
+                section.className = 'day-section';
+
+                const date = new Date(dateStr);
+                const h3 = document.createElement('h3');
+                h3.textContent = date.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                section.appendChild(h3);
+
+                ordersByDate[dateStr].forEach(order => {
+                    const orderDiv = document.createElement('div');
+                    orderDiv.className = 'order-item';
+                    orderDiv.innerHTML = `
+                        <div>
+                            <strong>${order.client_name || 'Unknown Client'}</strong>
+                            <p style="margin: 5px 0; color: #666;">${order.products || 'No products'}</p>
+                            <small style="color: #999;">
+                                ${order.scheduled_time ? new Date(order.scheduled_time).toLocaleString() : new Date(order.created_at).toLocaleString()}
+                            </small>
+                        </div>
+                        <div>
+                            <span style="padding: 6px 15px; background: #667eea; color: white; border-radius: 20px; font-size: 0.9em;">
+                                ${formatStatus(order.status)}
+                            </span>
+                        </div>
+                    `;
+                    section.appendChild(orderDiv);
+                });
+
+                container.appendChild(section);
+            });
+
+            if (sortedDates.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: #999;">No orders found</div>';
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('orderModal').onclick = (e) => {
+            if (e.target.id === 'orderModal') {
+                closeModal();
+            }
+        };
+
+        // Initial load
+        loadOrders();
+    </script>
+</body>
+</html>

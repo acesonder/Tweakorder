@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Dashboard - Tweakorder</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .dashboard-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .role-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+        }
+
+        .logout-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            padding: 30px;
+        }
+
+        .quick-action {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .quick-action:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .quick-action-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .quick-action h3 {
+            margin: 10px 0 5px 0;
+            color: #667eea;
+        }
+
+        .recent-activity {
+            padding: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .activity-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .activity-info {
+            flex: 1;
+        }
+
+        .activity-time {
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .protected-content {
+            display: none;
+        }
+
+        .admin-only {
+            border: 2px solid #f5576c;
+        }
+
+        .manager-only {
+            border: 2px solid #4facfe;
+        }
+    </style>
+</head>
+<body>
+    <div id="loadingScreen" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: white; display: flex; align-items: center; justify-content: center; z-index: 9999;">
+        <div style="text-align: center;">
+            <div style="font-size: 4em;">⏳</div>
+            <h2>Loading...</h2>
+        </div>
+    </div>
+
+    <div id="dashboard" class="protected-content">
+        <div class="dashboard-header">
+            <div>
+                <h1 style="margin: 0;">Staff Dashboard</h1>
+                <p style="margin: 5px 0 0 0; opacity: 0.9;">Welcome back!</p>
+            </div>
+            <div class="user-info">
+                <div>
+                    <strong id="userName">User</strong>
+                    <span class="role-badge" id="userRole">Role</span>
+                </div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <a href="add-product.html" class="quick-action">
+                <div class="quick-action-icon">📦</div>
+                <h3>Add Product</h3>
+                <p>New inventory</p>
+            </a>
+
+            <a href="create-order.html" class="quick-action">
+                <div class="quick-action-icon">🛒</div>
+                <h3>Create Order</h3>
+                <p>New order</p>
+            </a>
+
+            <a href="mobile-order.html" class="quick-action">
+                <div class="quick-action-icon">📱</div>
+                <h3>Mobile Order</h3>
+                <p>Quick order</p>
+            </a>
+
+            <a href="all-orders.html" class="quick-action">
+                <div class="quick-action-icon">📊</div>
+                <h3>All Orders</h3>
+                <p>View history</p>
+            </a>
+
+            <a href="analytics.html" class="quick-action">
+                <div class="quick-action-icon">📈</div>
+                <h3>Analytics</h3>
+                <p>Reports & insights</p>
+            </a>
+
+            <a href="case-management.html" class="quick-action">
+                <div class="quick-action-icon">📋</div>
+                <h3>Case Management</h3>
+                <p>Client notes</p>
+            </a>
+
+            <a href="bulk-import-export.html" class="quick-action">
+                <div class="quick-action-icon">📊</div>
+                <h3>Import/Export</h3>
+                <p>Bulk operations</p>
+            </a>
+
+            <a href="error-logs.html" class="quick-action admin-only" id="adminOnlyLogs">
+                <div class="quick-action-icon">⚠️</div>
+                <h3>Error Logs</h3>
+                <p>System errors</p>
+            </a>
+
+            <a href="user-management.html" class="quick-action admin-only" id="adminOnlyUsers">
+                <div class="quick-action-icon">👥</div>
+                <h3>User Management</h3>
+                <p>Staff accounts</p>
+            </a>
+        </div>
+
+        <div class="recent-activity">
+            <h2>Recent Activity</h2>
+            <div id="activityContainer">
+                <div style="text-align: center; padding: 40px; color: #999;">
+                    Loading activity...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        async function checkAuth() {
+            try {
+                const response = await fetch('api/staff-auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ action: 'check_session' })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    currentUser = result.user;
+                    displayDashboard();
+                } else {
+                    window.location.href = 'staff-login.html';
+                }
+            } catch (error) {
+                console.error('Auth error:', error);
+                window.location.href = 'staff-login.html';
+            }
+        }
+
+        function displayDashboard() {
+            document.getElementById('userName').textContent = currentUser.full_name;
+            document.getElementById('userRole').textContent = currentUser.role;
+
+            // Show/hide admin-only sections
+            if (currentUser.role !== 'Admin') {
+                document.querySelectorAll('.admin-only').forEach(el => {
+                    el.style.display = 'none';
+                });
+            }
+
+            // Show dashboard, hide loading
+            document.getElementById('loadingScreen').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+
+            loadRecentActivity();
+        }
+
+        async function loadRecentActivity() {
+            try {
+                // Load recent orders
+                const ordersRes = await fetch('api/orders.php');
+                const ordersData = await ordersRes.json();
+
+                if (ordersData.success && ordersData.data) {
+                    displayActivity(ordersData.data.slice(0, 10));
+                }
+            } catch (error) {
+                console.error('Error loading activity:', error);
+            }
+        }
+
+        function displayActivity(orders) {
+            const container = document.getElementById('activityContainer');
+            
+            if (orders.length === 0) {
+                container.innerHTML = '<div style="text-align: center; padding: 40px; color: #999;">No recent activity</div>';
+                return;
+            }
+
+            container.innerHTML = '';
+            
+            orders.forEach(order => {
+                const card = document.createElement('div');
+                card.className = 'activity-card';
+                card.innerHTML = `
+                    <div class="activity-info">
+                        <strong>${order.client_name || 'Unknown Client'}</strong>
+                        <p style="margin: 5px 0; color: #666;">${order.products || 'No products'}</p>
+                        <div class="activity-time">${formatDate(order.created_at)}</div>
+                    </div>
+                    <div>
+                        <span style="padding: 6px 15px; background: #667eea; color: white; border-radius: 20px; font-size: 0.9em;">
+                            ${order.status || 'Processing'}
+                        </span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+            const hours = Math.floor(diff / (1000 * 60 * 60));
+            
+            if (hours < 1) {
+                const minutes = Math.floor(diff / (1000 * 60));
+                return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+            } else if (hours < 24) {
+                return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+            } else {
+                return date.toLocaleDateString();
+            }
+        }
+
+        async function logout() {
+            try {
+                await fetch('api/staff-auth.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ action: 'logout' })
+                });
+
+                window.location.href = 'staff-login.html';
+            } catch (error) {
+                console.error('Logout error:', error);
+                window.location.href = 'staff-login.html';
+            }
+        }
+
+        // Check authentication on load
+        checkAuth();
+    </script>
+</body>
+</html>
