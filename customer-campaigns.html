@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Segmentation & Campaigns - Tweakorder</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Customer Segmentation & Email Campaigns</h1>
+        
+        <div class="back-link" style="margin-bottom: 20px;">
+            <a href="index.html" style="text-decoration: none; color: #667eea;">← Back to Dashboard</a>
+        </div>
+
+        <!-- Quick Stats -->
+        <section style="margin-bottom: 40px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                <div class="nav-card">
+                    <h3 style="color: var(--accent-color); font-size: 2.5em; margin-bottom: 10px;">1,247</h3>
+                    <p style="color: var(--text-secondary);">Total Customers</p>
+                </div>
+                <div class="nav-card">
+                    <h3 style="color: var(--accent-color); font-size: 2.5em; margin-bottom: 10px;">8</h3>
+                    <p style="color: var(--text-secondary);">Segments</p>
+                </div>
+                <div class="nav-card">
+                    <h3 style="color: #4caf50; font-size: 2.5em; margin-bottom: 10px;">23</h3>
+                    <p style="color: var(--text-secondary);">Active Campaigns</p>
+                </div>
+                <div class="nav-card">
+                    <h3 style="color: var(--accent-color); font-size: 2.5em; margin-bottom: 10px;">42%</h3>
+                    <p style="color: var(--text-secondary);">Avg. Open Rate</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Customer Segments -->
+        <section style="margin-bottom: 40px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>Customer Segments</h2>
+                <button class="btn btn-primary btn-morph ripple" onclick="createSegment()">
+                    + Create New Segment
+                </button>
+            </div>
+            
+            <div style="display: grid; gap: 15px;">
+                <!-- Segment 1: VIP Customers -->
+                <div class="nav-card" style="text-align: left;">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <h3 style="color: #ffd700;">⭐ VIP Customers</h3>
+                                <span class="badge" style="background: #ffd700; color: #000;">432 members</span>
+                            </div>
+                            <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                                Customers with 10+ orders or total spend over $1,000
+                            </p>
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap; font-size: 0.85em;">
+                                <span class="badge badge-primary">Orders ≥ 10</span>
+                                <span class="badge badge-primary">Total Spend ≥ $1,000</span>
+                                <span class="badge badge-primary">Active in last 30 days</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn-small btn-morph" onclick="emailSegment('vip')">✉️ Email</button>
+                            <button class="btn-small" onclick="editSegment('vip')">✏️ Edit</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Segment 2: New Customers -->
+                <div class="nav-card" style="text-align: left;">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <h3 style="color: #4caf50;">🆕 New Customers</h3>
+                                <span class="badge" style="background: #4caf50; color: #fff;">89 members</span>
+                            </div>
+                            <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                                Customers who joined in the last 30 days
+                            </p>
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap; font-size: 0.85em;">
+                                <span class="badge badge-primary">Joined last 30 days</span>
+                                <span class="badge badge-primary">0-2 orders</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn-small btn-morph" onclick="emailSegment('new')">✉️ Email</button>
+                            <button class="btn-small" onclick="editSegment('new')">✏️ Edit</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Segment 3: At Risk -->
+                <div class="nav-card" style="text-align: left;">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <h3 style="color: #ff9800;">⚠️ At Risk</h3>
+                                <span class="badge" style="background: #ff9800; color: #fff;">156 members</span>
+                            </div>
+                            <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                                Customers who haven't ordered in 90+ days
+                            </p>
+                            <div style="display: flex; gap: 10px; flex-wrap: wrap; font-size: 0.85em;">
+                                <span class="badge badge-primary">Last order > 90 days</span>
+                                <span class="badge badge-primary">Previously active</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn-small btn-morph" onclick="emailSegment('risk')">✉️ Email</button>
+                            <button class="btn-small" onclick="editSegment('risk')">✏️ Edit</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Email Campaigns -->
+        <section style="margin-bottom: 40px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>Email Campaigns</h2>
+                <button class="btn btn-primary btn-morph ripple" onclick="createCampaign()">
+                    + Create New Campaign
+                </button>
+            </div>
+
+            <div style="display: grid; gap: 15px;">
+                <!-- Campaign 1 -->
+                <div class="nav-card" style="text-align: left;">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <h3>🎉 Holiday Special Promotion</h3>
+                                <span class="badge" style="background: #4caf50; color: white;">Active</span>
+                            </div>
+                            <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                                Sent to VIP Customers • Scheduled: Nov 5, 2024 9:00 AM
+                            </p>
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 15px;">
+                                <div>
+                                    <div style="font-size: 1.5em; font-weight: bold; color: var(--accent-color);">432</div>
+                                    <div style="font-size: 0.85em; color: var(--text-secondary);">Recipients</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 1.5em; font-weight: bold; color: var(--accent-color);">45%</div>
+                                    <div style="font-size: 0.85em; color: var(--text-secondary);">Open Rate</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 1.5em; font-weight: bold; color: var(--accent-color);">23%</div>
+                                    <div style="font-size: 0.85em; color: var(--text-secondary);">Click Rate</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 1.5em; font-weight: bold; color: #4caf50;">$12.5K</div>
+                                    <div style="font-size: 0.85em; color: var(--text-secondary);">Revenue</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn-small btn-morph" onclick="viewCampaign(1)">👁️ View</button>
+                            <button class="btn-small" onclick="editCampaign(1)">✏️ Edit</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campaign 2 -->
+                <div class="nav-card" style="text-align: left;">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <h3>👋 Welcome Series - Day 1</h3>
+                                <span class="badge" style="background: #ff9800; color: white;">Scheduled</span>
+                            </div>
+                            <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                                Sent to New Customers • Automated trigger on signup
+                            </p>
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 15px;">
+                                <div>
+                                    <div style="font-size: 1.5em; font-weight: bold; color: var(--accent-color);">89</div>
+                                    <div style="font-size: 0.85em; color: var(--text-secondary);">Recipients</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 1.5em; font-weight: bold; color: var(--accent-color);">62%</div>
+                                    <div style="font-size: 0.85em; color: var(--text-secondary);">Open Rate</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 1.5em; font-weight: bold; color: var(--accent-color);">34%</div>
+                                    <div style="font-size: 0.85em; color: var(--text-secondary);">Click Rate</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 1.5em; font-weight: bold; color: #4caf50;">$3.2K</div>
+                                    <div style="font-size: 0.85em; color: var(--text-secondary);">Revenue</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn-small btn-morph" onclick="viewCampaign(2)">👁️ View</button>
+                            <button class="btn-small" onclick="editCampaign(2)">✏️ Edit</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Campaign 3 -->
+                <div class="nav-card" style="text-align: left;">
+                    <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <h3>💝 We Miss You - Win Back Campaign</h3>
+                                <span class="badge" style="background: #2196f3; color: white;">Draft</span>
+                            </div>
+                            <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                                Targeting At Risk segment • Ready to send
+                            </p>
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-top: 15px;">
+                                <div>
+                                    <div style="font-size: 1.5em; font-weight: bold; color: var(--accent-color);">156</div>
+                                    <div style="font-size: 0.85em; color: var(--text-secondary);">Recipients</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 1.5em; font-weight: bold; color: var(--text-secondary);">-</div>
+                                    <div style="font-size: 0.85em; color: var(--text-secondary);">Open Rate</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 1.5em; font-weight: bold; color: var(--text-secondary);">-</div>
+                                    <div style="font-size: 0.85em; color: var(--text-secondary);">Click Rate</div>
+                                </div>
+                                <div>
+                                    <div style="font-size: 1.5em; font-weight: bold; color: var(--text-secondary);">-</div>
+                                    <div style="font-size: 0.85em; color: var(--text-secondary);">Revenue</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn-small btn-morph" onclick="viewCampaign(3)">👁️ View</button>
+                            <button class="btn-small" style="background: #4caf50; color: white;" onclick="sendCampaign(3)">📤 Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Campaign Templates -->
+        <section>
+            <h2>Email Templates</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div class="nav-card" onclick="useTemplate('welcome')" style="cursor: pointer;">
+                    <h3 style="margin-bottom: 10px;">👋 Welcome Email</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9em;">
+                        Greet new customers and introduce your services
+                    </p>
+                </div>
+                <div class="nav-card" onclick="useTemplate('promotion')" style="cursor: pointer;">
+                    <h3 style="margin-bottom: 10px;">🎉 Promotion</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9em;">
+                        Announce special offers and discounts
+                    </p>
+                </div>
+                <div class="nav-card" onclick="useTemplate('newsletter')" style="cursor: pointer;">
+                    <h3 style="margin-bottom: 10px;">📰 Newsletter</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9em;">
+                        Share updates and news with customers
+                    </p>
+                </div>
+                <div class="nav-card" onclick="useTemplate('winback')" style="cursor: pointer;">
+                    <h3 style="margin-bottom: 10px;">💝 Win Back</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9em;">
+                        Re-engage inactive customers
+                    </p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <style>
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-primary {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .btn-small {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            background: var(--accent-color);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .btn-small:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+    </style>
+
+    <script src="assets/js/theme-system.js"></script>
+    <script>
+        function createSegment() {
+            NotificationManager.show('Opening segment builder...', 'info');
+            setTimeout(() => {
+                NotificationManager.show('Segment builder feature coming soon!', 'info');
+            }, 1000);
+        }
+
+        function editSegment(segmentId) {
+            LoadingSpinner.show();
+            setTimeout(() => {
+                LoadingSpinner.hide();
+                NotificationManager.show(`Editing ${segmentId} segment...`, 'info');
+            }, 500);
+        }
+
+        function emailSegment(segmentId) {
+            NotificationManager.show(`Creating campaign for ${segmentId} segment...`, 'success');
+        }
+
+        function createCampaign() {
+            NotificationManager.show('Opening campaign builder...', 'info');
+        }
+
+        function viewCampaign(id) {
+            LoadingSpinner.show();
+            setTimeout(() => {
+                LoadingSpinner.hide();
+                NotificationManager.show(`Viewing campaign ${id}...`, 'info');
+            }, 500);
+        }
+
+        function editCampaign(id) {
+            LoadingSpinner.show();
+            setTimeout(() => {
+                LoadingSpinner.hide();
+                NotificationManager.show(`Editing campaign ${id}...`, 'info');
+            }, 500);
+        }
+
+        function sendCampaign(id) {
+            if (confirm('Send this campaign now to 156 recipients?')) {
+                LoadingSpinner.show();
+                setTimeout(() => {
+                    LoadingSpinner.hide();
+                    NotificationManager.show('Campaign sent successfully! 📧', 'success');
+                }, 2000);
+            }
+        }
+
+        function useTemplate(templateId) {
+            NotificationManager.show(`Loading ${templateId} template...`, 'success');
+        }
+    </script>
+</body>
+</html>

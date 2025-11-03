@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback & Suggestions - Tweakorder</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+</head>
+<body>
+    <div class="container">
+        <h1>💬 Feedback Collection System</h1>
+        
+        <div class="back-link" style="margin-bottom: 20px;">
+            <a href="index.html" style="text-decoration: none; color: #667eea;">← Back to Dashboard</a>
+        </div>
+
+        <!-- Quick Stats -->
+        <section style="margin-bottom: 40px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                <div class="nav-card">
+                    <h3 style="color: #f44336; font-size: 2.5em; margin-bottom: 10px;">23</h3>
+                    <p style="color: var(--text-secondary);">Open Bug Reports</p>
+                </div>
+                <div class="nav-card">
+                    <h3 style="color: #2196f3; font-size: 2.5em; margin-bottom: 10px;">47</h3>
+                    <p style="color: var(--text-secondary);">Feature Suggestions</p>
+                </div>
+                <div class="nav-card">
+                    <h3 style="color: #4caf50; font-size: 2.5em; margin-bottom: 10px;">156</h3>
+                    <p style="color: var(--text-secondary);">Total Votes</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Submit Feedback -->
+        <section style="margin-bottom: 40px;">
+            <h2>Submit New Feedback</h2>
+            <div class="nav-card" style="text-align: left;">
+                <div class="form-group">
+                    <label>Feedback Type</label>
+                    <select id="feedback-type" onchange="updateFeedbackForm()">
+                        <option value="bug">🐛 Bug Report</option>
+                        <option value="feature">💡 Feature Suggestion</option>
+                        <option value="improvement">✨ Improvement</option>
+                        <option value="other">📝 Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Title</label>
+                    <input type="text" id="feedback-title" placeholder="Brief description of the issue or suggestion">
+                </div>
+
+                <div class="form-group" id="bug-fields" style="display: none;">
+                    <label>Severity</label>
+                    <select>
+                        <option value="low">🟢 Low - Minor issue</option>
+                        <option value="medium">🟡 Medium - Affects functionality</option>
+                        <option value="high">🟠 High - Major issue</option>
+                        <option value="critical">🔴 Critical - System breaking</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="feedback-description" rows="6" placeholder="Provide detailed information..."></textarea>
+                </div>
+
+                <div class="form-group" id="steps-fields" style="display: none;">
+                    <label>Steps to Reproduce</label>
+                    <textarea rows="4" placeholder="1. Go to...&#10;2. Click on...&#10;3. See error..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Attachments (Screenshots, Files)</label>
+                    <input type="file" multiple accept="image/*,.pdf,.doc,.docx">
+                    <p style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">
+                        Max 5 files, 10MB each
+                    </p>
+                </div>
+
+                <button class="btn btn-primary btn-morph ripple" onclick="submitFeedback()">
+                    Submit Feedback
+                </button>
+            </div>
+        </section>
+
+        <!-- Feedback List with Voting -->
+        <section style="margin-bottom: 40px;">
+            <h2>Bug Reports</h2>
+            
+            <div id="bug-list" style="display: grid; gap: 15px;">
+                <!-- Bug Report 1 -->
+                <div class="nav-card" style="text-align: left; position: relative;">
+                    <div style="display: flex; gap: 20px;">
+                        <div style="text-align: center; min-width: 60px;">
+                            <button class="vote-btn" onclick="vote(1, 'up')" style="display: block; width: 100%; padding: 5px; background: none; border: 2px solid var(--accent-color); border-radius: 5px; cursor: pointer; margin-bottom: 5px; transition: all 0.3s;">
+                                ⬆️
+                            </button>
+                            <div style="font-size: 1.5em; font-weight: bold; color: var(--accent-color);" id="votes-1">23</div>
+                            <button class="vote-btn" onclick="vote(1, 'down')" style="display: block; width: 100%; padding: 5px; background: none; border: 2px solid var(--border-color); border-radius: 5px; cursor: pointer; margin-top: 5px; transition: all 0.3s;">
+                                ⬇️
+                            </button>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <span class="badge badge-critical">🔴 Critical</span>
+                                <span class="badge badge-bug">Bug</span>
+                            </div>
+                            <h3 style="margin-bottom: 10px; color: var(--text-primary);">
+                                Order submission fails on mobile devices
+                            </h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                                When submitting an order from mobile browsers (iOS Safari and Chrome), 
+                                the submit button becomes unresponsive after adding more than 5 products.
+                            </p>
+                            <div style="display: flex; gap: 15px; font-size: 0.85em; color: var(--text-secondary);">
+                                <span>👤 John Doe</span>
+                                <span>📅 Nov 1, 2024</span>
+                                <span>💬 5 comments</span>
+                                <span class="badge" style="background: #fff3cd; color: #856404;">In Progress</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bug Report 2 -->
+                <div class="nav-card" style="text-align: left; position: relative;">
+                    <div style="display: flex; gap: 20px;">
+                        <div style="text-align: center; min-width: 60px;">
+                            <button class="vote-btn" onclick="vote(2, 'up')" style="display: block; width: 100%; padding: 5px; background: none; border: 2px solid var(--accent-color); border-radius: 5px; cursor: pointer; margin-bottom: 5px; transition: all 0.3s;">
+                                ⬆️
+                            </button>
+                            <div style="font-size: 1.5em; font-weight: bold; color: var(--accent-color);" id="votes-2">15</div>
+                            <button class="vote-btn" onclick="vote(2, 'down')" style="display: block; width: 100%; padding: 5px; background: none; border: 2px solid var(--border-color); border-radius: 5px; cursor: pointer; margin-top: 5px; transition: all 0.3s;">
+                                ⬇️
+                            </button>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <span class="badge badge-high">🟠 High</span>
+                                <span class="badge badge-bug">Bug</span>
+                            </div>
+                            <h3 style="margin-bottom: 10px; color: var(--text-primary);">
+                                Product images not loading in dark theme
+                            </h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                                Product thumbnails show broken image icons when using the dark theme. 
+                                Works fine in light theme.
+                            </p>
+                            <div style="display: flex; gap: 15px; font-size: 0.85em; color: var(--text-secondary);">
+                                <span>👤 Jane Smith</span>
+                                <span>📅 Oct 28, 2024</span>
+                                <span>💬 3 comments</span>
+                                <span class="badge" style="background: #e3f2fd; color: #1976d2;">Open</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Suggestions -->
+        <section>
+            <h2>Feature Suggestions</h2>
+            
+            <div id="feature-list" style="display: grid; gap: 15px;">
+                <!-- Feature 1 -->
+                <div class="nav-card" style="text-align: left; position: relative;">
+                    <div style="display: flex; gap: 20px;">
+                        <div style="text-align: center; min-width: 60px;">
+                            <button class="vote-btn" onclick="vote(3, 'up')" style="display: block; width: 100%; padding: 5px; background: none; border: 2px solid var(--accent-color); border-radius: 5px; cursor: pointer; margin-bottom: 5px; transition: all 0.3s;">
+                                ⬆️
+                            </button>
+                            <div style="font-size: 1.5em; font-weight: bold; color: var(--accent-color);" id="votes-3">42</div>
+                            <button class="vote-btn" onclick="vote(3, 'down')" style="display: block; width: 100%; padding: 5px; background: none; border: 2px solid var(--border-color); border-radius: 5px; cursor: pointer; margin-top: 5px; transition: all 0.3s;">
+                                ⬇️
+                            </button>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <span class="badge badge-feature">💡 Feature</span>
+                            </div>
+                            <h3 style="margin-bottom: 10px; color: var(--text-primary);">
+                                Add bulk order import from CSV
+                            </h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                                Would be great to have ability to import multiple orders at once from a CSV file. 
+                                This would save tons of time when migrating data.
+                            </p>
+                            <div style="display: flex; gap: 15px; font-size: 0.85em; color: var(--text-secondary);">
+                                <span>👤 Mike Johnson</span>
+                                <span>📅 Oct 25, 2024</span>
+                                <span>💬 12 comments</span>
+                                <span class="badge" style="background: #d4edda; color: #155724;">Planned</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="nav-card" style="text-align: left; position: relative;">
+                    <div style="display: flex; gap: 20px;">
+                        <div style="text-align: center; min-width: 60px;">
+                            <button class="vote-btn" onclick="vote(4, 'up')" style="display: block; width: 100%; padding: 5px; background: none; border: 2px solid var(--accent-color); border-radius: 5px; cursor: pointer; margin-bottom: 5px; transition: all 0.3s;">
+                                ⬆️
+                            </button>
+                            <div style="font-size: 1.5em; font-weight: bold; color: var(--accent-color);" id="votes-4">38</div>
+                            <button class="vote-btn" onclick="vote(4, 'down')" style="display: block; width: 100%; padding: 5px; background: none; border: 2px solid var(--border-color); border-radius: 5px; cursor: pointer; margin-top: 5px; transition: all 0.3s;">
+                                ⬇️
+                            </button>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                                <span class="badge badge-feature">💡 Feature</span>
+                            </div>
+                            <h3 style="margin-bottom: 10px; color: var(--text-primary);">
+                                Email notifications for order status changes
+                            </h3>
+                            <p style="color: var(--text-secondary); margin-bottom: 15px;">
+                                Clients should receive email notifications when their order status changes. 
+                                This keeps them informed without having to check the portal constantly.
+                            </p>
+                            <div style="display: flex; gap: 15px; font-size: 0.85em; color: var(--text-secondary);">
+                                <span>👤 Sarah Williams</span>
+                                <span>📅 Oct 20, 2024</span>
+                                <span>💬 8 comments</span>
+                                <span class="badge" style="background: #e3f2fd; color: #1976d2;">Under Review</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <style>
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-critical {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .badge-high {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .badge-bug {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-feature {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .vote-btn:hover {
+            background: var(--accent-color) !important;
+            color: white;
+            transform: scale(1.1);
+        }
+    </style>
+
+    <script src="assets/js/theme-system.js"></script>
+    <script>
+        function updateFeedbackForm() {
+            const type = document.getElementById('feedback-type').value;
+            const bugFields = document.getElementById('bug-fields');
+            const stepsFields = document.getElementById('steps-fields');
+            
+            if (type === 'bug') {
+                bugFields.style.display = 'block';
+                stepsFields.style.display = 'block';
+            } else {
+                bugFields.style.display = 'none';
+                stepsFields.style.display = 'none';
+            }
+        }
+
+        function submitFeedback() {
+            const title = document.getElementById('feedback-title').value;
+            const description = document.getElementById('feedback-description').value;
+            
+            if (!title || !description) {
+                NotificationManager.show('Please fill in all required fields', 'error');
+                return;
+            }
+
+            LoadingSpinner.show();
+            setTimeout(() => {
+                LoadingSpinner.hide();
+                NotificationManager.show('Feedback submitted successfully! Thank you!', 'success');
+                document.getElementById('feedback-title').value = '';
+                document.getElementById('feedback-description').value = '';
+            }, 1500);
+        }
+
+        function vote(id, direction) {
+            const votesElement = document.getElementById(`votes-${id}`);
+            let currentVotes = parseInt(votesElement.textContent);
+            
+            if (direction === 'up') {
+                currentVotes++;
+                NotificationManager.show('Upvoted! 👍', 'success', 1500);
+            } else {
+                currentVotes--;
+                NotificationManager.show('Downvoted 👎', 'info', 1500);
+            }
+            
+            votesElement.textContent = currentVotes;
+            votesElement.style.animation = 'pulse 0.5s ease';
+            setTimeout(() => {
+                votesElement.style.animation = '';
+            }, 500);
+        }
+    </script>
+</body>
+</html>

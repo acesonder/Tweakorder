@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Generator - Tweakorder</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 AI Image Generator</h1>
+        
+        <div class="back-link" style="margin-bottom: 20px;">
+            <a href="index.html" style="text-decoration: none; color: #667eea;">← Back to Dashboard</a>
+        </div>
+
+        <!-- AI Provider Configuration -->
+        <section style="margin-bottom: 40px;">
+            <h2>AI Provider Settings</h2>
+            <div class="nav-card" style="text-align: left;">
+                <div class="form-group">
+                    <label>Select AI Provider</label>
+                    <select id="ai-provider" onchange="updateProviderConfig()">
+                        <option value="dalle">DALL·E (OpenAI)</option>
+                        <option value="stable-diffusion">Stable Diffusion</option>
+                        <option value="midjourney">Midjourney API</option>
+                        <option value="replicate">Replicate</option>
+                    </select>
+                </div>
+
+                <div id="dalle-config">
+                    <div class="form-group">
+                        <label>OpenAI API Key</label>
+                        <input type="password" placeholder="sk-...">
+                        <p style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">
+                            Get your API key from <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">OpenAI Platform</a>
+                        </p>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Model Version</label>
+                        <select>
+                            <option value="dall-e-3">DALL·E 3 (Latest)</option>
+                            <option value="dall-e-2">DALL·E 2</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Image Quality</label>
+                        <select>
+                            <option value="standard">Standard</option>
+                            <option value="hd">HD (Higher cost)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary btn-morph ripple" onclick="saveConfig()">
+                    Save Configuration
+                </button>
+            </div>
+        </section>
+
+        <!-- Generate Images -->
+        <section style="margin-bottom: 40px;">
+            <h2>Generate Product Images</h2>
+            <div class="nav-card" style="text-align: left;">
+                <div class="form-group">
+                    <label>Product Name</label>
+                    <input type="text" id="product-name" placeholder="e.g., Cotton T-Shirt">
+                </div>
+
+                <div class="form-group">
+                    <label>Image Description / Prompt</label>
+                    <textarea id="image-prompt" rows="4" placeholder="Describe the image you want to generate...&#10;Example: A professional product photo of a blue cotton t-shirt on a white background, studio lighting, high quality"></textarea>
+                    <p style="font-size: 0.85em; color: var(--text-secondary); margin-top: 5px;">
+                        💡 Tip: Be specific about style, lighting, background, and composition for best results
+                    </p>
+                </div>
+
+                <div class="form-group">
+                    <label>Image Size</label>
+                    <select id="image-size">
+                        <option value="1024x1024">Square (1024×1024)</option>
+                        <option value="1792x1024">Landscape (1792×1024)</option>
+                        <option value="1024x1792">Portrait (1024×1792)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Number of Variations</label>
+                    <select id="num-images">
+                        <option value="1">1 image</option>
+                        <option value="2">2 images</option>
+                        <option value="3">3 images</option>
+                        <option value="4">4 images</option>
+                    </select>
+                </div>
+
+                <button class="btn btn-primary btn-morph ripple" onclick="generateImages()">
+                    ✨ Generate Images
+                </button>
+            </div>
+        </section>
+
+        <!-- Generated Images Gallery -->
+        <section style="margin-bottom: 40px;">
+            <h2>Generated Images</h2>
+            <div id="image-gallery" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
+                <!-- Placeholder images -->
+                <div class="nav-card product-thumbnail" style="padding: 0; overflow: hidden; height: 300px; position: relative;">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Crect fill='%23667eea' width='300' height='300'/%3E%3Ctext fill='white' font-size='24' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3EProduct 1%3C/text%3E%3C/svg%3E" 
+                         style="width: 100%; height: 100%; object-fit: cover;">
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); padding: 15px; color: white;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.85em;">Cotton T-Shirt</span>
+                            <div>
+                                <button class="btn-small" style="background: white; color: var(--accent-color); padding: 5px 10px; margin: 0 3px;" onclick="downloadImage(1)">⬇️</button>
+                                <button class="btn-small" style="background: #4caf50; color: white; padding: 5px 10px; margin: 0 3px;" onclick="useImage(1)">✓</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-card product-thumbnail" style="padding: 0; overflow: hidden; height: 300px; position: relative;">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Crect fill='%23764ba2' width='300' height='300'/%3E%3Ctext fill='white' font-size='24' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3EProduct 2%3C/text%3E%3C/svg%3E" 
+                         style="width: 100%; height: 100%; object-fit: cover;">
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); padding: 15px; color: white;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.85em;">Denim Jeans</span>
+                            <div>
+                                <button class="btn-small" style="background: white; color: var(--accent-color); padding: 5px 10px; margin: 0 3px;" onclick="downloadImage(2)">⬇️</button>
+                                <button class="btn-small" style="background: #4caf50; color: white; padding: 5px 10px; margin: 0 3px;" onclick="useImage(2)">✓</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-card product-thumbnail" style="padding: 0; overflow: hidden; height: 300px; position: relative;">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Crect fill='%23f093fb' width='300' height='300'/%3E%3Ctext fill='white' font-size='24' x='50%25' y='50%25' text-anchor='middle' dominant-baseline='middle'%3EProduct 3%3C/text%3E%3C/svg%3E" 
+                         style="width: 100%; height: 100%; object-fit: cover;">
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); padding: 15px; color: white;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-size: 0.85em;">Winter Jacket</span>
+                            <div>
+                                <button class="btn-small" style="background: white; color: var(--accent-color); padding: 5px 10px; margin: 0 3px;" onclick="downloadImage(3)">⬇️</button>
+                                <button class="btn-small" style="background: #4caf50; color: white; padding: 5px 10px; margin: 0 3px;" onclick="useImage(3)">✓</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Prompt Templates -->
+        <section>
+            <h2>Prompt Templates</h2>
+            <div style="display: grid; gap: 15px;">
+                <div class="nav-card" onclick="usePromptTemplate('product')" style="cursor: pointer; text-align: left;">
+                    <h3 style="margin-bottom: 10px;">📸 Product Photography</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9em;">
+                        "Professional product photo of [PRODUCT], white background, studio lighting, 4k, high quality, commercial photography"
+                    </p>
+                </div>
+
+                <div class="nav-card" onclick="usePromptTemplate('lifestyle')" style="cursor: pointer; text-align: left;">
+                    <h3 style="margin-bottom: 10px;">🌟 Lifestyle Shot</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9em;">
+                        "[PRODUCT] in use, lifestyle photography, natural lighting, modern setting, candid, Instagram worthy"
+                    </p>
+                </div>
+
+                <div class="nav-card" onclick="usePromptTemplate('banner')" style="cursor: pointer; text-align: left;">
+                    <h3 style="margin-bottom: 10px;">🎨 Marketing Banner</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9em;">
+                        "Marketing banner featuring [PRODUCT], vibrant colors, modern design, promotional, eye-catching, professional"
+                    </p>
+                </div>
+
+                <div class="nav-card" onclick="usePromptTemplate('mockup')" style="cursor: pointer; text-align: left;">
+                    <h3 style="margin-bottom: 10px;">🖼️ Mockup</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9em;">
+                        "[PRODUCT] mockup, realistic, detailed, professional presentation, clean background"
+                    </p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <style>
+        .btn-small {
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .btn-small:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+    </style>
+
+    <script src="assets/js/theme-system.js"></script>
+    <script>
+        function updateProviderConfig() {
+            // Update form fields based on selected provider
+            NotificationManager.show('Provider configuration updated', 'info');
+        }
+
+        function saveConfig() {
+            LoadingSpinner.show();
+            setTimeout(() => {
+                LoadingSpinner.hide();
+                NotificationManager.show('AI provider configuration saved successfully!', 'success');
+            }, 1500);
+        }
+
+        function generateImages() {
+            const productName = document.getElementById('product-name').value;
+            const prompt = document.getElementById('image-prompt').value;
+            
+            if (!productName || !prompt) {
+                NotificationManager.show('Please fill in product name and description', 'error');
+                return;
+            }
+
+            LoadingSpinner.show();
+            NotificationManager.show('Generating images with AI... This may take 30-60 seconds', 'info', 5000);
+            
+            setTimeout(() => {
+                LoadingSpinner.hide();
+                NotificationManager.show('Images generated successfully! 🎨', 'success');
+            }, 3000);
+        }
+
+        function downloadImage(id) {
+            NotificationManager.show(`Downloading image ${id}...`, 'success');
+        }
+
+        function useImage(id) {
+            NotificationManager.show(`Image ${id} set as product thumbnail!`, 'success');
+        }
+
+        function usePromptTemplate(type) {
+            const templates = {
+                product: "Professional product photo of [YOUR PRODUCT], white background, studio lighting, 4k, high quality, commercial photography",
+                lifestyle: "[YOUR PRODUCT] in use, lifestyle photography, natural lighting, modern setting, candid, Instagram worthy",
+                banner: "Marketing banner featuring [YOUR PRODUCT], vibrant colors, modern design, promotional, eye-catching, professional",
+                mockup: "[YOUR PRODUCT] mockup, realistic, detailed, professional presentation, clean background"
+            };
+
+            document.getElementById('image-prompt').value = templates[type];
+            NotificationManager.show('Template applied! Edit as needed.', 'success');
+        }
+    </script>
+</body>
+</html>

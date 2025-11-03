@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Settings - Tweakorder</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🔒 Advanced Security Settings</h1>
+        
+        <div class="back-link" style="margin-bottom: 20px;">
+            <a href="index.html" style="text-decoration: none; color: #667eea;">← Back to Dashboard</a>
+        </div>
+
+        <!-- Two-Factor Authentication -->
+        <section style="margin-bottom: 40px;">
+            <h2>Two-Factor Authentication (2FA)</h2>
+            <div class="nav-card" style="text-align: left;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <h3 style="margin-bottom: 10px;">Enable 2FA Protection</h3>
+                        <p style="color: var(--text-secondary);">
+                            Add an extra layer of security to your account with two-factor authentication.
+                        </p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="enable2fa" onchange="toggle2FA(this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div id="2fa-setup" style="display: none;">
+                    <div style="background: var(--bg-secondary); padding: 20px; border-radius: 10px; margin-bottom: 15px;">
+                        <h4 style="margin-bottom: 10px;">Step 1: Scan QR Code</h4>
+                        <div style="text-align: center; margin: 20px 0;">
+                            <div style="width: 200px; height: 200px; background: white; margin: 0 auto; border-radius: 10px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--border-color);">
+                                <span style="font-size: 100px;">📱</span>
+                            </div>
+                            <p style="margin-top: 15px; color: var(--text-secondary);">
+                                Scan this QR code with Google Authenticator or Authy
+                            </p>
+                        </div>
+                    </div>
+
+                    <div style="background: var(--bg-secondary); padding: 20px; border-radius: 10px; margin-bottom: 15px;">
+                        <h4 style="margin-bottom: 10px;">Step 2: Enter Verification Code</h4>
+                        <div class="form-group">
+                            <input type="text" placeholder="Enter 6-digit code" maxlength="6" style="text-align: center; font-size: 1.5em; letter-spacing: 10px;">
+                        </div>
+                        <button class="btn btn-primary btn-morph ripple" onclick="verify2FA()">
+                            ✓ Verify & Enable
+                        </button>
+                    </div>
+
+                    <div style="background: #fff3cd; padding: 15px; border-radius: 10px; border-left: 4px solid #ffc107;">
+                        <h4 style="color: #856404; margin-bottom: 10px;">Backup Codes</h4>
+                        <p style="color: #856404; font-size: 0.9em; margin-bottom: 10px;">
+                            Save these backup codes in a safe place. You can use them to access your account if you lose your phone.
+                        </p>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; font-family: monospace;">
+                            <code style="background: white; padding: 8px; border-radius: 5px;">A1B2-C3D4-E5F6</code>
+                            <code style="background: white; padding: 8px; border-radius: 5px;">G7H8-I9J0-K1L2</code>
+                            <code style="background: white; padding: 8px; border-radius: 5px;">M3N4-O5P6-Q7R8</code>
+                            <code style="background: white; padding: 8px; border-radius: 5px;">S9T0-U1V2-W3X4</code>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Login Attempt Logs -->
+        <section style="margin-bottom: 40px;">
+            <h2>Login Attempt Logs</h2>
+            <div class="nav-card" style="text-align: left;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="background: var(--bg-secondary); border-bottom: 2px solid var(--border-color);">
+                            <th style="padding: 15px; text-align: left;">Date & Time</th>
+                            <th style="padding: 15px; text-align: left;">IP Address</th>
+                            <th style="padding: 15px; text-align: left;">Location</th>
+                            <th style="padding: 15px; text-align: left;">Device</th>
+                            <th style="padding: 15px; text-align: center;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="login-logs">
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 15px;">2024-11-03 14:32:15</td>
+                            <td style="padding: 15px;">192.168.1.100</td>
+                            <td style="padding: 15px;">🇺🇸 New York, USA</td>
+                            <td style="padding: 15px;">Chrome on Windows</td>
+                            <td style="padding: 15px; text-align: center;">
+                                <span class="badge badge-success">✓ Success</span>
+                            </td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 15px;">2024-11-03 10:15:42</td>
+                            <td style="padding: 15px;">203.0.113.45</td>
+                            <td style="padding: 15px;">🇬🇧 London, UK</td>
+                            <td style="padding: 15px;">Safari on iPhone</td>
+                            <td style="padding: 15px; text-align: center;">
+                                <span class="badge badge-success">✓ Success</span>
+                            </td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-color);">
+                            <td style="padding: 15px;">2024-11-02 22:05:18</td>
+                            <td style="padding: 15px;">198.51.100.7</td>
+                            <td style="padding: 15px;">🇨🇳 Beijing, China</td>
+                            <td style="padding: 15px;">Firefox on Linux</td>
+                            <td style="padding: 15px; text-align: center;">
+                                <span class="badge badge-danger">✗ Failed</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- IP Management -->
+        <section style="margin-bottom: 40px;">
+            <h2>IP Whitelist & Blacklist</h2>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <!-- Whitelist -->
+                <div class="nav-card" style="text-align: left;">
+                    <h3 style="color: #4caf50; margin-bottom: 15px;">✓ IP Whitelist</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 15px; font-size: 0.9em;">
+                        Only these IP addresses can access the system
+                    </p>
+                    
+                    <div id="whitelist" style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--bg-secondary); border-radius: 5px; margin-bottom: 10px;">
+                            <code>192.168.1.0/24</code>
+                            <button class="btn-small" onclick="removeIP('whitelist', '192.168.1.0/24')" style="background: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Remove</button>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--bg-secondary); border-radius: 5px;">
+                            <code>203.0.113.0/24</code>
+                            <button class="btn-small" onclick="removeIP('whitelist', '203.0.113.0/24')" style="background: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Remove</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" id="new-whitelist" placeholder="Enter IP address or range">
+                        <button class="btn btn-primary btn-morph ripple" onclick="addIP('whitelist')" style="margin-top: 10px; width: 100%;">
+                            + Add to Whitelist
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Blacklist -->
+                <div class="nav-card" style="text-align: left;">
+                    <h3 style="color: #f44336; margin-bottom: 15px;">✗ IP Blacklist</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 15px; font-size: 0.9em;">
+                        These IP addresses are blocked from accessing the system
+                    </p>
+                    
+                    <div id="blacklist" style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--bg-secondary); border-radius: 5px; margin-bottom: 10px;">
+                            <code>198.51.100.7</code>
+                            <button class="btn-small" onclick="removeIP('blacklist', '198.51.100.7')" style="background: #4caf50; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Unblock</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" id="new-blacklist" placeholder="Enter IP address or range">
+                        <button class="btn btn-primary btn-morph ripple" onclick="addIP('blacklist')" style="margin-top: 10px; width: 100%;">
+                            + Add to Blacklist
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CAPTCHA Settings -->
+        <section>
+            <h2>CAPTCHA Protection</h2>
+            <div class="nav-card" style="text-align: left;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <h3 style="margin-bottom: 10px;">Enable CAPTCHA</h3>
+                        <p style="color: var(--text-secondary);">
+                            Require CAPTCHA verification for login and registration
+                        </p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="enableCaptcha" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>CAPTCHA Provider</label>
+                    <select>
+                        <option>Google reCAPTCHA v2</option>
+                        <option>Google reCAPTCHA v3</option>
+                        <option>hCaptcha</option>
+                        <option>Cloudflare Turnstile</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Site Key</label>
+                    <input type="text" placeholder="Enter your CAPTCHA site key">
+                </div>
+
+                <div class="form-group">
+                    <label>Secret Key</label>
+                    <input type="password" placeholder="Enter your CAPTCHA secret key">
+                </div>
+
+                <button class="btn btn-primary btn-morph ripple">Save CAPTCHA Settings</button>
+            </div>
+        </section>
+    </div>
+
+    <style>
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+
+    <script src="assets/js/theme-system.js"></script>
+    <script>
+        function toggle2FA(enabled) {
+            const setup = document.getElementById('2fa-setup');
+            if (enabled) {
+                setup.style.display = 'block';
+                setup.classList.add('modal-blur-in');
+            } else {
+                setup.style.display = 'none';
+            }
+        }
+
+        function verify2FA() {
+            LoadingSpinner.show();
+            setTimeout(() => {
+                LoadingSpinner.hide();
+                NotificationManager.show('Two-factor authentication enabled successfully!', 'success');
+            }, 1500);
+        }
+
+        function addIP(type) {
+            const input = document.getElementById(`new-${type}`);
+            const ip = input.value.trim();
+            
+            if (!ip) {
+                NotificationManager.show('Please enter an IP address', 'error');
+                return;
+            }
+
+            LoadingSpinner.show();
+            setTimeout(() => {
+                LoadingSpinner.hide();
+                NotificationManager.show(`IP ${ip} added to ${type}`, 'success');
+                input.value = '';
+            }, 800);
+        }
+
+        function removeIP(type, ipAddress) {
+            if (confirm(`Remove ${ipAddress} from ${type}?`)) {
+                LoadingSpinner.show();
+                setTimeout(() => {
+                    LoadingSpinner.hide();
+                    NotificationManager.show(`IP ${ipAddress} removed from ${type}`, 'success');
+                }, 800);
+            }
+        }
+    </script>
+</body>
+</html>

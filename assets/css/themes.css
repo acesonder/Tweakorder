@@ -1,0 +1,267 @@
+/* ===================================
+   Multi-Theme System for Tweakorder
+   Themes: Light, Dark, Neon, Glassmorphism, Material, Retro
+   =================================== */
+
+/* Theme Variables */
+:root {
+    /* Light Theme (Default) */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f5f5f5;
+    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --text-primary: #333333;
+    --text-secondary: #666666;
+    --border-color: #e0e0e0;
+    --shadow: rgba(0, 0, 0, 0.1);
+    --shadow-hover: rgba(0, 0, 0, 0.2);
+    --card-bg: #ffffff;
+    --nav-bg: #ffffff;
+    --accent-color: #667eea;
+    --accent-secondary: #764ba2;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+    --bg-primary: #1a1a2e;
+    --bg-secondary: #16213e;
+    --bg-gradient: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+    --text-primary: #eaeaea;
+    --text-secondary: #a0a0a0;
+    --border-color: #2d3561;
+    --shadow: rgba(0, 0, 0, 0.5);
+    --shadow-hover: rgba(0, 0, 0, 0.7);
+    --card-bg: #16213e;
+    --nav-bg: #0f3460;
+    --accent-color: #00d4ff;
+    --accent-secondary: #533483;
+}
+
+/* Neon Theme */
+[data-theme="neon"] {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #1a1a1a;
+    --bg-gradient: linear-gradient(135deg, #ff006e 0%, #8338ec 50%, #3a86ff 100%);
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --border-color: #ff006e;
+    --shadow: rgba(255, 0, 110, 0.5);
+    --shadow-hover: rgba(131, 56, 236, 0.7);
+    --card-bg: #1a1a1a;
+    --nav-bg: #0a0a0a;
+    --accent-color: #ff006e;
+    --accent-secondary: #8338ec;
+}
+
+/* Glassmorphism Theme */
+[data-theme="glass"] {
+    --bg-primary: rgba(255, 255, 255, 0.1);
+    --bg-secondary: rgba(255, 255, 255, 0.05);
+    --bg-gradient: linear-gradient(135deg, rgba(102, 126, 234, 0.6) 0%, rgba(118, 75, 162, 0.6) 100%);
+    --text-primary: #ffffff;
+    --text-secondary: #e0e0e0;
+    --border-color: rgba(255, 255, 255, 0.2);
+    --shadow: rgba(0, 0, 0, 0.2);
+    --shadow-hover: rgba(0, 0, 0, 0.3);
+    --card-bg: rgba(255, 255, 255, 0.1);
+    --nav-bg: rgba(255, 255, 255, 0.15);
+    --accent-color: #ffffff;
+    --accent-secondary: rgba(255, 255, 255, 0.8);
+}
+
+/* Material Theme */
+[data-theme="material"] {
+    --bg-primary: #fafafa;
+    --bg-secondary: #f5f5f5;
+    --bg-gradient: linear-gradient(135deg, #6200ea 0%, #b388ff 100%);
+    --text-primary: #212121;
+    --text-secondary: #757575;
+    --border-color: #e0e0e0;
+    --shadow: rgba(0, 0, 0, 0.14);
+    --shadow-hover: rgba(0, 0, 0, 0.24);
+    --card-bg: #ffffff;
+    --nav-bg: #ffffff;
+    --accent-color: #6200ea;
+    --accent-secondary: #b388ff;
+}
+
+/* Retro Theme */
+[data-theme="retro"] {
+    --bg-primary: #f4e8c1;
+    --bg-secondary: #e8d4a2;
+    --bg-gradient: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+    --text-primary: #2d3142;
+    --text-secondary: #4f5d75;
+    --border-color: #bfc0c0;
+    --shadow: rgba(45, 49, 66, 0.15);
+    --shadow-hover: rgba(45, 49, 66, 0.25);
+    --card-bg: #ffffff;
+    --nav-bg: #e8d4a2;
+    --accent-color: #ff6b35;
+    --accent-secondary: #f7931e;
+}
+
+/* Apply theme to body */
+body {
+    background: var(--bg-gradient);
+    color: var(--text-primary);
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Glassmorphism specific body styling */
+[data-theme="glass"] body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    backdrop-filter: blur(10px);
+}
+
+/* Container theme styling */
+.container {
+    background: var(--card-bg);
+    color: var(--text-primary);
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Glassmorphism container effects */
+[data-theme="glass"] .container {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Nav card theme styling */
+.nav-card {
+    background: var(--card-bg);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+    box-shadow: 0 5px 15px var(--shadow);
+    transition: all 0.3s ease;
+}
+
+.nav-card:hover {
+    box-shadow: 0 15px 30px var(--shadow-hover);
+    border-color: var(--accent-color);
+    transform: translateY(-10px);
+}
+
+/* Glassmorphism nav card */
+[data-theme="glass"] .nav-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Neon glow effect */
+[data-theme="neon"] .nav-card:hover {
+    box-shadow: 0 0 20px var(--accent-color), 0 0 40px var(--accent-secondary);
+}
+
+/* Form elements */
+.form-group input,
+.form-group textarea,
+.form-group select {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+/* Buttons */
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.btn-primary:hover {
+    background: var(--accent-secondary);
+    border-color: var(--accent-secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px var(--shadow-hover);
+}
+
+/* Neon button glow */
+[data-theme="neon"] .btn-primary:hover {
+    box-shadow: 0 0 20px var(--accent-color);
+}
+
+/* Theme Switcher Widget */
+.theme-switcher {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: var(--card-bg);
+    border-radius: 50px;
+    padding: 10px;
+    box-shadow: 0 5px 20px var(--shadow);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+[data-theme="glass"] .theme-switcher {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.theme-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-btn:hover {
+    transform: scale(1.1);
+    border-color: var(--accent-color);
+}
+
+.theme-btn.active {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 10px var(--accent-color);
+}
+
+.theme-btn[data-theme="light"] {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.theme-btn[data-theme="dark"] {
+    background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+}
+
+.theme-btn[data-theme="neon"] {
+    background: linear-gradient(135deg, #ff006e 0%, #8338ec 50%, #3a86ff 100%);
+}
+
+.theme-btn[data-theme="glass"] {
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.theme-btn[data-theme="material"] {
+    background: linear-gradient(135deg, #6200ea 0%, #b388ff 100%);
+}
+
+.theme-btn[data-theme="retro"] {
+    background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+}
+
+/* Accessibility - Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}

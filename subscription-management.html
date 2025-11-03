@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscription Management - Tweakorder</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+</head>
+<body>
+    <div class="container">
+        <h1>💳 Subscription & Membership Management</h1>
+        
+        <div class="back-link" style="margin-bottom: 20px;">
+            <a href="index.html" style="text-decoration: none; color: #667eea;">← Back to Dashboard</a>
+        </div>
+
+        <!-- Quick Stats -->
+        <section style="margin-bottom: 40px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                <div class="nav-card">
+                    <h3 style="color: var(--accent-color); font-size: 2.5em; margin-bottom: 10px;">342</h3>
+                    <p style="color: var(--text-secondary);">Active Subscribers</p>
+                </div>
+                <div class="nav-card">
+                    <h3 style="color: #4caf50; font-size: 2.5em; margin-bottom: 10px;">$24.8K</h3>
+                    <p style="color: var(--text-secondary);">Monthly Revenue</p>
+                </div>
+                <div class="nav-card">
+                    <h3 style="color: var(--accent-color); font-size: 2.5em; margin-bottom: 10px;">23</h3>
+                    <p style="color: var(--text-secondary);">Trial Users</p>
+                </div>
+                <div class="nav-card">
+                    <h3 style="color: #ff9800; font-size: 2.5em; margin-bottom: 10px;">8</h3>
+                    <p style="color: var(--text-secondary);">Pending Renewals</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Subscription Plans -->
+        <section style="margin-bottom: 40px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>Subscription Plans</h2>
+                <button class="btn btn-primary btn-morph ripple" onclick="createPlan()">
+                    + Create New Plan
+                </button>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                <!-- Basic Plan -->
+                <div class="nav-card pricing-card" style="text-align: center; position: relative; overflow: visible;">
+                    <h3 style="color: var(--accent-color); font-size: 1.8em; margin-bottom: 10px;">Basic</h3>
+                    <div style="font-size: 3em; font-weight: bold; color: var(--text-primary); margin: 20px 0;">
+                        $9<span style="font-size: 0.4em; color: var(--text-secondary);">/mo</span>
+                    </div>
+                    <ul style="text-align: left; list-style: none; padding: 0; margin: 20px 0;">
+                        <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">✓ Up to 50 orders/month</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">✓ Basic analytics</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">✓ Email support</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">✓ 1 user account</li>
+                    </ul>
+                    <div style="margin-top: 20px; color: var(--text-secondary); font-size: 0.9em;">
+                        <strong>87 subscribers</strong>
+                    </div>
+                    <button class="btn btn-primary btn-morph ripple" style="margin-top: 15px; width: 100%;" onclick="editPlan('basic')">
+                        Edit Plan
+                    </button>
+                </div>
+
+                <!-- Professional Plan -->
+                <div class="nav-card pricing-card" style="text-align: center; position: relative; border: 3px solid var(--accent-color); overflow: visible;">
+                    <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: var(--accent-color); color: white; padding: 5px 20px; border-radius: 20px; font-size: 0.85em; font-weight: bold;">
+                        POPULAR
+                    </div>
+                    <h3 style="color: var(--accent-color); font-size: 1.8em; margin-bottom: 10px; margin-top: 10px;">Professional</h3>
+                    <div style="font-size: 3em; font-weight: bold; color: var(--text-primary); margin: 20px 0;">
+                        $29<span style="font-size: 0.4em; color: var(--text-secondary);">/mo</span>
+                    </div>
+                    <ul style="text-align: left; list-style: none; padding: 0; margin: 20px 0;">
+                        <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">✓ Unlimited orders</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">✓ Advanced analytics</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">✓ Priority support</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">✓ 5 user accounts</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">✓ Custom branding</li>
+                    </ul>
+                    <div style="margin-top: 20px; color: var(--text-secondary); font-size: 0.9em;">
+                        <strong>203 subscribers</strong>
+                    </div>
+                    <button class="btn btn-primary btn-morph ripple" style="margin-top: 15px; width: 100%;" onclick="editPlan('pro')">
+                        Edit Plan
+                    </button>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div class="nav-card pricing-card" style="text-align: center; position: relative; overflow: visible;">
+                    <h3 style="color: var(--accent-color); font-size: 1.8em; margin-bottom: 10px;">Enterprise</h3>
+                    <div style="font-size: 3em; font-weight: bold; color: var(--text-primary); margin: 20px 0;">
+                        $99<span style="font-size: 0.4em; color: var(--text-secondary);">/mo</span>
+                    </div>
+                    <ul style="text-align: left; list-style: none; padding: 0; margin: 20px 0;">
+                        <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">✓ Everything in Professional</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">✓ Dedicated support</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">✓ Unlimited users</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">✓ API access</li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid var(--border-color);">✓ White-label option</li>
+                    </ul>
+                    <div style="margin-top: 20px; color: var(--text-secondary); font-size: 0.9em;">
+                        <strong>52 subscribers</strong>
+                    </div>
+                    <button class="btn btn-primary btn-morph ripple" style="margin-top: 15px; width: 100%;" onclick="editPlan('enterprise')">
+                        Edit Plan
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Active Subscriptions -->
+        <section style="margin-bottom: 40px;">
+            <h2>Active Subscriptions</h2>
+            <div class="nav-card" style="text-align: left;">
+                <div style="margin-bottom: 15px;">
+                    <input type="text" placeholder="🔍 Search subscribers..." style="width: 100%; padding: 12px; border: 2px solid var(--border-color); border-radius: 8px;">
+                </div>
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: var(--bg-secondary); border-bottom: 2px solid var(--border-color);">
+                                <th style="padding: 15px; text-align: left;">Customer</th>
+                                <th style="padding: 15px; text-align: left;">Plan</th>
+                                <th style="padding: 15px; text-align: left;">Status</th>
+                                <th style="padding: 15px; text-align: left;">Start Date</th>
+                                <th style="padding: 15px; text-align: left;">Next Billing</th>
+                                <th style="padding: 15px; text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 15px;">
+                                    <strong>John Smith</strong><br>
+                                    <span style="font-size: 0.85em; color: var(--text-secondary);">john@example.com</span>
+                                </td>
+                                <td style="padding: 15px;">Professional</td>
+                                <td style="padding: 15px;">
+                                    <span class="badge badge-success">Active</span>
+                                </td>
+                                <td style="padding: 15px;">Jan 15, 2024</td>
+                                <td style="padding: 15px;">Dec 15, 2024</td>
+                                <td style="padding: 15px; text-align: center;">
+                                    <button class="btn-small" onclick="manageSub(1)">⚙️ Manage</button>
+                                </td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 15px;">
+                                    <strong>Sarah Johnson</strong><br>
+                                    <span style="font-size: 0.85em; color: var(--text-secondary);">sarah@example.com</span>
+                                </td>
+                                <td style="padding: 15px;">Basic</td>
+                                <td style="padding: 15px;">
+                                    <span class="badge badge-warning">Trial</span>
+                                </td>
+                                <td style="padding: 15px;">Nov 1, 2024</td>
+                                <td style="padding: 15px;">Nov 15, 2024</td>
+                                <td style="padding: 15px; text-align: center;">
+                                    <button class="btn-small" onclick="manageSub(2)">⚙️ Manage</button>
+                                </td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 15px;">
+                                    <strong>Tech Corp Inc.</strong><br>
+                                    <span style="font-size: 0.85em; color: var(--text-secondary);">billing@techcorp.com</span>
+                                </td>
+                                <td style="padding: 15px;">Enterprise</td>
+                                <td style="padding: 15px;">
+                                    <span class="badge badge-success">Active</span>
+                                </td>
+                                <td style="padding: 15px;">Mar 10, 2024</td>
+                                <td style="padding: 15px;">Dec 10, 2024</td>
+                                <td style="padding: 15px; text-align: center;">
+                                    <button class="btn-small" onclick="manageSub(3)">⚙️ Manage</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Billing Settings -->
+        <section>
+            <h2>Billing Configuration</h2>
+            <div class="nav-card" style="text-align: left;">
+                <div class="form-group">
+                    <label>Payment Gateway</label>
+                    <select>
+                        <option>Stripe</option>
+                        <option>PayPal</option>
+                        <option>Square</option>
+                        <option>Braintree</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Trial Period (days)</label>
+                    <input type="number" value="14" min="0" max="90">
+                </div>
+
+                <div class="form-group">
+                    <label>Billing Cycle</label>
+                    <select>
+                        <option>Monthly</option>
+                        <option>Quarterly</option>
+                        <option>Annually</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" checked>
+                        Send payment receipt emails
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 10px;">
+                        <input type="checkbox" checked>
+                        Send renewal reminder 7 days before
+                    </label>
+                </div>
+
+                <button class="btn btn-primary btn-morph ripple">Save Billing Settings</button>
+            </div>
+        </section>
+    </div>
+
+    <style>
+        .pricing-card {
+            transition: all 0.3s ease;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-10px) scale(1.02);
+        }
+
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .btn-small {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            background: var(--accent-color);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .btn-small:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+    </style>
+
+    <script src="assets/js/theme-system.js"></script>
+    <script>
+        function createPlan() {
+            NotificationManager.show('Opening plan builder...', 'info');
+        }
+
+        function editPlan(planId) {
+            LoadingSpinner.show();
+            setTimeout(() => {
+                LoadingSpinner.hide();
+                NotificationManager.show(`Editing ${planId} plan...`, 'info');
+            }, 800);
+        }
+
+        function manageSub(subId) {
+            LoadingSpinner.show();
+            setTimeout(() => {
+                LoadingSpinner.hide();
+                NotificationManager.show(`Managing subscription ${subId}...`, 'info');
+            }, 800);
+        }
+    </script>
+</body>
+</html>
