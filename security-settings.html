@@ -134,11 +134,11 @@
                     <div id="whitelist" style="margin-bottom: 15px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--bg-secondary); border-radius: 5px; margin-bottom: 10px;">
                             <code>192.168.1.0/24</code>
-                            <button class="btn-small" onclick="removeIP('whitelist', 0)" style="background: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Remove</button>
+                            <button class="btn-small" onclick="removeIP('whitelist', '192.168.1.0/24')" style="background: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Remove</button>
                         </div>
                         <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--bg-secondary); border-radius: 5px;">
                             <code>203.0.113.0/24</code>
-                            <button class="btn-small" onclick="removeIP('whitelist', 1)" style="background: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Remove</button>
+                            <button class="btn-small" onclick="removeIP('whitelist', '203.0.113.0/24')" style="background: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Remove</button>
                         </div>
                     </div>
 
@@ -160,7 +160,7 @@
                     <div id="blacklist" style="margin-bottom: 15px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--bg-secondary); border-radius: 5px; margin-bottom: 10px;">
                             <code>198.51.100.7</code>
-                            <button class="btn-small" onclick="removeIP('blacklist', 0)" style="background: #4caf50; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Unblock</button>
+                            <button class="btn-small" onclick="removeIP('blacklist', '198.51.100.7')" style="background: #4caf50; color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;">Unblock</button>
                         </div>
                     </div>
 
@@ -317,12 +317,12 @@
             }, 800);
         }
 
-        function removeIP(type, index) {
-            if (confirm(`Remove this IP from ${type}?`)) {
+        function removeIP(type, ipAddress) {
+            if (confirm(`Remove ${ipAddress} from ${type}?`)) {
                 LoadingSpinner.show();
                 setTimeout(() => {
                     LoadingSpinner.hide();
-                    NotificationManager.show(`IP removed from ${type}`, 'success');
+                    NotificationManager.show(`IP ${ipAddress} removed from ${type}`, 'success');
                 }, 800);
             }
         }

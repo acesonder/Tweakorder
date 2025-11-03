@@ -286,13 +286,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(style);
 });
 
-// Export for use in other modules
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        ThemeManager,
-        Card3DEffect,
-        LoadingSpinner,
-        NotificationManager,
-        smoothScroll
-    };
-}
+// Make utilities globally available
+window.ThemeManager = ThemeManager;
+window.Card3DEffect = Card3DEffect;
+window.LoadingSpinner = LoadingSpinner;
+window.NotificationManager = NotificationManager;
+window.smoothScroll = smoothScroll;
