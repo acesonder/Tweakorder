@@ -68,7 +68,7 @@ function handleLogin($pdo, $data) {
     }
 
     // Verify password
-    $passwordField = isset($user['password']) ? $user['password'] : $user['password_hash'];
+    $passwordField = $user['password_hash'];
     if (!password_verify($password, $passwordField)) {
         echo json_encode(['success' => false, 'error' => 'Invalid credentials']);
         return;
@@ -162,7 +162,7 @@ function handleRegister($pdo, $data) {
 
     // Insert user
     $stmt = $pdo->prepare("
-        INSERT INTO users (username, password, first_name, last_name, email, role, is_active)
+        INSERT INTO users (username, password_hash, first_name, last_name, email, role, is_active)
         VALUES (?, ?, ?, ?, ?, ?, 1)
     ");
 

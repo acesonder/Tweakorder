@@ -5,14 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Worker - Tweak Order Online</title>
     <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .section-divider {
+            margin: 30px 0 20px 0;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+        }
+        
+        .section-title {
+            color: #667eea;
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        
+        .help-text {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <button class="btn btn-back" onclick="navigateTo('index.html')">← Back to Home</button>
         
-        <h1>Add New Worker</h1>
+        <h1>Add New Worker/Staff</h1>
         
         <form id="workerForm">
+            <div class="section-title">📋 Basic Information</div>
+            
             <div class="form-group">
                 <label for="first_name">First Name *</label>
                 <input type="text" id="first_name" name="first_name" required>
@@ -23,31 +44,130 @@
                 <input type="text" id="last_name" name="last_name" required>
             </div>
             
+            <div class="section-divider"></div>
+            <div class="section-title">🔐 Staff Account (Optional)</div>
+            <p class="help-text">Create a staff account to allow this worker to login to the system.</p>
+            
+            <div class="form-group">
+                <label for="create_account">
+                    <input type="checkbox" id="create_account" name="create_account" onchange="toggleAccountFields()">
+                    Create Staff Account
+                </label>
+            </div>
+            
+            <div id="accountFields" style="display: none;">
+                <div class="form-group">
+                    <label for="username">Username *</label>
+                    <input type="text" id="username" name="username">
+                    <div class="help-text">Used for login</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password *</label>
+                    <input type="password" id="password" name="password">
+                    <div class="help-text">Minimum 6 characters</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email">
+                </div>
+                
+                <div class="form-group">
+                    <label for="role">Role *</label>
+                    <select id="role" name="role">
+                        <option value="Worker">Worker</option>
+                        <option value="Manager">Manager</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Viewer">Viewer</option>
+                    </select>
+                    <div class="help-text">Determines access level in the system</div>
+                </div>
+            </div>
+            
             <button type="submit" class="btn">Add Worker</button>
         </form>
     </div>
     
     <script src="assets/js/app.js"></script>
     <script>
-        document.getElementById('workerForm').addEventListener('submit', function(e) {
+        function toggleAccountFields() {
+            const checked = document.getElementById('create_account').checked;
+            const accountFields = document.getElementById('accountFields');
+            accountFields.style.display = checked ? 'block' : 'none';
+            
+            // Update required fields
+            document.getElementById('username').required = checked;
+            document.getElementById('password').required = checked;
+        }
+        
+        document.getElementById('workerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const formData = new FormData(this);
-            const data = new URLSearchParams(formData).toString();
+            const createAccount = document.getElementById('create_account').checked;
             
-            ajax('api/workers.php', 'POST', data, function(err, response) {
-                if (err) {
-                    showAlert('Error adding worker', 'error');
+            // First, add the worker record (for backward compatibility)
+            const workerData = new URLSearchParams({
+                first_name: document.getElementById('first_name').value,
+                last_name: document.getElementById('last_name').value
+            });
+            
+            try {
+                const workerResponse = await fetch('api/workers.php', {
+                    method: 'POST',
+                    body: workerData
+                });
+                
+                const workerResult = await workerResponse.json();
+                
+                if (!workerResult.success) {
+                    showAlert('Error adding worker: ' + (workerResult.message || 'Unknown error'), 'error');
                     return;
                 }
                 
-                if (response.success) {
-                    showAlert('Worker added successfully!', 'success');
-                    setTimeout(() => navigateTo('index.html'), 1500);
+                // If creating staff account, create it now
+                if (createAccount) {
+                    const username = document.getElementById('username').value;
+                    const password = document.getElementById('password').value;
+                    
+                    if (!username || !password) {
+                        showAlert('Username and password are required for staff account', 'error');
+                        return;
+                    }
+                    
+                    const staffData = {
+                        action: 'register',
+                        username: username,
+                        password: password,
+                        first_name: document.getElementById('first_name').value,
+                        last_name: document.getElementById('last_name').value,
+                        email: document.getElementById('email').value,
+                        role: document.getElementById('role').value
+                    };
+                    
+                    const staffResponse = await fetch('api/staff-auth.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(staffData)
+                    });
+                    
+                    const staffResult = await staffResponse.json();
+                    
+                    if (!staffResult.success) {
+                        showAlert('Worker added but staff account creation failed: ' + (staffResult.error || 'Unknown error'), 'error');
+                        return;
+                    }
+                    
+                    showAlert('Worker and staff account created successfully!', 'success');
                 } else {
-                    showAlert(response.message || 'Failed to add worker', 'error');
+                    showAlert('Worker added successfully!', 'success');
                 }
-            });
+                
+                setTimeout(() => navigateTo('index.html'), 1500);
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error processing request', 'error');
+            }
         });
     </script>
 </body>
