@@ -69,6 +69,18 @@ A professional, enterprise-grade web application for managing products, workers,
 - **Error Handling** - Comprehensive error response guide
 - **Integration Guide** - Third-party integration instructions
 
+#### Customizable Dashboard
+- **Drag & Drop Layouts** - Reorder widgets by dragging them
+- **Widget Resizing** - Adjust widget sizes to fit your workflow
+- **Persistent Layouts** - Saves your customizations across sessions
+- **Smooth Animations** - Polished transitions for all interactions
+- **Quick Stats Widget** - View key metrics at a glance
+- **Recent Orders Widget** - Monitor latest order activity
+- **Quick Actions Widget** - Fast access to common tasks
+- **Analytics Summary** - Visual charts and trends
+- **Activity Feed** - Real-time system updates
+- **Reset to Default** - One-click restore of original layout
+
 ### Staff Portal
 - **Add Products** - Create products with images, descriptions, inventory, and custom gradient backgrounds
 - **Add Workers** - Register workers in the system
@@ -147,9 +159,14 @@ A professional, enterprise-grade web application for managing products, workers,
    mysql -u root -p < database.sql
    ```
 
-3. **Load case management templates (NEW)**
+3. **Load case management templates**
    ```bash
-   mysql -u root -p < case_templates_data.sql
+   mysql -u root -p tweakorder < case_templates_data.sql
+   ```
+
+4. **Set up customizable dashboard** (NEW)
+   ```bash
+   mysql -u root -p tweakorder < dashboard_customization.sql
    ```
    
    Or use the automated setup script:
@@ -157,26 +174,26 @@ A professional, enterprise-grade web application for managing products, workers,
    bash setup_new_features.sh
    ```
 
-4. **Add sample data (optional)**
+5. **Add sample data (optional)**
    ```bash
    mysql -u root -p < sample_data.sql
    ```
 
-5. **Configure database connection**
+6. **Configure database connection**
    - Edit `config/database.php` with your MySQL credentials
    - Default settings: host=localhost, user=root, password='', database=tweakorder
 
-6. **Grant database privileges**
+7. **Grant database privileges**
    ```bash
    mysql -u root -p -e "GRANT ALL PRIVILEGES ON tweakorder.* TO 'root'@'localhost'; FLUSH PRIVILEGES;"
    ```
 
-7. **Set up file permissions**
+8. **Set up file permissions**
    ```bash
    chmod 755 assets/uploads
    ```
 
-8. **Start your web server**
+9. **Start your web server**
    - Point your web server document root to the project directory
    - For development, you can use PHP's built-in server:
      ```bash
@@ -189,6 +206,7 @@ A professional, enterprise-grade web application for managing products, workers,
    - **Case Management**: `http://localhost:8000/case-management.html`
    - **Error Logs**: `http://localhost:8000/error-logs.html`
    - **Client Portal**: `http://localhost:8000/client-portal.html`
+   - **Customizable Dashboard**: `http://localhost:8000/dashboard-custom.html`
 
 ## Database Configuration
 
@@ -264,6 +282,7 @@ The application is fully responsive and works seamlessly on:
 
 ## User Guides
 
+- [**Dashboard Customization Guide**](DASHBOARD_CUSTOMIZATION_GUIDE.md) - Complete guide for customizing your dashboard
 - [**Mobile Features Guide**](MOBILE_FEATURES_GUIDE.md) - Complete guide for new mobile and case management features
 - [**Client Portal User Guide**](CLIENT_PORTAL_GUIDE.md) - Complete guide for customers
 - [**Staff Workflow Guide**](WORKFLOW_GUIDE.md) - Guide for staff users
@@ -319,6 +338,8 @@ The application includes tables for:
 - **NEW: error_logs** - System error tracking with severity levels
 - **NEW: case_templates** - 50+ pre-built case management templates
 - **NEW: case_notes** - Client case documentation and notes
+- **NEW: dashboard_layouts** - User-specific dashboard configurations
+- **NEW: dashboard_widgets** - Widget positions, sizes, and settings
 - **NEW: worker_preferences** - User UI style preferences
 - **audit_log** - Change tracking (future use)
 - **product_categories** - Product categorization (future use)
