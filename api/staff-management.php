@@ -130,9 +130,9 @@ function resetStaffPassword($pdo, $data) {
 
     try {
         $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare("UPDATE users SET password_hash = ?, password = ? WHERE id = ?");
+        $stmt = $pdo->prepare("UPDATE users SET password_hash = ? WHERE id = ?");
         
-        if ($stmt->execute([$hashedPassword, $hashedPassword, $userId])) {
+        if ($stmt->execute([$hashedPassword, $userId])) {
             logActivity($pdo, $_SESSION['user_id'], 'reset_password', "Reset password for user ID: $userId");
             echo json_encode(['success' => true, 'message' => 'Password reset successfully']);
         } else {

@@ -118,6 +118,22 @@ function removeDemoContent($pdo) {
         // Start transaction
         $pdo->beginTransaction();
 
+        // Get demo location IDs first
+        $stmt = $pdo->prepare("
+            SELECT id FROM locations 
+            WHERE name IN ('Main Warehouse', 'Downtown Pickup Point', 'East Side Dropoff', 'North Branch')
+        ");
+        $stmt->execute();
+        $demoLocationIds = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        if (!empty($demoLocationIds)) {
+            $placeholders = implode(',', array_fill(0, count($demoLocationIds), '?'));
+            
+            // Remove schedule availability for demo locations
+            $stmt = $pdo->prepare("DELETE FROM schedule_availability WHERE location_id IN ($placeholders)");
+            $stmt->execute($demoLocationIds);
+        }
+
         // Remove demo products (keep if referenced in orders)
         $stmt = $pdo->prepare("
             DELETE FROM products 
@@ -126,7 +142,7 @@ function removeDemoContent($pdo) {
         ");
         $stmt->execute();
 
-        // Remove demo locations (keep if referenced in orders or schedules with orders)
+        // Remove demo locations (keep if referenced in orders)
         $stmt = $pdo->prepare("
             DELETE FROM locations 
             WHERE name IN ('Main Warehouse', 'Downtown Pickup Point', 'East Side Dropoff', 'North Branch')
@@ -139,13 +155,6 @@ function removeDemoContent($pdo) {
             DELETE FROM workers 
             WHERE first_name IN ('Alice', 'Bob', 'Carol')
             AND last_name IN ('Manager', 'Technician', 'Supervisor')
-        ");
-        $stmt->execute();
-
-        // Remove orphaned schedule availability
-        $stmt = $pdo->prepare("
-            DELETE FROM schedule_availability 
-            WHERE location_id NOT IN (SELECT id FROM locations)
         ");
         $stmt->execute();
 

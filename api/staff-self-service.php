@@ -47,7 +47,7 @@ function resetOwnPassword($pdo, $data) {
 
     try {
         // Verify current password
-        $stmt = $pdo->prepare("SELECT password_hash, password FROM users WHERE id = ?");
+        $stmt = $pdo->prepare("SELECT password_hash FROM users WHERE id = ?");
         $stmt->execute([$_SESSION['user_id']]);
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -56,7 +56,7 @@ function resetOwnPassword($pdo, $data) {
             return;
         }
 
-        $passwordField = isset($user['password']) ? $user['password'] : $user['password_hash'];
+        $passwordField = $user['password_hash'];
         if (!password_verify($currentPassword, $passwordField)) {
             echo json_encode(['success' => false, 'error' => 'Current password is incorrect']);
             return;
@@ -64,9 +64,9 @@ function resetOwnPassword($pdo, $data) {
 
         // Update password
         $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
-        $stmt = $pdo->prepare("UPDATE users SET password_hash = ?, password = ? WHERE id = ?");
+        $stmt = $pdo->prepare("UPDATE users SET password_hash = ? WHERE id = ?");
         
-        if ($stmt->execute([$hashedPassword, $hashedPassword, $_SESSION['user_id']])) {
+        if ($stmt->execute([$hashedPassword, $_SESSION['user_id']])) {
             logActivity($pdo, $_SESSION['user_id'], 'reset_own_password', 'User reset their own password');
             echo json_encode(['success' => true, 'message' => 'Password reset successfully']);
         } else {
