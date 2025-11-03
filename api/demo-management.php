@@ -188,7 +188,6 @@ function logActivity($pdo, $userId, $action, $description) {
 }
 
 function getPDOConnection() {
-    require_once '../config/database.php';
     return getConnection();
 }
 ?>
