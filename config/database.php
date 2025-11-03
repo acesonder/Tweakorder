@@ -36,4 +36,10 @@ try {
     error_log('PDO connection failed: ' . $e->getMessage());
     die(json_encode(['success' => false, 'message' => 'Database connection failed. Please contact support.']));
 }
+
+// Get PDO connection (function for new code)
+function getConnection() {
+    global $pdo;
+    return $pdo;
+}
 ?>
