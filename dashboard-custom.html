@@ -816,12 +816,29 @@
 
         // Render analytics summary
         function renderAnalyticsSummary(data) {
-            return `
-                <div style="height: 250px;">
-                    <canvas id="analyticsChart"></canvas>
-                </div>
-            `;
-            // Note: Chart.js rendering would be done after the element is created
+            if (!data || (!data.by_status && !data.last_7_days)) {
+                return '<div class="empty-widget">No analytics data available</div>';
+            }
+            
+            // Simple text-based analytics summary (Chart.js can be added later)
+            let html = '<div style="padding: 10px;">';
+            
+            if (data.by_status && data.by_status.length > 0) {
+                html += '<h4 style="margin-top: 0;">Orders by Status</h4>';
+                html += '<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">';
+                data.by_status.forEach(item => {
+                    html += `
+                        <div style="padding: 10px; background: #f8f9fa; border-radius: 6px;">
+                            <div style="font-weight: 600; color: #667eea;">${item.count}</div>
+                            <div style="font-size: 0.85em; color: #666;">${formatStatus(item.status)}</div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            html += '</div>';
+            return html;
         }
 
         // Helper: Format status
