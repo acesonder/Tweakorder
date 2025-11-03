@@ -225,7 +225,10 @@ class SystemValidator {
                 $this->addPass("Test product submission successful (ID: $product_id)");
                 
                 // Verify it was stored correctly
-                $verify = $this->dbConnection->query("SELECT * FROM products WHERE id = $product_id");
+                $verifyStmt = $this->dbConnection->prepare("SELECT * FROM products WHERE id = ?");
+                $verifyStmt->bind_param("i", $product_id);
+                $verifyStmt->execute();
+                $verify = $verifyStmt->get_result();
                 if ($verify && $verify->num_rows > 0) {
                     $row = $verify->fetch_assoc();
                     if ($row['name'] === $testProduct['name']) {
@@ -233,9 +236,13 @@ class SystemValidator {
                     } else {
                         $this->addError("Test product data mismatch in database");
                     }
+                    $verifyStmt->close();
                     
                     // Clean up test data
-                    $this->dbConnection->query("DELETE FROM products WHERE id = $product_id");
+                    $cleanupStmt = $this->dbConnection->prepare("DELETE FROM products WHERE id = ?");
+                    $cleanupStmt->bind_param("i", $product_id);
+                    $cleanupStmt->execute();
+                    $cleanupStmt->close();
                     $this->addPass("Test product cleaned up");
                 }
             } else {
@@ -261,7 +268,10 @@ class SystemValidator {
                 $this->addPass("Test worker submission successful (ID: $worker_id)");
                 
                 // Clean up
-                $this->dbConnection->query("DELETE FROM workers WHERE id = $worker_id");
+                $cleanupStmt = $this->dbConnection->prepare("DELETE FROM workers WHERE id = ?");
+                $cleanupStmt->bind_param("i", $worker_id);
+                $cleanupStmt->execute();
+                $cleanupStmt->close();
                 $this->addPass("Test worker cleaned up");
             } else {
                 $this->addError("Failed to insert test worker: " . $stmt->error);
@@ -285,7 +295,10 @@ class SystemValidator {
                 $this->addPass("Test client submission successful (ID: $client_id)");
                 
                 // Clean up
-                $this->dbConnection->query("DELETE FROM clients WHERE id = $client_id");
+                $cleanupStmt = $this->dbConnection->prepare("DELETE FROM clients WHERE id = ?");
+                $cleanupStmt->bind_param("i", $client_id);
+                $cleanupStmt->execute();
+                $cleanupStmt->close();
                 $this->addPass("Test client cleaned up");
             } else {
                 $this->addError("Failed to insert test client: " . $stmt->error);

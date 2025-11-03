@@ -104,7 +104,10 @@ class DatabaseFormTester {
                 echo Colors::$GREEN . "  ✓ Product inserted successfully (ID: $productId)" . Colors::$NC . "\n";
                 
                 // Verify data was stored correctly
-                $verify = $this->conn->query("SELECT * FROM products WHERE id = $productId");
+                $verifyStmt = $this->conn->prepare("SELECT * FROM products WHERE id = ?");
+                $verifyStmt->bind_param("i", $productId);
+                $verifyStmt->execute();
+                $verify = $verifyStmt->get_result();
                 if ($verify && $verify->num_rows > 0) {
                     $row = $verify->fetch_assoc();
                     
@@ -125,9 +128,13 @@ class DatabaseFormTester {
                     echo Colors::$RED . "  ✗ Could not retrieve inserted product" . Colors::$NC . "\n";
                     $this->failed[] = "Product retrieval after insert";
                 }
+                $verifyStmt->close();
                 
                 // Cleanup
-                $this->conn->query("DELETE FROM products WHERE id = $productId");
+                $cleanupStmt = $this->conn->prepare("DELETE FROM products WHERE id = ?");
+                $cleanupStmt->bind_param("i", $productId);
+                $cleanupStmt->execute();
+                $cleanupStmt->close();
                 echo Colors::$GREEN . "  ✓ Test data cleaned up" . Colors::$NC . "\n";
                 
             } else {
@@ -161,7 +168,10 @@ class DatabaseFormTester {
                 echo Colors::$GREEN . "  ✓ Worker inserted successfully (ID: $workerId)" . Colors::$NC . "\n";
                 
                 // Verify
-                $verify = $this->conn->query("SELECT * FROM workers WHERE id = $workerId");
+                $verifyStmt = $this->conn->prepare("SELECT * FROM workers WHERE id = ?");
+                $verifyStmt->bind_param("i", $workerId);
+                $verifyStmt->execute();
+                $verify = $verifyStmt->get_result();
                 if ($verify && $verify->num_rows > 0) {
                     $row = $verify->fetch_assoc();
                     if ($row['name'] === $testWorker['name'] && $row['email'] === $testWorker['email']) {
@@ -172,9 +182,13 @@ class DatabaseFormTester {
                         $this->failed[] = "Worker data verification";
                     }
                 }
+                $verifyStmt->close();
                 
                 // Cleanup
-                $this->conn->query("DELETE FROM workers WHERE id = $workerId");
+                $cleanupStmt = $this->conn->prepare("DELETE FROM workers WHERE id = ?");
+                $cleanupStmt->bind_param("i", $workerId);
+                $cleanupStmt->execute();
+                $cleanupStmt->close();
                 echo Colors::$GREEN . "  ✓ Test data cleaned up" . Colors::$NC . "\n";
                 
             } else {
@@ -210,7 +224,10 @@ class DatabaseFormTester {
                 echo Colors::$GREEN . "  ✓ Client inserted successfully (ID: $clientId)" . Colors::$NC . "\n";
                 
                 // Verify
-                $verify = $this->conn->query("SELECT * FROM clients WHERE id = $clientId");
+                $verifyStmt = $this->conn->prepare("SELECT * FROM clients WHERE id = ?");
+                $verifyStmt->bind_param("i", $clientId);
+                $verifyStmt->execute();
+                $verify = $verifyStmt->get_result();
                 if ($verify && $verify->num_rows > 0) {
                     $row = $verify->fetch_assoc();
                     if ($row['name'] === $testClient['name'] && $row['phone'] === $testClient['phone']) {
@@ -221,9 +238,13 @@ class DatabaseFormTester {
                         $this->failed[] = "Client data verification";
                     }
                 }
+                $verifyStmt->close();
                 
                 // Cleanup
-                $this->conn->query("DELETE FROM clients WHERE id = $clientId");
+                $cleanupStmt = $this->conn->prepare("DELETE FROM clients WHERE id = ?");
+                $cleanupStmt->bind_param("i", $clientId);
+                $cleanupStmt->execute();
+                $cleanupStmt->close();
                 echo Colors::$GREEN . "  ✓ Test data cleaned up" . Colors::$NC . "\n";
                 
             } else {
@@ -267,7 +288,10 @@ class DatabaseFormTester {
                 echo Colors::$GREEN . "  ✓ Order inserted successfully (ID: $orderId)" . Colors::$NC . "\n";
                 
                 // Verify
-                $verify = $this->conn->query("SELECT * FROM orders WHERE id = $orderId");
+                $verifyStmt = $this->conn->prepare("SELECT * FROM orders WHERE id = ?");
+                $verifyStmt->bind_param("i", $orderId);
+                $verifyStmt->execute();
+                $verify = $verifyStmt->get_result();
                 if ($verify && $verify->num_rows > 0) {
                     $row = $verify->fetch_assoc();
                     if ($row['client_id'] == $testOrder['client_id'] && $row['status'] === $testOrder['status']) {
@@ -278,9 +302,13 @@ class DatabaseFormTester {
                         $this->failed[] = "Order data verification";
                     }
                 }
+                $verifyStmt->close();
                 
                 // Cleanup
-                $this->conn->query("DELETE FROM orders WHERE id = $orderId");
+                $cleanupStmt = $this->conn->prepare("DELETE FROM orders WHERE id = ?");
+                $cleanupStmt->bind_param("i", $orderId);
+                $cleanupStmt->execute();
+                $cleanupStmt->close();
                 echo Colors::$GREEN . "  ✓ Test order cleaned up" . Colors::$NC . "\n";
                 
             } else {
@@ -291,7 +319,10 @@ class DatabaseFormTester {
             $stmt->close();
             
             // Cleanup client
-            $this->conn->query("DELETE FROM clients WHERE id = $clientId");
+            $cleanupStmt = $this->conn->prepare("DELETE FROM clients WHERE id = ?");
+            $cleanupStmt->bind_param("i", $clientId);
+            $cleanupStmt->execute();
+            $cleanupStmt->close();
             echo "\n";
             
         } catch (Exception $e) {
@@ -337,7 +368,10 @@ class DatabaseFormTester {
                 echo Colors::$GREEN . "  ✓ Case note inserted successfully (ID: $noteId)" . Colors::$NC . "\n";
                 
                 // Verify
-                $verify = $this->conn->query("SELECT * FROM case_notes WHERE id = $noteId");
+                $verifyStmt = $this->conn->prepare("SELECT * FROM case_notes WHERE id = ?");
+                $verifyStmt->bind_param("i", $noteId);
+                $verifyStmt->execute();
+                $verify = $verifyStmt->get_result();
                 if ($verify && $verify->num_rows > 0) {
                     $row = $verify->fetch_assoc();
                     if ($row['client_id'] == $testNote['client_id'] && $row['note_text'] === $testNote['note_text']) {
@@ -345,14 +379,22 @@ class DatabaseFormTester {
                         $this->passed[] = "Case note submission and validation";
                     }
                 }
+                $verifyStmt->close();
                 
                 // Cleanup
-                $this->conn->query("DELETE FROM case_notes WHERE id = $noteId");
+                $cleanupStmt = $this->conn->prepare("DELETE FROM case_notes WHERE id = ?");
+                $cleanupStmt->bind_param("i", $noteId);
+                $cleanupStmt->execute();
+                $cleanupStmt->close();
                 echo Colors::$GREEN . "  ✓ Test case note cleaned up" . Colors::$NC . "\n";
             }
             
             $stmt->close();
-            $this->conn->query("DELETE FROM clients WHERE id = $clientId");
+            
+            $cleanupClientStmt = $this->conn->prepare("DELETE FROM clients WHERE id = ?");
+            $cleanupClientStmt->bind_param("i", $clientId);
+            $cleanupClientStmt->execute();
+            $cleanupClientStmt->close();
             echo "\n";
             
         } catch (Exception $e) {
