@@ -292,10 +292,18 @@ class LinkAndFormValidator {
         foreach ($apiFiles as $file) {
             $filename = basename($file);
             
+            // Validate file is within expected directory to prevent path traversal
+            $realPath = realpath($file);
+            $expectedPath = realpath($this->baseDir . '/api');
+            if ($realPath === false || strpos($realPath, $expectedPath) !== 0) {
+                $this->addError("Security: Invalid file path detected: $filename");
+                continue;
+            }
+            
             // Check PHP syntax
             $output = [];
             $return_var = 0;
-            exec("php -l " . escapeshellarg($file) . " 2>&1", $output, $return_var);
+            exec("php -l " . escapeshellarg($realPath) . " 2>&1", $output, $return_var);
             
             if ($return_var !== 0) {
                 $this->addError("PHP syntax error in $filename: " . implode("\n", $output));
