@@ -89,7 +89,7 @@ class DatabaseFormTester {
         try {
             // Test data
             $testProduct = [
-                'name' => 'Test Product ' . time(),
+                'name' => 'Test Product ' . uniqid(),
                 'description' => 'This is a test product created by validation script',
                 'inventory' => 50,
                 'background_color' => 'gradient-3'
@@ -156,8 +156,8 @@ class DatabaseFormTester {
         
         try {
             $testWorker = [
-                'name' => 'Test Worker ' . time(),
-                'email' => 'test' . time() . '@validation.local'
+                'name' => 'Test Worker ' . uniqid(),
+                'email' => 'test' . uniqid() . '@validation.local'
             ];
             
             $stmt = $this->conn->prepare("INSERT INTO workers (name, email) VALUES (?, ?)");
@@ -210,9 +210,9 @@ class DatabaseFormTester {
         
         try {
             $testClient = [
-                'name' => 'Test Client ' . time(),
+                'name' => 'Test Client ' . uniqid(),
                 'phone' => '555-' . rand(1000, 9999),
-                'email' => 'client' . time() . '@validation.local',
+                'email' => 'client' . uniqid() . '@validation.local',
                 'address' => '123 Test St'
             ];
             

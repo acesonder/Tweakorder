@@ -62,14 +62,18 @@ class SystemValidator {
             $this->addPass("Database connection successful");
             
             // Test database tables exist
-            $tables = ['products', 'clients', 'workers', 'orders', 'order_items', 'locations', 'users'];
-            foreach ($tables as $table) {
-                $result = $this->dbConnection->query("SHOW TABLES LIKE '$table'");
+            $allowedTables = ['products', 'clients', 'workers', 'orders', 'order_items', 'locations', 'users'];
+            foreach ($allowedTables as $table) {
+                $stmt = $this->dbConnection->prepare("SHOW TABLES LIKE ?");
+                $stmt->bind_param("s", $table);
+                $stmt->execute();
+                $result = $stmt->get_result();
                 if ($result->num_rows > 0) {
                     $this->addPass("Table '$table' exists");
                 } else {
                     $this->addWarning("Table '$table' does not exist");
                 }
+                $stmt->close();
             }
             
             return true;
