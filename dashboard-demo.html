@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customizable Dashboard - Tweakorder</title>
+    <title>Customizable Dashboard Demo - Tweakorder</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
         body {
@@ -25,6 +25,14 @@
         .header-left h1 {
             margin: 0;
             font-size: 1.8em;
+        }
+
+        .demo-badge {
+            background: rgba(255,255,255,0.3);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            margin-left: 15px;
         }
 
         .header-actions {
@@ -250,11 +258,6 @@
             color: #155724;
         }
 
-        .status-cancelled {
-            background: #f8d7da;
-            color: #721c24;
-        }
-
         .quick-action-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -312,28 +315,6 @@
             color: #999;
         }
 
-        .empty-widget {
-            text-align: center;
-            padding: 40px;
-            color: #999;
-        }
-
-        .resize-handle {
-            display: none;
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 20px;
-            height: 20px;
-            background: #667eea;
-            cursor: nwse-resize;
-            border-radius: 0 0 12px 0;
-        }
-
-        .edit-mode .resize-handle {
-            display: block;
-        }
-
         .notification {
             position: fixed;
             top: 20px;
@@ -345,18 +326,11 @@
             display: none;
             z-index: 1000;
             animation: slideIn 0.3s ease;
+            border-left: 4px solid #43e97b;
         }
 
         .notification.show {
             display: block;
-        }
-
-        .notification.success {
-            border-left: 4px solid #43e97b;
-        }
-
-        .notification.error {
-            border-left: 4px solid #f5576c;
         }
 
         @keyframes slideIn {
@@ -387,7 +361,7 @@
 
     <div class="dashboard-header">
         <div class="header-left">
-            <h1>🎨 Customizable Dashboard</h1>
+            <h1>🎨 Customizable Dashboard<span class="demo-badge">DEMO MODE</span></h1>
             <p style="margin: 5px 0 0 0; opacity: 0.9;">Drag, drop, and resize your widgets</p>
         </div>
         <div class="header-actions">
@@ -408,85 +382,155 @@
                 🔄 Reset Layout
             </button>
             <button class="btn btn-primary" onclick="saveLayout()" style="font-size: 0.9em;" id="saveBtn" disabled>
-                💾 Save Layout
+                💾 Save Layout (Demo)
             </button>
         </div>
     </div>
 
     <div class="dashboard-container">
         <div class="dashboard-grid" id="dashboardGrid">
-            <!-- Widgets will be loaded here -->
+            <!-- Quick Stats Widget -->
+            <div class="widget w-12 h-2" draggable="false" data-widget-id="1">
+                <div class="widget-header">
+                    <h3 class="widget-title">Quick Statistics</h3>
+                    <div class="widget-actions">
+                        <button class="widget-btn" onclick="resizeWidget(this, 'smaller')">-</button>
+                        <button class="widget-btn" onclick="resizeWidget(this, 'larger')">+</button>
+                    </div>
+                </div>
+                <div class="widget-content">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                        <div class="stat-card">
+                            <div class="stat-label">Total Orders</div>
+                            <div class="stat-value">342</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Today</div>
+                            <div class="stat-value" style="color: #43e97b;">12</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Pending</div>
+                            <div class="stat-value" style="color: #f5a623;">8</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Products</div>
+                            <div class="stat-value" style="color: #4facfe;">156</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Clients</div>
+                            <div class="stat-value" style="color: #764ba2;">89</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders Widget -->
+            <div class="widget w-6 h-4" draggable="false" data-widget-id="2">
+                <div class="widget-header">
+                    <h3 class="widget-title">Recent Orders</h3>
+                    <div class="widget-actions">
+                        <button class="widget-btn" onclick="resizeWidget(this, 'smaller')">-</button>
+                        <button class="widget-btn" onclick="resizeWidget(this, 'larger')">+</button>
+                    </div>
+                </div>
+                <div class="widget-content">
+                    <div class="order-item">
+                        <div class="order-info">
+                            <div class="order-client">John Doe</div>
+                            <div class="order-meta">3 items • Today</div>
+                        </div>
+                        <span class="status-badge status-processing">Processing</span>
+                    </div>
+                    <div class="order-item">
+                        <div class="order-info">
+                            <div class="order-client">Jane Smith</div>
+                            <div class="order-meta">5 items • Today</div>
+                        </div>
+                        <span class="status-badge status-fulfilled">Fulfilled</span>
+                    </div>
+                    <div class="order-item">
+                        <div class="order-info">
+                            <div class="order-client">Mike Johnson</div>
+                            <div class="order-meta">2 items • Yesterday</div>
+                        </div>
+                        <span class="status-badge status-processing">Processing</span>
+                    </div>
+                    <div class="order-item">
+                        <div class="order-info">
+                            <div class="order-client">Sarah Williams</div>
+                            <div class="order-meta">4 items • Yesterday</div>
+                        </div>
+                        <span class="status-badge status-fulfilled">Fulfilled</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions Widget -->
+            <div class="widget w-6 h-4" draggable="false" data-widget-id="3">
+                <div class="widget-header">
+                    <h3 class="widget-title">Quick Actions</h3>
+                    <div class="widget-actions">
+                        <button class="widget-btn" onclick="resizeWidget(this, 'smaller')">-</button>
+                        <button class="widget-btn" onclick="resizeWidget(this, 'larger')">+</button>
+                    </div>
+                </div>
+                <div class="widget-content">
+                    <div class="quick-action-grid">
+                        <a href="add-product.html" class="quick-action-card">
+                            <div class="quick-action-icon">📦</div>
+                            <div class="quick-action-label">Add Product</div>
+                        </a>
+                        <a href="create-order.html" class="quick-action-card">
+                            <div class="quick-action-icon">🛒</div>
+                            <div class="quick-action-label">New Order</div>
+                        </a>
+                        <a href="analytics.html" class="quick-action-card">
+                            <div class="quick-action-icon">📊</div>
+                            <div class="quick-action-label">Analytics</div>
+                        </a>
+                        <a href="case-management.html" class="quick-action-card">
+                            <div class="quick-action-icon">📋</div>
+                            <div class="quick-action-label">Cases</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Feed Widget -->
+            <div class="widget w-4 h-3" draggable="false" data-widget-id="4">
+                <div class="widget-header">
+                    <h3 class="widget-title">Recent Activity</h3>
+                    <div class="widget-actions">
+                        <button class="widget-btn" onclick="resizeWidget(this, 'smaller')">-</button>
+                        <button class="widget-btn" onclick="resizeWidget(this, 'larger')">+</button>
+                    </div>
+                </div>
+                <div class="widget-content">
+                    <div class="activity-item">
+                        <div class="activity-text">Order #342 created</div>
+                        <div class="activity-time">5 minutes ago</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-text">New client registered</div>
+                        <div class="activity-time">15 minutes ago</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-text">Order #341 fulfilled</div>
+                        <div class="activity-time">1 hour ago</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-text">Product added to inventory</div>
+                        <div class="activity-time">2 hours ago</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
         let editMode = false;
-        let layoutData = null;
-        let widgetsData = [];
-        let hasChanges = false;
         let draggedElement = null;
-
-        // Initialize dashboard
-        async function initDashboard() {
-            await loadLayout();
-            renderWidgets();
-        }
-
-        // Load layout from server
-        async function loadLayout() {
-            try {
-                const response = await fetch('api/dashboard.php?action=get_layout');
-                const result = await response.json();
-                
-                if (result.success) {
-                    layoutData = result.layout;
-                    widgetsData = result.widgets;
-                } else {
-                    showNotification('Failed to load dashboard layout', 'error');
-                }
-            } catch (error) {
-                console.error('Error loading layout:', error);
-                showNotification('Error loading dashboard', 'error');
-            }
-        }
-
-        // Render widgets
-        function renderWidgets() {
-            const grid = document.getElementById('dashboardGrid');
-            grid.innerHTML = '';
-
-            widgetsData.forEach(widget => {
-                const widgetEl = createWidgetElement(widget);
-                grid.appendChild(widgetEl);
-            });
-
-            // Load widget data
-            loadAllWidgetData();
-        }
-
-        // Create widget element
-        function createWidgetElement(widget) {
-            const div = document.createElement('div');
-            div.className = `widget w-${widget.width} h-${widget.height}`;
-            div.dataset.widgetId = widget.id;
-            div.dataset.widgetType = widget.widget_type;
-            
-            div.innerHTML = `
-                <div class="widget-header">
-                    <h3 class="widget-title">${widget.widget_title}</h3>
-                    <div class="widget-actions">
-                        <button class="widget-btn" onclick="resizeWidget(${widget.id}, 'smaller')">-</button>
-                        <button class="widget-btn" onclick="resizeWidget(${widget.id}, 'larger')">+</button>
-                    </div>
-                </div>
-                <div class="widget-content" id="widget-content-${widget.id}">
-                    <div class="empty-widget">Loading...</div>
-                </div>
-                <div class="resize-handle"></div>
-            `;
-            
-            return div;
-        }
+        let hasChanges = false;
 
         // Toggle edit mode
         function toggleEditMode() {
@@ -516,7 +560,6 @@
             
             widgets.forEach(widget => {
                 widget.draggable = true;
-                
                 widget.addEventListener('dragstart', handleDragStart);
                 widget.addEventListener('dragover', handleDragOver);
                 widget.addEventListener('drop', handleDrop);
@@ -532,30 +575,26 @@
         }
 
         function handleDragOver(e) {
-            if (e.preventDefault) {
-                e.preventDefault();
-            }
+            e.preventDefault();
             e.dataTransfer.dropEffect = 'move';
             
-            const afterElement = getDragAfterElement(this.parentElement, e.clientY);
+            const grid = document.getElementById('dashboardGrid');
+            const afterElement = getDragAfterElement(grid, e.clientY);
+            
             if (afterElement == null) {
-                this.parentElement.appendChild(draggedElement);
+                grid.appendChild(draggedElement);
             } else {
-                this.parentElement.insertBefore(draggedElement, afterElement);
+                grid.insertBefore(draggedElement, afterElement);
             }
             
             return false;
         }
 
         function handleDrop(e) {
-            if (e.stopPropagation) {
-                e.stopPropagation();
-            }
-            
+            e.stopPropagation();
             hasChanges = true;
             document.getElementById('saveBtn').disabled = false;
-            updateWidgetOrder();
-            
+            showNotification('Widget moved! Click "Save Layout" to persist changes.');
             return false;
         }
 
@@ -591,259 +630,45 @@
             });
         }
 
-        // Update widget order after drag
-        function updateWidgetOrder() {
-            const grid = document.getElementById('dashboardGrid');
-            const widgets = grid.querySelectorAll('.widget');
-            
-            widgets.forEach((widget, index) => {
-                const widgetId = parseInt(widget.dataset.widgetId);
-                const widgetData = widgetsData.find(w => w.id === widgetId);
-                if (widgetData) {
-                    widgetData.widget_order = index;
-                }
-            });
-        }
-
         // Resize widget
-        function resizeWidget(widgetId, direction) {
-            const widgetData = widgetsData.find(w => w.id === widgetId);
-            const widgetEl = document.querySelector(`[data-widget-id="${widgetId}"]`);
+        function resizeWidget(btn, direction) {
+            const widget = btn.closest('.widget');
+            const currentWidth = parseInt(widget.className.match(/w-(\d+)/)[1]);
             
-            if (!widgetData || !widgetEl) return;
-            
-            let newWidth = widgetData.width;
+            let newWidth = currentWidth;
             
             if (direction === 'larger' && newWidth < 12) {
-                newWidth += 3;
+                newWidth = Math.min(12, newWidth + 3);
             } else if (direction === 'smaller' && newWidth > 3) {
-                newWidth -= 3;
+                newWidth = Math.max(3, newWidth - 3);
             }
             
-            widgetData.width = Math.max(3, Math.min(12, newWidth));
-            
-            // Update DOM
-            widgetEl.className = `widget w-${widgetData.width} h-${widgetData.height}`;
+            widget.className = widget.className.replace(/w-\d+/, `w-${newWidth}`);
             
             hasChanges = true;
             document.getElementById('saveBtn').disabled = false;
-            
-            showNotification('Widget resized', 'success');
+            showNotification('Widget resized! Click "Save Layout" to persist changes.');
         }
 
-        // Save layout
-        async function saveLayout() {
-            try {
-                const response = await fetch('api/dashboard.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'save_widgets',
-                        layout_id: layoutData.id,
-                        widgets: widgetsData
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    hasChanges = false;
-                    document.getElementById('saveBtn').disabled = true;
-                    showNotification('Layout saved successfully!', 'success');
-                } else {
-                    showNotification('Failed to save layout', 'error');
-                }
-            } catch (error) {
-                console.error('Error saving layout:', error);
-                showNotification('Error saving layout', 'error');
-            }
+        // Save layout (demo mode)
+        function saveLayout() {
+            showNotification('Layout saved successfully! (Demo mode - changes not persisted)');
+            hasChanges = false;
+            document.getElementById('saveBtn').disabled = true;
         }
 
         // Reset layout
-        async function resetLayout() {
-            if (!confirm('Are you sure you want to reset to default layout? This will discard all customizations.')) {
-                return;
+        function resetLayout() {
+            if (confirm('Reset to default layout? This will discard all customizations.')) {
+                window.location.reload();
             }
-            
-            try {
-                const response = await fetch('api/dashboard.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'reset_layout' })
-                });
-                
-                const result = await response.json();
-                
-                if (result.success) {
-                    showNotification('Layout reset successfully!', 'success');
-                    setTimeout(() => window.location.reload(), 1000);
-                } else {
-                    showNotification('Failed to reset layout', 'error');
-                }
-            } catch (error) {
-                console.error('Error resetting layout:', error);
-                showNotification('Error resetting layout', 'error');
-            }
-        }
-
-        // Load all widget data
-        async function loadAllWidgetData() {
-            for (const widget of widgetsData) {
-                await loadWidgetData(widget);
-            }
-        }
-
-        // Load data for a specific widget
-        async function loadWidgetData(widget) {
-            try {
-                const response = await fetch(`api/dashboard.php?action=get_widget_data&widget_type=${widget.widget_type}&limit=${widget.settings?.limit || 10}`);
-                const result = await response.json();
-                
-                if (result.success) {
-                    renderWidgetContent(widget, result.data);
-                }
-            } catch (error) {
-                console.error('Error loading widget data:', error);
-            }
-        }
-
-        // Render widget content based on type
-        function renderWidgetContent(widget, data) {
-            const contentEl = document.getElementById(`widget-content-${widget.id}`);
-            
-            switch (widget.widget_type) {
-                case 'quick_stats':
-                    contentEl.innerHTML = renderQuickStats(data);
-                    break;
-                case 'recent_orders':
-                    contentEl.innerHTML = renderRecentOrders(data);
-                    break;
-                case 'quick_actions':
-                    contentEl.innerHTML = renderQuickActions();
-                    break;
-                case 'activity_feed':
-                    contentEl.innerHTML = renderActivityFeed(data);
-                    break;
-                case 'analytics_summary':
-                    contentEl.innerHTML = renderAnalyticsSummary(data);
-                    break;
-                default:
-                    contentEl.innerHTML = '<div class="empty-widget">Unknown widget type</div>';
-            }
-        }
-
-        // Render quick stats
-        function renderQuickStats(data) {
-            return `
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
-                    <div class="stat-card">
-                        <div class="stat-label">Total Orders</div>
-                        <div class="stat-value">${data.total_orders || 0}</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Today</div>
-                        <div class="stat-value" style="color: #43e97b;">${data.today_orders || 0}</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Pending</div>
-                        <div class="stat-value" style="color: #f5a623;">${data.pending_orders || 0}</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Products</div>
-                        <div class="stat-value" style="color: #4facfe;">${data.total_products || 0}</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Clients</div>
-                        <div class="stat-value" style="color: #764ba2;">${data.total_clients || 0}</div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Render recent orders
-        function renderRecentOrders(data) {
-            if (!data || data.length === 0) {
-                return '<div class="empty-widget">No recent orders</div>';
-            }
-            
-            return data.map(order => `
-                <div class="order-item">
-                    <div class="order-info">
-                        <div class="order-client">${order.client_name}</div>
-                        <div class="order-meta">${order.item_count} items • ${new Date(order.created_at).toLocaleDateString()}</div>
-                    </div>
-                    <span class="status-badge status-${order.status}">${formatStatus(order.status)}</span>
-                </div>
-            `).join('');
-        }
-
-        // Render quick actions
-        function renderQuickActions() {
-            const actions = [
-                { icon: '📦', label: 'Add Product', url: 'add-product.html' },
-                { icon: '🛒', label: 'New Order', url: 'create-order.html' },
-                { icon: '📊', label: 'Analytics', url: 'analytics.html' },
-                { icon: '📋', label: 'Cases', url: 'case-management.html' }
-            ];
-            
-            return `
-                <div class="quick-action-grid">
-                    ${actions.map(action => `
-                        <a href="${action.url}" class="quick-action-card">
-                            <div class="quick-action-icon">${action.icon}</div>
-                            <div class="quick-action-label">${action.label}</div>
-                        </a>
-                    `).join('')}
-                </div>
-            `;
-        }
-
-        // Render activity feed
-        function renderActivityFeed(data) {
-            if (!data || data.length === 0) {
-                return '<div class="empty-widget">No recent activity</div>';
-            }
-            
-            return data.map(activity => `
-                <div class="activity-item">
-                    <div class="activity-text">
-                        Order #${activity.id} - ${activity.client_name}
-                    </div>
-                    <div class="activity-time">${timeAgo(activity.created_at)}</div>
-                </div>
-            `).join('');
-        }
-
-        // Render analytics summary
-        function renderAnalyticsSummary(data) {
-            return `
-                <div style="height: 250px;">
-                    <canvas id="analyticsChart"></canvas>
-                </div>
-            `;
-            // Note: Chart.js rendering would be done after the element is created
-        }
-
-        // Helper: Format status
-        function formatStatus(status) {
-            return status.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-        }
-
-        // Helper: Time ago
-        function timeAgo(date) {
-            const seconds = Math.floor((new Date() - new Date(date)) / 1000);
-            
-            if (seconds < 60) return 'Just now';
-            if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
-            if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
-            return `${Math.floor(seconds / 86400)} days ago`;
         }
 
         // Show notification
-        function showNotification(message, type = 'success') {
+        function showNotification(message) {
             const notification = document.getElementById('notification');
             notification.textContent = message;
-            notification.className = `notification ${type} show`;
+            notification.classList.add('show');
             
             setTimeout(() => {
                 notification.classList.remove('show');
@@ -857,9 +682,6 @@
                 e.returnValue = '';
             }
         });
-
-        // Initialize on load
-        window.addEventListener('DOMContentLoaded', initDashboard);
     </script>
 </body>
 </html>
