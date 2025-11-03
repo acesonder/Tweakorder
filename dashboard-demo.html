@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customizable Dashboard Demo - Tweakorder</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        body {
+            background: #f5f5f5;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        .dashboard-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .header-left h1 {
+            margin: 0;
+            font-size: 1.8em;
+        }
+
+        .demo-badge {
+            background: rgba(255,255,255,0.3);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            margin-left: 15px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: white;
+            color: #667eea;
+        }
+
+        .dashboard-controls {
+            background: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .control-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .toggle-edit {
+            padding: 8px 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .toggle-edit:hover {
+            background: #5568d3;
+        }
+
+        .toggle-edit.active {
+            background: #f5576c;
+        }
+
+        .dashboard-container {
+            padding: 30px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+            min-height: 600px;
+        }
+
+        .widget {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .widget:hover {
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+        }
+
+        .widget-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .widget-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: #333;
+            margin: 0;
+        }
+
+        .widget-actions {
+            display: none;
+            gap: 5px;
+        }
+
+        .edit-mode .widget-actions {
+            display: flex;
+        }
+
+        .widget-btn {
+            padding: 5px 10px;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s;
+        }
+
+        .widget-btn:hover {
+            background: #e0e0e0;
+        }
+
+        .widget-content {
+            min-height: 100px;
+        }
+
+        .widget.dragging {
+            opacity: 0.5;
+            cursor: move;
+        }
+
+        .edit-mode .widget {
+            cursor: move;
+            border: 2px dashed #667eea;
+        }
+
+        .edit-mode .widget:hover {
+            border-color: #f5576c;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 15px;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #667eea;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            font-size: 0.95em;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .order-item {
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .order-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .order-info {
+            flex: 1;
+        }
+
+        .order-client {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .order-meta {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .status-processing {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-fulfilled {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .quick-action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .quick-action-card {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .quick-action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .quick-action-icon {
+            font-size: 2.5em;
+            margin-bottom: 8px;
+        }
+
+        .quick-action-label {
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .activity-item {
+            padding: 12px;
+            border-left: 3px solid #667eea;
+            margin-bottom: 12px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .activity-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .activity-text {
+            font-size: 0.95em;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .activity-time {
+            font-size: 0.8em;
+            color: #999;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: none;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            border-left: 4px solid #43e97b;
+        }
+
+        .notification.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Grid size utilities */
+        .w-3 { grid-column: span 3; }
+        .w-4 { grid-column: span 4; }
+        .w-6 { grid-column: span 6; }
+        .w-8 { grid-column: span 8; }
+        .w-12 { grid-column: span 12; }
+        
+        .h-2 { min-height: 200px; }
+        .h-3 { min-height: 300px; }
+        .h-4 { min-height: 400px; }
+    </style>
+</head>
+<body>
+    <div class="notification" id="notification"></div>
+
+    <div class="dashboard-header">
+        <div class="header-left">
+            <h1>🎨 Customizable Dashboard<span class="demo-badge">DEMO MODE</span></h1>
+            <p style="margin: 5px 0 0 0; opacity: 0.9;">Drag, drop, and resize your widgets</p>
+        </div>
+        <div class="header-actions">
+            <a href="staff-dashboard.html" class="btn btn-secondary">← Back to Dashboard</a>
+            <button class="btn btn-primary" onclick="window.location.reload()">🔄 Refresh</button>
+        </div>
+    </div>
+
+    <div class="dashboard-controls">
+        <div class="control-group">
+            <button class="toggle-edit" onclick="toggleEditMode()" id="editModeBtn">
+                ✏️ Enable Edit Mode
+            </button>
+            <span id="editModeStatus" style="color: #666; font-size: 0.9em;"></span>
+        </div>
+        <div class="control-group">
+            <button class="btn btn-secondary" onclick="resetLayout()" style="font-size: 0.9em;">
+                🔄 Reset Layout
+            </button>
+            <button class="btn btn-primary" onclick="saveLayout()" style="font-size: 0.9em;" id="saveBtn" disabled>
+                💾 Save Layout (Demo)
+            </button>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <div class="dashboard-grid" id="dashboardGrid">
+            <!-- Quick Stats Widget -->
+            <div class="widget w-12 h-2" draggable="false" data-widget-id="1">
+                <div class="widget-header">
+                    <h3 class="widget-title">Quick Statistics</h3>
+                    <div class="widget-actions">
+                        <button class="widget-btn" onclick="resizeWidget(this, 'smaller')">-</button>
+                        <button class="widget-btn" onclick="resizeWidget(this, 'larger')">+</button>
+                    </div>
+                </div>
+                <div class="widget-content">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                        <div class="stat-card">
+                            <div class="stat-label">Total Orders</div>
+                            <div class="stat-value">342</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Today</div>
+                            <div class="stat-value" style="color: #43e97b;">12</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Pending</div>
+                            <div class="stat-value" style="color: #f5a623;">8</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Products</div>
+                            <div class="stat-value" style="color: #4facfe;">156</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Clients</div>
+                            <div class="stat-value" style="color: #764ba2;">89</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders Widget -->
+            <div class="widget w-6 h-4" draggable="false" data-widget-id="2">
+                <div class="widget-header">
+                    <h3 class="widget-title">Recent Orders</h3>
+                    <div class="widget-actions">
+                        <button class="widget-btn" onclick="resizeWidget(this, 'smaller')">-</button>
+                        <button class="widget-btn" onclick="resizeWidget(this, 'larger')">+</button>
+                    </div>
+                </div>
+                <div class="widget-content">
+                    <div class="order-item">
+                        <div class="order-info">
+                            <div class="order-client">John Doe</div>
+                            <div class="order-meta">3 items • Today</div>
+                        </div>
+                        <span class="status-badge status-processing">Processing</span>
+                    </div>
+                    <div class="order-item">
+                        <div class="order-info">
+                            <div class="order-client">Jane Smith</div>
+                            <div class="order-meta">5 items • Today</div>
+                        </div>
+                        <span class="status-badge status-fulfilled">Fulfilled</span>
+                    </div>
+                    <div class="order-item">
+                        <div class="order-info">
+                            <div class="order-client">Mike Johnson</div>
+                            <div class="order-meta">2 items • Yesterday</div>
+                        </div>
+                        <span class="status-badge status-processing">Processing</span>
+                    </div>
+                    <div class="order-item">
+                        <div class="order-info">
+                            <div class="order-client">Sarah Williams</div>
+                            <div class="order-meta">4 items • Yesterday</div>
+                        </div>
+                        <span class="status-badge status-fulfilled">Fulfilled</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions Widget -->
+            <div class="widget w-6 h-4" draggable="false" data-widget-id="3">
+                <div class="widget-header">
+                    <h3 class="widget-title">Quick Actions</h3>
+                    <div class="widget-actions">
+                        <button class="widget-btn" onclick="resizeWidget(this, 'smaller')">-</button>
+                        <button class="widget-btn" onclick="resizeWidget(this, 'larger')">+</button>
+                    </div>
+                </div>
+                <div class="widget-content">
+                    <div class="quick-action-grid">
+                        <a href="add-product.html" class="quick-action-card">
+                            <div class="quick-action-icon">📦</div>
+                            <div class="quick-action-label">Add Product</div>
+                        </a>
+                        <a href="create-order.html" class="quick-action-card">
+                            <div class="quick-action-icon">🛒</div>
+                            <div class="quick-action-label">New Order</div>
+                        </a>
+                        <a href="analytics.html" class="quick-action-card">
+                            <div class="quick-action-icon">📊</div>
+                            <div class="quick-action-label">Analytics</div>
+                        </a>
+                        <a href="case-management.html" class="quick-action-card">
+                            <div class="quick-action-icon">📋</div>
+                            <div class="quick-action-label">Cases</div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Activity Feed Widget -->
+            <div class="widget w-4 h-3" draggable="false" data-widget-id="4">
+                <div class="widget-header">
+                    <h3 class="widget-title">Recent Activity</h3>
+                    <div class="widget-actions">
+                        <button class="widget-btn" onclick="resizeWidget(this, 'smaller')">-</button>
+                        <button class="widget-btn" onclick="resizeWidget(this, 'larger')">+</button>
+                    </div>
+                </div>
+                <div class="widget-content">
+                    <div class="activity-item">
+                        <div class="activity-text">Order #342 created</div>
+                        <div class="activity-time">5 minutes ago</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-text">New client registered</div>
+                        <div class="activity-time">15 minutes ago</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-text">Order #341 fulfilled</div>
+                        <div class="activity-time">1 hour ago</div>
+                    </div>
+                    <div class="activity-item">
+                        <div class="activity-text">Product added to inventory</div>
+                        <div class="activity-time">2 hours ago</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let editMode = false;
+        let draggedElement = null;
+        let hasChanges = false;
+
+        // Toggle edit mode
+        function toggleEditMode() {
+            editMode = !editMode;
+            const btn = document.getElementById('editModeBtn');
+            const status = document.getElementById('editModeStatus');
+            const grid = document.getElementById('dashboardGrid');
+            
+            if (editMode) {
+                grid.classList.add('edit-mode');
+                btn.classList.add('active');
+                btn.textContent = '✓ Exit Edit Mode';
+                status.textContent = 'Drag widgets to reorder';
+                enableDragAndDrop();
+            } else {
+                grid.classList.remove('edit-mode');
+                btn.classList.remove('active');
+                btn.textContent = '✏️ Enable Edit Mode';
+                status.textContent = '';
+                disableDragAndDrop();
+            }
+        }
+
+        // Enable drag and drop using native HTML5 API
+        function enableDragAndDrop() {
+            const widgets = document.querySelectorAll('.widget');
+            
+            widgets.forEach(widget => {
+                widget.draggable = true;
+                widget.addEventListener('dragstart', handleDragStart);
+                widget.addEventListener('dragover', handleDragOver);
+                widget.addEventListener('drop', handleDrop);
+                widget.addEventListener('dragend', handleDragEnd);
+            });
+        }
+
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.innerHTML);
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            
+            const grid = document.getElementById('dashboardGrid');
+            const afterElement = getDragAfterElement(grid, e.clientY);
+            
+            if (afterElement == null) {
+                grid.appendChild(draggedElement);
+            } else {
+                grid.insertBefore(draggedElement, afterElement);
+            }
+            
+            return false;
+        }
+
+        function handleDrop(e) {
+            e.stopPropagation();
+            hasChanges = true;
+            document.getElementById('saveBtn').disabled = false;
+            showNotification('Widget moved! Click "Save Layout" to persist changes.');
+            return false;
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+        }
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.widget:not(.dragging)')];
+            
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        // Disable drag and drop
+        function disableDragAndDrop() {
+            const widgets = document.querySelectorAll('.widget');
+            
+            widgets.forEach(widget => {
+                widget.draggable = false;
+                widget.removeEventListener('dragstart', handleDragStart);
+                widget.removeEventListener('dragover', handleDragOver);
+                widget.removeEventListener('drop', handleDrop);
+                widget.removeEventListener('dragend', handleDragEnd);
+            });
+        }
+
+        // Resize widget
+        function resizeWidget(btn, direction) {
+            const widget = btn.closest('.widget');
+            const currentWidth = parseInt(widget.className.match(/w-(\d+)/)[1]);
+            
+            let newWidth = currentWidth;
+            
+            if (direction === 'larger' && newWidth < 12) {
+                newWidth = Math.min(12, newWidth + 3);
+            } else if (direction === 'smaller' && newWidth > 3) {
+                newWidth = Math.max(3, newWidth - 3);
+            }
+            
+            widget.className = widget.className.replace(/w-\d+/, `w-${newWidth}`);
+            
+            hasChanges = true;
+            document.getElementById('saveBtn').disabled = false;
+            showNotification('Widget resized! Click "Save Layout" to persist changes.');
+        }
+
+        // Save layout (demo mode)
+        function saveLayout() {
+            showNotification('Layout saved successfully! (Demo mode - changes not persisted)');
+            hasChanges = false;
+            document.getElementById('saveBtn').disabled = true;
+        }
+
+        // Reset layout
+        function resetLayout() {
+            if (confirm('Reset to default layout? This will discard all customizations.')) {
+                window.location.reload();
+            }
+        }
+
+        // Show notification
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Warn on unsaved changes
+        window.addEventListener('beforeunload', (e) => {
+            if (hasChanges) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    </script>
+</body>
+</html>
