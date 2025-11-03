@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backup & Restore - Tweakorder</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+</head>
+<body>
+    <div class="container">
+        <h1>💾 Automated Backup & Restore</h1>
+        
+        <div class="back-link" style="margin-bottom: 20px;">
+            <a href="index.html" style="text-decoration: none; color: #667eea;">← Back to Dashboard</a>
+        </div>
+
+        <!-- Quick Actions -->
+        <section style="margin-bottom: 40px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                <button class="btn btn-primary btn-morph ripple" onclick="createBackup()" style="padding: 20px; font-size: 1.1em;">
+                    💾 Create Backup Now
+                </button>
+                <button class="btn btn-primary btn-morph ripple" onclick="document.getElementById('restore-file').click()" style="padding: 20px; font-size: 1.1em; background: #ff9800;">
+                    📂 Restore from File
+                </button>
+                <input type="file" id="restore-file" style="display: none;" accept=".sql,.zip" onchange="restoreBackup(this.files[0])">
+            </div>
+        </section>
+
+        <!-- Schedule Settings -->
+        <section style="margin-bottom: 40px;">
+            <h2>Automated Backup Schedule</h2>
+            <div class="nav-card" style="text-align: left;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <h3 style="margin-bottom: 10px;">Enable Automatic Backups</h3>
+                        <p style="color: var(--text-secondary);">
+                            Automatically create backups on a scheduled basis
+                        </p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="autoBackup" checked onchange="toggleAutoBackup(this.checked)">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div id="schedule-settings">
+                    <div class="form-group">
+                        <label>Backup Frequency</label>
+                        <select id="backup-frequency" onchange="updateSchedule()">
+                            <option value="hourly">Hourly</option>
+                            <option value="daily" selected>Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="time-select">
+                        <label>Backup Time</label>
+                        <input type="time" value="02:00">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Retention Period</label>
+                        <select>
+                            <option value="7">Keep for 7 days</option>
+                            <option value="14">Keep for 14 days</option>
+                            <option value="30" selected>Keep for 30 days</option>
+                            <option value="60">Keep for 60 days</option>
+                            <option value="90">Keep for 90 days</option>
+                            <option value="0">Keep forever</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>What to Backup</label>
+                        <div style="display: grid; gap: 10px;">
+                            <label style="display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox" checked> Database
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox" checked> Uploaded Files
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 10px;">
+                                <input type="checkbox"> Configuration Files
+                            </label>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary btn-morph ripple" onclick="saveSchedule()">
+                        Save Schedule Settings
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Backup History -->
+        <section style="margin-bottom: 40px;">
+            <h2>Backup History</h2>
+            <div class="nav-card" style="text-align: left;">
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: var(--bg-secondary); border-bottom: 2px solid var(--border-color);">
+                                <th style="padding: 15px; text-align: left;">Date & Time</th>
+                                <th style="padding: 15px; text-align: left;">Type</th>
+                                <th style="padding: 15px; text-align: left;">Size</th>
+                                <th style="padding: 15px; text-align: left;">Status</th>
+                                <th style="padding: 15px; text-align: center;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="backup-history">
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 15px;">2024-11-03 02:00:00</td>
+                                <td style="padding: 15px;">
+                                    <span class="badge badge-primary">Automatic</span>
+                                </td>
+                                <td style="padding: 15px;">15.3 MB</td>
+                                <td style="padding: 15px;">
+                                    <span class="badge badge-success">✓ Complete</span>
+                                </td>
+                                <td style="padding: 15px; text-align: center;">
+                                    <button class="btn-small btn-morph" onclick="downloadBackup('backup-20241103.zip')">⬇️ Download</button>
+                                    <button class="btn-small" style="background: #f44336; color: white;" onclick="deleteBackup('backup-20241103.zip')">🗑️ Delete</button>
+                                </td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 15px;">2024-11-02 02:00:00</td>
+                                <td style="padding: 15px;">
+                                    <span class="badge badge-primary">Automatic</span>
+                                </td>
+                                <td style="padding: 15px;">14.8 MB</td>
+                                <td style="padding: 15px;">
+                                    <span class="badge badge-success">✓ Complete</span>
+                                </td>
+                                <td style="padding: 15px; text-align: center;">
+                                    <button class="btn-small btn-morph" onclick="downloadBackup('backup-20241102.zip')">⬇️ Download</button>
+                                    <button class="btn-small" style="background: #f44336; color: white;" onclick="deleteBackup('backup-20241102.zip')">🗑️ Delete</button>
+                                </td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 15px;">2024-11-01 14:25:30</td>
+                                <td style="padding: 15px;">
+                                    <span class="badge badge-warning">Manual</span>
+                                </td>
+                                <td style="padding: 15px;">14.5 MB</td>
+                                <td style="padding: 15px;">
+                                    <span class="badge badge-success">✓ Complete</span>
+                                </td>
+                                <td style="padding: 15px; text-align: center;">
+                                    <button class="btn-small btn-morph" onclick="downloadBackup('backup-20241101-manual.zip')">⬇️ Download</button>
+                                    <button class="btn-small" style="background: #f44336; color: white;" onclick="deleteBackup('backup-20241101-manual.zip')">🗑️ Delete</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Storage Status -->
+        <section>
+            <h2>Storage Status</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <div class="nav-card">
+                    <h3 style="color: var(--accent-color); font-size: 2.5em; margin-bottom: 10px;">8.5 GB</h3>
+                    <p style="color: var(--text-secondary);">Total Backup Size</p>
+                </div>
+                <div class="nav-card">
+                    <h3 style="color: var(--accent-color); font-size: 2.5em; margin-bottom: 10px;">12</h3>
+                    <p style="color: var(--text-secondary);">Total Backups</p>
+                </div>
+                <div class="nav-card">
+                    <h3 style="color: #4caf50; font-size: 2.5em; margin-bottom: 10px;">65%</h3>
+                    <p style="color: var(--text-secondary);">Storage Used</p>
+                    <div style="width: 100%; background: var(--bg-secondary); height: 10px; border-radius: 5px; margin-top: 15px; overflow: hidden;">
+                        <div style="width: 65%; background: linear-gradient(90deg, #4caf50, #8bc34a); height: 100%;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <style>
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--accent-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-primary {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .btn-small {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            background: var(--accent-color);
+            color: white;
+            cursor: pointer;
+            margin: 0 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-small:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px var(--shadow);
+        }
+    </style>
+
+    <script src="assets/js/theme-system.js"></script>
+    <script>
+        function createBackup() {
+            if (confirm('Create a backup now? This may take a few minutes.')) {
+                LoadingSpinner.show();
+                
+                // Simulate backup process
+                let progress = 0;
+                const interval = setInterval(() => {
+                    progress += 10;
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        LoadingSpinner.hide();
+                        NotificationManager.show('Backup created successfully! Size: 15.4 MB', 'success', 4000);
+                    }
+                }, 300);
+            }
+        }
+
+        function restoreBackup(file) {
+            if (file) {
+                const confirmMsg = `Are you sure you want to restore from "${file.name}"? This will overwrite current data.`;
+                if (confirm(confirmMsg)) {
+                    LoadingSpinner.show();
+                    setTimeout(() => {
+                        LoadingSpinner.hide();
+                        NotificationManager.show('Database restored successfully!', 'success');
+                    }, 3000);
+                }
+            }
+        }
+
+        function toggleAutoBackup(enabled) {
+            const settings = document.getElementById('schedule-settings');
+            if (enabled) {
+                settings.style.display = 'block';
+                NotificationManager.show('Automatic backups enabled', 'success');
+            } else {
+                settings.style.display = 'none';
+                NotificationManager.show('Automatic backups disabled', 'warning');
+            }
+        }
+
+        function updateSchedule() {
+            const frequency = document.getElementById('backup-frequency').value;
+            const timeSelect = document.getElementById('time-select');
+            
+            if (frequency === 'hourly') {
+                timeSelect.style.display = 'none';
+            } else {
+                timeSelect.style.display = 'block';
+            }
+        }
+
+        function saveSchedule() {
+            LoadingSpinner.show();
+            setTimeout(() => {
+                LoadingSpinner.hide();
+                NotificationManager.show('Backup schedule saved successfully!', 'success');
+            }, 1000);
+        }
+
+        function downloadBackup(filename) {
+            LoadingSpinner.show();
+            setTimeout(() => {
+                LoadingSpinner.hide();
+                NotificationManager.show(`Downloading ${filename}...`, 'info');
+            }, 1000);
+        }
+
+        function deleteBackup(filename) {
+            if (confirm(`Delete backup "${filename}"? This action cannot be undone.`)) {
+                LoadingSpinner.show();
+                setTimeout(() => {
+                    LoadingSpinner.hide();
+                    NotificationManager.show(`Backup ${filename} deleted`, 'success');
+                }, 800);
+            }
+        }
+    </script>
+</body>
+</html>

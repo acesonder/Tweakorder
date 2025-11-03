@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Management - Tweakorder</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🔑 API Access & Documentation</h1>
+        
+        <div class="back-link" style="margin-bottom: 20px;">
+            <a href="index.html" style="text-decoration: none; color: #667eea;">← Back to Dashboard</a>
+        </div>
+
+        <!-- API Keys Section -->
+        <section style="margin-bottom: 40px;">
+            <h2>API Keys</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                Manage API keys for third-party integrations and external access.
+            </p>
+
+            <div style="display: grid; gap: 20px;">
+                <div class="nav-card" style="text-align: left;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 style="margin-bottom: 10px;">Production API Key</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.9em;">
+                                Created: Jan 15, 2024 | Last used: 2 hours ago
+                            </p>
+                            <code style="display: block; background: var(--bg-secondary); padding: 10px; border-radius: 5px; margin-top: 10px; font-size: 0.85em;">
+                                tw_prod_••••••••••••••••••••1a2b3c
+                            </code>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-primary btn-morph ripple" onclick="copyApiKey('prod')">📋 Copy</button>
+                            <button class="btn" style="background: #f44336; color: white;" onclick="revokeApiKey('prod')">🗑️ Revoke</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="nav-card" style="text-align: left;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3 style="margin-bottom: 10px;">Development API Key</h3>
+                            <p style="color: var(--text-secondary); font-size: 0.9em;">
+                                Created: Feb 20, 2024 | Last used: Never
+                            </p>
+                            <code style="display: block; background: var(--bg-secondary); padding: 10px; border-radius: 5px; margin-top: 10px; font-size: 0.85em;">
+                                tw_dev_••••••••••••••••••••4d5e6f
+                            </code>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-primary btn-morph ripple" onclick="copyApiKey('dev')">📋 Copy</button>
+                            <button class="btn" style="background: #f44336; color: white;" onclick="revokeApiKey('dev')">🗑️ Revoke</button>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary btn-morph ripple" onclick="generateNewKey()" style="width: fit-content; margin-top: 10px;">
+                    ✨ Generate New API Key
+                </button>
+            </div>
+        </section>
+
+        <!-- API Documentation Section -->
+        <section style="margin-bottom: 40px;">
+            <h2>API Endpoints</h2>
+            
+            <div style="display: grid; gap: 15px;">
+                <!-- Products API -->
+                <div class="nav-card flip-card" style="text-align: left; height: auto;">
+                    <h3 style="color: var(--accent-color); margin-bottom: 15px;">📦 Products API</h3>
+                    <div style="background: var(--bg-secondary); padding: 15px; border-radius: 8px; margin-bottom: 10px;">
+                        <code style="color: var(--text-primary);">GET /api/products.php</code>
+                        <p style="margin-top: 5px; font-size: 0.9em; color: var(--text-secondary);">Retrieve all products</p>
+                    </div>
+                    <div style="background: var(--bg-secondary); padding: 15px; border-radius: 8px; margin-bottom: 10px;">
+                        <code style="color: var(--text-primary);">POST /api/products.php</code>
+                        <p style="margin-top: 5px; font-size: 0.9em; color: var(--text-secondary);">Create new product</p>
+                    </div>
+                    <div style="background: var(--bg-secondary); padding: 15px; border-radius: 8px;">
+                        <code style="color: var(--text-primary);">DELETE /api/products.php?id={id}</code>
+                        <p style="margin-top: 5px; font-size: 0.9em; color: var(--text-secondary);">Delete product by ID</p>
+                    </div>
+                </div>
+
+                <!-- Orders API -->
+                <div class="nav-card" style="text-align: left; height: auto;">
+                    <h3 style="color: var(--accent-color); margin-bottom: 15px;">🛒 Orders API</h3>
+                    <div style="background: var(--bg-secondary); padding: 15px; border-radius: 8px; margin-bottom: 10px;">
+                        <code style="color: var(--text-primary);">GET /api/orders.php</code>
+                        <p style="margin-top: 5px; font-size: 0.9em; color: var(--text-secondary);">Retrieve all orders</p>
+                    </div>
+                    <div style="background: var(--bg-secondary); padding: 15px; border-radius: 8px; margin-bottom: 10px;">
+                        <code style="color: var(--text-primary);">POST /api/orders.php</code>
+                        <p style="margin-top: 5px; font-size: 0.9em; color: var(--text-secondary);">Create new order</p>
+                    </div>
+                    <div style="background: var(--bg-secondary); padding: 15px; border-radius: 8px;">
+                        <code style="color: var(--text-primary);">PUT /api/orders.php</code>
+                        <p style="margin-top: 5px; font-size: 0.9em; color: var(--text-secondary);">Update order status</p>
+                    </div>
+                </div>
+
+                <!-- Clients API -->
+                <div class="nav-card" style="text-align: left; height: auto;">
+                    <h3 style="color: var(--accent-color); margin-bottom: 15px;">👥 Clients API</h3>
+                    <div style="background: var(--bg-secondary); padding: 15px; border-radius: 8px; margin-bottom: 10px;">
+                        <code style="color: var(--text-primary);">GET /api/clients.php</code>
+                        <p style="margin-top: 5px; font-size: 0.9em; color: var(--text-secondary);">Retrieve all clients</p>
+                    </div>
+                    <div style="background: var(--bg-secondary); padding: 15px; border-radius: 8px;">
+                        <code style="color: var(--text-primary);">POST /api/clients.php</code>
+                        <p style="margin-top: 5px; font-size: 0.9em; color: var(--text-secondary);">Create new client</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Integration Examples -->
+        <section>
+            <h2>Integration Examples</h2>
+            
+            <div class="nav-card" style="text-align: left;">
+                <h3 style="margin-bottom: 15px;">JavaScript Example</h3>
+                <pre style="background: #2d3142; color: #eaeaea; padding: 20px; border-radius: 10px; overflow-x: auto; font-size: 0.9em;"><code>// Fetch all products
+fetch('https://yourdomain.com/api/products.php', {
+  headers: {
+    'Authorization': 'Bearer YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  }
+})
+.then(response => response.json())
+.then(data => console.log(data))
+.catch(error => console.error('Error:', error));</code></pre>
+            </div>
+
+            <div class="nav-card" style="text-align: left; margin-top: 20px;">
+                <h3 style="margin-bottom: 15px;">cURL Example</h3>
+                <pre style="background: #2d3142; color: #eaeaea; padding: 20px; border-radius: 10px; overflow-x: auto; font-size: 0.9em;"><code>curl -X GET "https://yourdomain.com/api/products.php" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json"</code></pre>
+            </div>
+        </section>
+    </div>
+
+    <script src="assets/js/theme-system.js"></script>
+    <script>
+        function copyApiKey(keyType) {
+            const key = keyType === 'prod' ? 'tw_prod_1a2b3c4d5e6f7g8h9i0j' : 'tw_dev_4d5e6f7g8h9i0j1k2l3m';
+            navigator.clipboard.writeText(key).then(() => {
+                NotificationManager.show('API key copied to clipboard!', 'success');
+            });
+        }
+
+        function revokeApiKey(keyType) {
+            if (confirm(`Are you sure you want to revoke the ${keyType} API key? This action cannot be undone.`)) {
+                LoadingSpinner.show();
+                setTimeout(() => {
+                    LoadingSpinner.hide();
+                    NotificationManager.show(`${keyType} API key has been revoked.`, 'warning');
+                }, 1000);
+            }
+        }
+
+        function generateNewKey() {
+            LoadingSpinner.show();
+            setTimeout(() => {
+                LoadingSpinner.hide();
+                const randomKey = 'tw_' + Math.random().toString(36).substring(2, 15);
+                NotificationManager.show('New API key generated: ' + randomKey, 'success', 5000);
+            }, 1500);
+        }
+    </script>
+</body>
+</html>

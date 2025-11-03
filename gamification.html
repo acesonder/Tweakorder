@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamification Dashboard - Tweakorder</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/themes.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Gamification & Achievements</h1>
+        
+        <div class="back-link" style="margin-bottom: 20px;">
+            <a href="index.html" style="text-decoration: none; color: #667eea;">← Back to Dashboard</a>
+        </div>
+
+        <!-- User Profile & Level -->
+        <section style="margin-bottom: 40px;">
+            <div class="nav-card" style="text-align: center; background: linear-gradient(135deg, var(--accent-color) 0%, var(--accent-secondary) 100%); color: white; padding: 40px;">
+                <div class="profile-avatar" style="width: 120px; height: 120px; margin: 0 auto 20px; border-radius: 50%; background: white; display: flex; align-items: center; justify-content: center; font-size: 60px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); position: relative;">
+                    👤
+                    <div class="status-ring pulse" style="position: absolute; width: 130px; height: 130px; border: 4px solid #4caf50; border-radius: 50%; top: -5px; left: -5px;"></div>
+                </div>
+                <h2 style="margin-bottom: 10px;">Staff Member</h2>
+                <div style="font-size: 2em; font-weight: bold; margin: 20px 0;">Level 12 🌟</div>
+                <div style="background: rgba(255,255,255,0.2); border-radius: 20px; padding: 10px; margin: 20px auto; max-width: 400px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9em;">
+                        <span>3,420 XP</span>
+                        <span>4,000 XP</span>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.3); height: 20px; border-radius: 10px; overflow: hidden;">
+                        <div style="background: linear-gradient(90deg, #4caf50, #8bc34a); height: 100%; width: 85%; transition: width 1s ease;"></div>
+                    </div>
+                    <div style="margin-top: 5px; font-size: 0.85em;">580 XP until Level 13</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Activity Streak -->
+        <section style="margin-bottom: 40px;">
+            <h2>🔥 Activity Streak</h2>
+            <div class="nav-card" style="text-align: center;">
+                <div style="font-size: 5em; margin: 20px 0;" class="bounce">🔥</div>
+                <div style="font-size: 3em; font-weight: bold; color: var(--accent-color); margin-bottom: 10px;">
+                    23 Days
+                </div>
+                <p style="color: var(--text-secondary); margin-bottom: 30px;">
+                    Your current streak! Keep it up!
+                </p>
+                <div style="display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
+                    <div class="streak-day active" style="width: 40px; height: 40px; border-radius: 8px; background: var(--accent-color); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">M</div>
+                    <div class="streak-day active" style="width: 40px; height: 40px; border-radius: 8px; background: var(--accent-color); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">T</div>
+                    <div class="streak-day active" style="width: 40px; height: 40px; border-radius: 8px; background: var(--accent-color); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">W</div>
+                    <div class="streak-day active" style="width: 40px; height: 40px; border-radius: 8px; background: var(--accent-color); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">T</div>
+                    <div class="streak-day active" style="width: 40px; height: 40px; border-radius: 8px; background: var(--accent-color); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">F</div>
+                    <div class="streak-day" style="width: 40px; height: 40px; border-radius: 8px; background: var(--bg-secondary); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-weight: bold;">S</div>
+                    <div class="streak-day" style="width: 40px; height: 40px; border-radius: 8px; background: var(--bg-secondary); display: flex; align-items: center; justify-content: center; color: var(--text-secondary); font-weight: bold;">S</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Achievements & Badges -->
+        <section style="margin-bottom: 40px;">
+            <h2>🏆 Achievements & Badges</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                <!-- Achievement 1 - Unlocked -->
+                <div class="nav-card achievement-card sparkle-effect" style="text-align: center; border: 2px solid #ffd700;">
+                    <div style="font-size: 4em; margin: 15px 0;">🏆</div>
+                    <h3 style="color: #ffd700; margin-bottom: 10px;">Order Master</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 15px;">
+                        Complete 100 orders
+                    </p>
+                    <div class="badge badge-success">Unlocked!</div>
+                    <div style="margin-top: 15px; font-size: 0.85em; color: var(--text-secondary);">
+                        Earned on Nov 1, 2024
+                    </div>
+                </div>
+
+                <!-- Achievement 2 - Unlocked -->
+                <div class="nav-card achievement-card" style="text-align: center; border: 2px solid #ffd700;">
+                    <div style="font-size: 4em; margin: 15px 0;">⚡</div>
+                    <h3 style="color: #ffd700; margin-bottom: 10px;">Speed Demon</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 15px;">
+                        Process 10 orders in under 1 hour
+                    </p>
+                    <div class="badge badge-success">Unlocked!</div>
+                    <div style="margin-top: 15px; font-size: 0.85em; color: var(--text-secondary);">
+                        Earned on Oct 28, 2024
+                    </div>
+                </div>
+
+                <!-- Achievement 3 - Unlocked -->
+                <div class="nav-card achievement-card" style="text-align: center; border: 2px solid #ffd700;">
+                    <div style="font-size: 4em; margin: 15px 0;">🔥</div>
+                    <h3 style="color: #ffd700; margin-bottom: 10px;">Streak Warrior</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 15px;">
+                        Maintain a 30-day activity streak
+                    </p>
+                    <div class="badge badge-warning">In Progress</div>
+                    <div style="margin-top: 15px;">
+                        <div style="background: var(--bg-secondary); height: 10px; border-radius: 5px; overflow: hidden;">
+                            <div style="background: linear-gradient(90deg, #ff9800, #f44336); height: 100%; width: 77%;"></div>
+                        </div>
+                        <div style="margin-top: 5px; font-size: 0.85em; color: var(--text-secondary);">23/30 days</div>
+                    </div>
+                </div>
+
+                <!-- Achievement 4 - Locked -->
+                <div class="nav-card achievement-card" style="text-align: center; opacity: 0.5;">
+                    <div style="font-size: 4em; margin: 15px 0;">🎯</div>
+                    <h3 style="color: var(--text-secondary); margin-bottom: 10px;">Perfect Week</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 15px;">
+                        Zero errors for 7 consecutive days
+                    </p>
+                    <div class="badge" style="background: var(--bg-secondary); color: var(--text-secondary);">Locked</div>
+                    <div style="margin-top: 15px;">
+                        <div style="background: var(--bg-secondary); height: 10px; border-radius: 5px; overflow: hidden;">
+                            <div style="background: #999; height: 100%; width: 43%;"></div>
+                        </div>
+                        <div style="margin-top: 5px; font-size: 0.85em; color: var(--text-secondary);">3/7 days</div>
+                    </div>
+                </div>
+
+                <!-- Achievement 5 - Locked -->
+                <div class="nav-card achievement-card" style="text-align: center; opacity: 0.5;">
+                    <div style="font-size: 4em; margin: 15px 0;">💎</div>
+                    <h3 style="color: var(--text-secondary); margin-bottom: 10px;">Elite Status</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 15px;">
+                        Reach Level 25
+                    </p>
+                    <div class="badge" style="background: var(--bg-secondary); color: var(--text-secondary);">Locked</div>
+                    <div style="margin-top: 15px;">
+                        <div style="background: var(--bg-secondary); height: 10px; border-radius: 5px; overflow: hidden;">
+                            <div style="background: #999; height: 100%; width: 48%;"></div>
+                        </div>
+                        <div style="margin-top: 5px; font-size: 0.85em; color: var(--text-secondary);">Level 12/25</div>
+                    </div>
+                </div>
+
+                <!-- Achievement 6 - Locked -->
+                <div class="nav-card achievement-card" style="text-align: center; opacity: 0.5;">
+                    <div style="font-size: 4em; margin: 15px 0;">🌟</div>
+                    <h3 style="color: var(--text-secondary); margin-bottom: 10px;">Customer Hero</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.9em; margin-bottom: 15px;">
+                        Receive 50 five-star ratings
+                    </p>
+                    <div class="badge" style="background: var(--bg-secondary); color: var(--text-secondary);">Locked</div>
+                    <div style="margin-top: 15px;">
+                        <div style="background: var(--bg-secondary); height: 10px; border-radius: 5px; overflow: hidden;">
+                            <div style="background: #999; height: 100%; width: 34%;"></div>
+                        </div>
+                        <div style="margin-top: 5px; font-size: 0.85em; color: var(--text-secondary);">17/50 ratings</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Progress Bars -->
+        <section style="margin-bottom: 40px;">
+            <h2>📊 Performance Stats</h2>
+            <div class="nav-card" style="text-align: left;">
+                <div style="margin-bottom: 25px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="font-weight: 600;">Orders Processed</span>
+                        <span style="color: var(--accent-color); font-weight: bold;">127 / 150</span>
+                    </div>
+                    <div style="background: var(--bg-secondary); height: 20px; border-radius: 10px; overflow: hidden;">
+                        <div class="glow" style="background: linear-gradient(90deg, var(--accent-color), var(--accent-secondary)); height: 100%; width: 85%; transition: width 1s ease;"></div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="font-weight: 600;">Customer Satisfaction</span>
+                        <span style="color: #4caf50; font-weight: bold;">94%</span>
+                    </div>
+                    <div style="background: var(--bg-secondary); height: 20px; border-radius: 10px; overflow: hidden;">
+                        <div style="background: linear-gradient(90deg, #4caf50, #8bc34a); height: 100%; width: 94%; transition: width 1s ease;"></div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 25px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="font-weight: 600;">Response Time</span>
+                        <span style="color: #2196f3; font-weight: bold;">Excellent</span>
+                    </div>
+                    <div style="background: var(--bg-secondary); height: 20px; border-radius: 10px; overflow: hidden;">
+                        <div style="background: linear-gradient(90deg, #2196f3, #03a9f4); height: 100%; width: 88%; transition: width 1s ease;"></div>
+                    </div>
+                </div>
+
+                <div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="font-weight: 600;">Team Collaboration</span>
+                        <span style="color: #9c27b0; font-weight: bold;">78 points</span>
+                    </div>
+                    <div style="background: var(--bg-secondary); height: 20px; border-radius: 10px; overflow: hidden;">
+                        <div style="background: linear-gradient(90deg, #9c27b0, #e91e63); height: 100%; width: 78%; transition: width 1s ease;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Leaderboard -->
+        <section>
+            <h2>🏅 Team Leaderboard</h2>
+            <div class="nav-card" style="text-align: left;">
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="background: var(--bg-secondary); border-bottom: 2px solid var(--border-color);">
+                                <th style="padding: 15px; text-align: center; width: 60px;">Rank</th>
+                                <th style="padding: 15px; text-align: left;">Member</th>
+                                <th style="padding: 15px; text-align: center;">Level</th>
+                                <th style="padding: 15px; text-align: center;">XP</th>
+                                <th style="padding: 15px; text-align: center;">Badges</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid var(--border-color); background: linear-gradient(90deg, rgba(255,215,0,0.1), transparent);">
+                                <td style="padding: 15px; text-align: center; font-size: 2em;">🥇</td>
+                                <td style="padding: 15px;"><strong>Sarah Johnson</strong></td>
+                                <td style="padding: 15px; text-align: center;"><strong>18</strong></td>
+                                <td style="padding: 15px; text-align: center;">6,234</td>
+                                <td style="padding: 15px; text-align: center;">12</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color); background: linear-gradient(90deg, rgba(192,192,192,0.1), transparent);">
+                                <td style="padding: 15px; text-align: center; font-size: 2em;">🥈</td>
+                                <td style="padding: 15px;"><strong>Mike Davis</strong></td>
+                                <td style="padding: 15px; text-align: center;"><strong>15</strong></td>
+                                <td style="padding: 15px; text-align: center;">5,127</td>
+                                <td style="padding: 15px; text-align: center;">10</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color); background: linear-gradient(90deg, rgba(205,127,50,0.1), transparent);">
+                                <td style="padding: 15px; text-align: center; font-size: 2em;">🥉</td>
+                                <td style="padding: 15px;"><strong>You</strong></td>
+                                <td style="padding: 15px; text-align: center;"><strong>12</strong></td>
+                                <td style="padding: 15px; text-align: center;">3,420</td>
+                                <td style="padding: 15px; text-align: center;">8</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 15px; text-align: center;">4</td>
+                                <td style="padding: 15px;">Emily Wilson</td>
+                                <td style="padding: 15px; text-align: center;">11</td>
+                                <td style="padding: 15px; text-align: center;">2,945</td>
+                                <td style="padding: 15px; text-align: center;">7</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 15px; text-align: center;">5</td>
+                                <td style="padding: 15px;">Alex Thompson</td>
+                                <td style="padding: 15px; text-align: center;">10</td>
+                                <td style="padding: 15px; text-align: center;">2,103</td>
+                                <td style="padding: 15px; text-align: center;">6</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <style>
+        .achievement-card {
+            transition: all 0.3s ease;
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-ring {
+            animation: pulse 2s ease-in-out infinite;
+        }
+    </style>
+
+    <script src="assets/js/theme-system.js"></script>
+    <script>
+        // Animate progress bars on load
+        document.addEventListener('DOMContentLoaded', () => {
+            NotificationManager.show('🎉 Welcome back! +50 XP for logging in!', 'success', 3000);
+        });
+    </script>
+</body>
+</html>
