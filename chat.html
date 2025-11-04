@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat & Messaging - Tweakorder</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/chat.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+</head>
+<body style="padding: 0; margin: 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+    
+    <!-- 3D Navbar -->
+    <nav class="chat-navbar">
+        <div class="chat-navbar-inner">
+            <a href="index.html" class="chat-navbar-brand">
+                <span class="chat-navbar-icon">💬</span>
+                <span>Tweakorder Chat</span>
+            </a>
+            <div class="chat-navbar-actions">
+                <button class="chat-navbar-btn" id="refreshBtn" title="Refresh">
+                    🔄 Refresh
+                </button>
+                <button class="chat-navbar-btn" id="newConversationBtn">
+                    ➕ New Chat
+                </button>
+                <a href="notifications.html" class="chat-navbar-btn">
+                    🔔 Notifications
+                    <span class="notification-badge" style="display: none;">0</span>
+                </a>
+                <a href="staff-dashboard.html" class="chat-navbar-btn">
+                    🏠 Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Chat Container -->
+    <div class="chat-container">
+        
+        <!-- Conversations Sidebar -->
+        <div class="conversations-sidebar">
+            <div class="conversations-header">
+                <h2>💬 Conversations</h2>
+                <input 
+                    type="text" 
+                    id="searchConversation" 
+                    class="search-conversation" 
+                    placeholder="🔍 Search conversations..."
+                >
+            </div>
+            <div class="conversations-list" id="conversationsList">
+                <!-- Conversations will be loaded dynamically -->
+                <div class="empty-state">
+                    <div class="empty-state-icon">💬</div>
+                    <h3>Loading conversations...</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Messages Area -->
+        <div class="chat-messages-area">
+            <div class="chat-header">
+                <div class="chat-header-title">
+                    <div>
+                        <h2 id="chatTitle">Select a conversation</h2>
+                        <div class="chat-status" id="chatStatus">Choose a conversation to start messaging</div>
+                    </div>
+                </div>
+                <div class="chat-header-actions">
+                    <button class="chat-action-btn" title="Conversation Info">
+                        ℹ️
+                    </button>
+                    <button class="chat-action-btn" title="Search Messages">
+                        🔍
+                    </button>
+                    <button class="chat-action-btn" title="Settings">
+                        ⚙️
+                    </button>
+                </div>
+            </div>
+
+            <div class="messages-container" id="messagesContainer">
+                <!-- Messages will be loaded dynamically -->
+                <div class="empty-state">
+                    <div class="empty-state-icon">📭</div>
+                    <h3>No conversation selected</h3>
+                    <p>Select a conversation from the sidebar to start messaging</p>
+                </div>
+            </div>
+
+            <div class="message-input-area">
+                <div class="message-input-container">
+                    <button class="attachment-btn" title="Attach file">
+                        📎
+                    </button>
+                    <textarea 
+                        id="messageInput" 
+                        class="message-input" 
+                        placeholder="Type your message here..."
+                        rows="1"
+                    ></textarea>
+                    <button class="send-btn" id="sendMessageBtn">
+                        ✈️ Send
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- New Conversation Modal -->
+    <div id="newConversationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>➕ Create New Conversation</h2>
+                <button class="modal-close" onclick="chatManager.closeModal('newConversationModal')">
+                    ✖
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="newConversationForm" onsubmit="event.preventDefault(); chatManager.createConversation();">
+                    <div class="form-group">
+                        <label class="form-label" for="conversationTitle">
+                            📝 Conversation Title
+                        </label>
+                        <input 
+                            type="text" 
+                            id="conversationTitle" 
+                            class="form-input" 
+                            placeholder="Enter conversation title"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="conversationType">
+                            🏷️ Type
+                        </label>
+                        <select id="conversationType" class="form-select">
+                            <option value="direct">Direct Message</option>
+                            <option value="group">Group Chat</option>
+                            <option value="support">Support</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            👥 Add Participants
+                        </label>
+                        <div class="participants-list" id="participantsList">
+                            <!-- Participants will be loaded dynamically -->
+                            <div style="text-align: center; padding: 20px; color: #999;">
+                                Loading participants...
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="chatManager.closeModal('newConversationModal')">
+                    Cancel
+                </button>
+                <button class="modal-btn modal-btn-primary" onclick="chatManager.createConversation()">
+                    Create Conversation
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Conversation Info Modal -->
+    <div id="conversationInfoModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>ℹ️ Conversation Information</h2>
+                <button class="modal-close" onclick="chatManager.closeModal('conversationInfoModal')">
+                    ✖
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">📝 Title</label>
+                    <input type="text" class="form-input" id="infoTitle" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">👥 Participants</label>
+                    <div id="infoParticipants" style="padding: 10px; background: #f5f7fa; border-radius: 8px;">
+                        <!-- Participants list -->
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">📅 Created</label>
+                    <input type="text" class="form-input" id="infoCreated" readonly>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="chatManager.closeModal('conversationInfoModal')">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/chat.js"></script>
+</body>
+</html>

@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messaging Dashboard - Tweakorder</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/chat.css">
+    <link rel="stylesheet" href="assets/css/animations.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .dashboard-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .dashboard-title {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5em;
+            margin: 0 0 10px 0;
+        }
+
+        .dashboard-subtitle {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            animation: scaleIn 0.6s ease-out;
+            transform-style: preserve-3d;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px) translateZ(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .stat-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .action-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .action-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+
+        .action-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .action-description {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .recent-section {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            color: #667eea;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .recent-conversations {
+            display: grid;
+            gap: 15px;
+        }
+
+        .recent-conv-item {
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .recent-conv-item:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .conv-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .conv-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            color: #2d3748;
+        }
+
+        .conv-time {
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .conv-preview {
+            color: #666;
+            line-height: 1.6;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="chat-navbar">
+        <div class="chat-navbar-inner">
+            <a href="index.html" class="chat-navbar-brand">
+                <span class="chat-navbar-icon">💬</span>
+                <span>Messaging Dashboard</span>
+            </a>
+            <div class="chat-navbar-actions">
+                <a href="chat.html" class="chat-navbar-btn">
+                    💬 Open Chat
+                </a>
+                <a href="notifications.html" class="chat-navbar-btn">
+                    🔔 Notifications
+                    <span class="notification-badge" style="display: none;">0</span>
+                </a>
+                <a href="staff-dashboard.html" class="chat-navbar-btn">
+                    🏠 Dashboard
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        
+        <!-- Header -->
+        <div class="dashboard-header">
+            <h1 class="dashboard-title">📬 Messaging Dashboard</h1>
+            <p class="dashboard-subtitle">Stay connected with your team and clients in real-time</p>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">💬</div>
+                <div class="stat-value" id="totalConversations">0</div>
+                <div class="stat-label">Total Conversations</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✉️</div>
+                <div class="stat-value" id="unreadMessages">0</div>
+                <div class="stat-label">Unread Messages</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div class="stat-value" id="activeChats">0</div>
+                <div class="stat-label">Active Chats</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📅</div>
+                <div class="stat-value" id="todayMessages">0</div>
+                <div class="stat-label">Messages Today</div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="chat.html" class="action-card">
+                <div class="action-icon">💬</div>
+                <div class="action-title">Open Chat</div>
+                <div class="action-description">
+                    Start a conversation or continue existing chats with your team and clients
+                </div>
+            </a>
+            <div class="action-card" onclick="openNewConversationModal()">
+                <div class="action-icon">➕</div>
+                <div class="action-title">New Conversation</div>
+                <div class="action-description">
+                    Create a new chat room for direct messaging or group discussions
+                </div>
+            </div>
+            <a href="notifications.html" class="action-card">
+                <div class="action-icon">🔔</div>
+                <div class="action-title">Notifications</div>
+                <div class="action-description">
+                    View all your notification settings and manage alert preferences
+                </div>
+            </a>
+        </div>
+
+        <!-- Recent Conversations -->
+        <div class="recent-section">
+            <h2 class="section-title">
+                <span>📋</span>
+                Recent Conversations
+            </h2>
+            <div class="recent-conversations" id="recentConversations">
+                <div class="empty-state">
+                    <div class="empty-state-icon">💬</div>
+                    <h3>Loading conversations...</h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- New Conversation Modal -->
+    <div id="newConversationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>➕ Create New Conversation</h2>
+                <button class="modal-close" onclick="closeModal('newConversationModal')">
+                    ✖
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="newConversationForm" onsubmit="event.preventDefault(); createConversation();">
+                    <div class="form-group">
+                        <label class="form-label" for="conversationTitle">
+                            📝 Conversation Title
+                        </label>
+                        <input 
+                            type="text" 
+                            id="conversationTitle" 
+                            class="form-input" 
+                            placeholder="Enter conversation title"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="conversationType">
+                            🏷️ Type
+                        </label>
+                        <select id="conversationType" class="form-select">
+                            <option value="direct">Direct Message</option>
+                            <option value="group">Group Chat</option>
+                            <option value="support">Support</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            👥 Add Participants
+                        </label>
+                        <div class="participants-list" id="participantsList">
+                            <div style="text-align: center; padding: 20px; color: #999;">
+                                Loading participants...
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-secondary" onclick="closeModal('newConversationModal')">
+                    Cancel
+                </button>
+                <button class="modal-btn modal-btn-primary" onclick="createConversation()">
+                    Create Conversation
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Load dashboard data
+        async function loadDashboardData() {
+            try {
+                // Load conversations
+                const response = await fetch('/api/chat.php?action=list_conversations');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const conversations = data.conversations;
+                    
+                    // Update stats
+                    document.getElementById('totalConversations').textContent = conversations.length;
+                    
+                    // Render recent conversations
+                    renderRecentConversations(conversations);
+                }
+
+                // Load unread count
+                const unreadResponse = await fetch('/api/chat.php?action=unread_count');
+                const unreadData = await unreadResponse.json();
+                
+                if (unreadData.success) {
+                    document.getElementById('unreadMessages').textContent = unreadData.data.unread_messages;
+                    document.getElementById('activeChats').textContent = unreadData.data.unread_conversations;
+                    
+                    // Update notification badge
+                    const badge = document.querySelector('.notification-badge');
+                    if (badge && unreadData.data.unread_messages > 0) {
+                        badge.textContent = unreadData.data.unread_messages;
+                        badge.style.display = 'inline-block';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+
+        function renderRecentConversations(conversations) {
+            const container = document.getElementById('recentConversations');
+            
+            if (conversations.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">💬</div>
+                        <h3>No conversations yet</h3>
+                        <p>Start a new conversation to get started</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = conversations.slice(0, 5).map(conv => {
+                const time = formatTime(conv.updated_at);
+                return `
+                    <div class="recent-conv-item" onclick="window.location.href='chat.html'">
+                        <div class="conv-header">
+                            <div class="conv-title">
+                                ${getConversationIcon(conv.type)} ${conv.title || 'Conversation'}
+                            </div>
+                            <div class="conv-time">${time}</div>
+                        </div>
+                        <div class="conv-preview">
+                            ${conv.last_message || 'No messages yet'}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getConversationIcon(type) {
+            const icons = {
+                'direct': '👤',
+                'group': '👥',
+                'support': '🎧'
+            };
+            return icons[type] || '💬';
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 60000) return 'Just now';
+            if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
+            if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
+            if (diff < 604800000) return `${Math.floor(diff / 86400000)}d ago`;
+            
+            return date.toLocaleDateString();
+        }
+
+        function openNewConversationModal() {
+            const modal = document.getElementById('newConversationModal');
+            if (modal) {
+                modal.classList.add('show');
+                loadAvailableParticipants();
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('show');
+            }
+        }
+
+        function loadAvailableParticipants() {
+            const participantsList = document.getElementById('participantsList');
+            if (!participantsList) return;
+
+            // Demo data
+            const participants = [
+                { id: 1, name: 'Admin User', type: 'staff' },
+                { id: 2, name: 'Manager User', type: 'staff' },
+                { id: 3, name: 'Worker User', type: 'staff' }
+            ];
+
+            participantsList.innerHTML = participants.map(p => `
+                <div class="participant-item" onclick="toggleParticipant(${p.id}, '${p.type}', this)">
+                    <input type="checkbox" class="participant-checkbox" data-id="${p.id}" data-type="${p.type}">
+                    <span>${p.name} (${p.type})</span>
+                </div>
+            `).join('');
+        }
+
+        function toggleParticipant(id, type, element) {
+            element.classList.toggle('selected');
+            const checkbox = element.querySelector('.participant-checkbox');
+            checkbox.checked = !checkbox.checked;
+        }
+
+        async function createConversation() {
+            const titleInput = document.getElementById('conversationTitle');
+            const typeSelect = document.getElementById('conversationType');
+            
+            if (!titleInput || !typeSelect) return;
+
+            const title = titleInput.value.trim();
+            const type = typeSelect.value;
+
+            if (!title) {
+                alert('Please enter a conversation title');
+                return;
+            }
+
+            const selectedCheckboxes = document.querySelectorAll('.participant-checkbox:checked');
+            const participants = Array.from(selectedCheckboxes).map(cb => ({
+                id: parseInt(cb.dataset.id),
+                type: cb.dataset.type
+            }));
+
+            try {
+                const response = await fetch('/api/chat.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'create_conversation',
+                        title: title,
+                        type: type,
+                        participants: participants
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    closeModal('newConversationModal');
+                    alert('Conversation created successfully!');
+                    window.location.href = 'chat.html';
+                } else {
+                    alert(data.message || 'Failed to create conversation');
+                }
+            } catch (error) {
+                console.error('Error creating conversation:', error);
+                alert('Error creating conversation');
+            }
+        }
+
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            loadDashboardData();
+            
+            // Refresh every 30 seconds
+            setInterval(loadDashboardData, 30000);
+        });
+    </script>
+</body>
+</html>
