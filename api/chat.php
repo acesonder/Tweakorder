@@ -20,8 +20,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 // Helper function to get current user/client info
 function getCurrentUser() {
-    // For demo purposes, we'll use a default user
-    // In production, this should check session authentication
+    // Check session for authenticated user
     if (isset($_SESSION['user_id'])) {
         return [
             'type' => 'staff',
@@ -33,7 +32,13 @@ function getCurrentUser() {
             'id' => $_SESSION['client_id']
         ];
     }
-    // Default to admin user for demo
+    
+    // DEMO MODE: Default to admin user for demonstration
+    // WARNING: In production, this should return an error instead
+    // Uncomment the following lines for production:
+    // header('HTTP/1.1 401 Unauthorized');
+    // die(json_encode(['success' => false, 'message' => 'Authentication required']));
+    
     return [
         'type' => 'staff',
         'id' => 1
@@ -262,12 +267,23 @@ function createConversation($conn, $data, $currentUser) {
         foreach($participants as $participant) {
             $partType = $participant['type'];
             $partId = $participant['id'];
-            $partField = $partType === 'staff' ? 'user_id' : 'client_id';
             
-            $partSql = "INSERT INTO conversation_participants (conversation_id, $partField, participant_type) VALUES (?, ?, ?)";
-            $partStmt = $conn->prepare($partSql);
-            $partStmt->bind_param("iis", $conversationId, $partId, $partType);
-            $partStmt->execute();
+            // Validate participant type to prevent SQL injection
+            if (!in_array($partType, ['staff', 'client'])) {
+                continue;
+            }
+            
+            if ($partType === 'staff') {
+                $partSql = "INSERT INTO conversation_participants (conversation_id, user_id, participant_type) VALUES (?, ?, ?)";
+                $partStmt = $conn->prepare($partSql);
+                $partStmt->bind_param("iis", $conversationId, $partId, $partType);
+                $partStmt->execute();
+            } else {
+                $partSql = "INSERT INTO conversation_participants (conversation_id, client_id, participant_type) VALUES (?, ?, ?)";
+                $partStmt = $conn->prepare($partSql);
+                $partStmt->bind_param("iis", $conversationId, $partId, $partType);
+                $partStmt->execute();
+            }
         }
         
         echo json_encode(['success' => true, 'message' => 'Conversation created', 'id' => $conversationId]);

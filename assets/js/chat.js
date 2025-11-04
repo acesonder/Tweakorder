@@ -417,12 +417,14 @@ class ChatManager {
 
     startAutoRefresh() {
         // Refresh messages every 5 seconds if a conversation is selected
+        // Note: In production, consider using WebSocket for true real-time updates
+        // or increase the interval to reduce server load (e.g., 10-30 seconds)
         this.refreshInterval = setInterval(() => {
             if (this.currentConversationId) {
                 this.loadMessages(this.currentConversationId);
             }
             this.loadUnreadCount();
-        }, 5000);
+        }, 10000); // Changed to 10 seconds to reduce server load
     }
 
     stopAutoRefresh() {

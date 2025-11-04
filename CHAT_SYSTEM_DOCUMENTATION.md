@@ -234,11 +234,17 @@ ChatManager.prototype.customMethod = function() {
 Modify the refresh interval in `assets/js/chat.js`:
 
 ```javascript
-// Default: 5 seconds (5000ms)
+// Default: 10 seconds (10000ms) - balanced for server load
+// For true real-time, consider WebSocket implementation
 this.refreshInterval = setInterval(() => {
     // Refresh logic
-}, 5000);
+}, 10000);
 ```
+
+**Note**: The default is set to 10 seconds to balance real-time updates with server load. For production environments with many users, consider:
+- Implementing WebSocket connections for true real-time messaging
+- Using Server-Sent Events (SSE)
+- Increasing the interval to 30-60 seconds for inactive conversations
 
 ## Pages Overview
 
@@ -365,6 +371,9 @@ define('DB_NAME', 'tweakorder');
 4. **Input Validation**: Server-side validation for all inputs
 5. **Content Security Policy**: Add CSP headers
 6. **Sanitize File Uploads**: If implementing file attachments
+7. **Remove Demo Mode**: Replace the default user authentication in `api/chat.php` with proper session validation
+8. **WebSocket Implementation**: Replace polling with WebSocket for true real-time updates and reduced server load
+9. **Database Indexes**: Add additional indexes based on query patterns for better performance
 
 ## Future Enhancements
 

@@ -73,7 +73,8 @@ CREATE TABLE IF NOT EXISTS message_read_status (
     FOREIGN KEY (message_id) REFERENCES messages(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (client_id) REFERENCES clients(id) ON DELETE CASCADE,
-    UNIQUE KEY unique_read (message_id, user_id, client_id),
+    UNIQUE KEY unique_staff_read (message_id, user_id, reader_type),
+    UNIQUE KEY unique_client_read (message_id, client_id, reader_type),
     INDEX idx_message (message_id)
 );
 
