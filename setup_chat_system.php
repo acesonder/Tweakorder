@@ -53,7 +53,9 @@ try {
     $tables = ['conversations', 'conversation_participants', 'messages', 'message_read_status', 'chat_notifications'];
     
     foreach ($tables as $table) {
-        $result = $conn->query("SHOW TABLES LIKE '$table'");
+        // Escape table name for security
+        $escapedTable = $conn->real_escape_string($table);
+        $result = $conn->query("SHOW TABLES LIKE '$escapedTable'");
         if ($result && $result->num_rows > 0) {
             echo "✓ Table '$table' exists\n";
         } else {
