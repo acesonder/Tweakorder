@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Reports - Tweakorder</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .reports-container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            transform: perspective(1000px) rotateX(2deg);
+            transition: transform 0.3s ease;
+        }
+
+        .header:hover {
+            transform: perspective(1000px) rotateX(0deg);
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .controls-panel {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            transform: perspective(1000px) rotateX(1deg);
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .control-group label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+        }
+
+        .control-group select,
+        .control-group input {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .control-group select:focus,
+        .control-group input:focus {
+            border-color: #667eea;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(56, 239, 125, 0.4);
+        }
+
+        .btn-export {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-export:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.4);
+        }
+
+        .report-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 2px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: #666;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .tab-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .report-content {
+            display: none;
+        }
+
+        .report-content.active {
+            display: block;
+        }
+
+        .stats-grid-3d {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card-3d {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: perspective(1000px) rotateY(2deg);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card-3d::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .stat-card-3d:hover {
+            transform: perspective(1000px) rotateY(0deg) translateY(-10px);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+        }
+
+        .stat-card-3d.green::before {
+            background: linear-gradient(90deg, #11998e, #38ef7d);
+        }
+
+        .stat-card-3d.orange::before {
+            background: linear-gradient(90deg, #f093fb, #f5576c);
+        }
+
+        .stat-card-3d.blue::before {
+            background: linear-gradient(90deg, #4facfe, #00f2fe);
+        }
+
+        .stat-label {
+            color: #999;
+            font-size: 0.9em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 3em;
+            font-weight: bold;
+            color: #333;
+            margin: 15px 0;
+        }
+
+        .stat-change {
+            color: #11998e;
+            font-size: 0.95em;
+            font-weight: 600;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card-3d {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transform: perspective(1000px) rotateX(2deg);
+            transition: all 0.4s ease;
+        }
+
+        .chart-card-3d:hover {
+            transform: perspective(1000px) rotateX(0deg) translateY(-5px);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.4);
+        }
+
+        .chart-card-3d h3 {
+            color: #333;
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #f0f0f0;
+        }
+
+        .data-table-container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95em;
+        }
+
+        .data-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        .data-table tbody tr {
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.2s ease;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f8f8f8;
+        }
+
+        .data-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+            transform: perspective(1000px) rotateX(0deg);
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: perspective(1000px) rotateX(-10deg) translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: perspective(1000px) rotateX(0deg) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #f0f0f0;
+        }
+
+        .modal-header h2 {
+            color: #667eea;
+            font-size: 2em;
+        }
+
+        .close-btn {
+            font-size: 2em;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: #667eea;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #667eea;
+            font-size: 1.2em;
+        }
+
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-value {
+                font-size: 2em;
+            }
+
+            .modal-content {
+                padding: 20px;
+                max-width: 95%;
+            }
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            transform: translateX(-5px);
+        }
+    </style>
+</head>
+<body>
+    <div class="reports-container">
+        <a href="admin-panel.html" class="back-link">
+            <span>←</span> Back to Admin Panel
+        </a>
+
+        <div class="header">
+            <h1>📊 Advanced Admin Reports</h1>
+            <p>Comprehensive analytics and reporting with export capabilities</p>
+        </div>
+
+        <div class="controls-panel">
+            <div class="controls-grid">
+                <div class="control-group">
+                    <label for="reportType">Report Type</label>
+                    <select id="reportType">
+                        <option value="sales">Sales Report</option>
+                        <option value="inventory">Inventory Report</option>
+                        <option value="client_activity">Client Activity Report</option>
+                        <option value="staff_performance">Staff Performance Report</option>
+                        <option value="comprehensive">Comprehensive Report</option>
+                    </select>
+                </div>
+
+                <div class="control-group">
+                    <label for="startDate">Start Date</label>
+                    <input type="date" id="startDate" value="">
+                </div>
+
+                <div class="control-group">
+                    <label for="endDate">End Date</label>
+                    <input type="date" id="endDate" value="">
+                </div>
+
+                <div class="control-group">
+                    <label for="timePreset">Quick Select</label>
+                    <select id="timePreset">
+                        <option value="custom">Custom Range</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                        <option value="quarter">This Quarter</option>
+                        <option value="year">This Year</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary" onclick="generateReport()">
+                    🔍 Generate Report
+                </button>
+                <button class="btn btn-secondary" onclick="exportToCSV()">
+                    📄 Export CSV
+                </button>
+                <button class="btn btn-secondary" onclick="exportToExcel()">
+                    📊 Export Excel
+                </button>
+                <button class="btn btn-export" onclick="exportToPDF()">
+                    📑 Export PDF
+                </button>
+                <button class="btn btn-primary" onclick="openReportModal()">
+                    🔍 View in Modal
+                </button>
+            </div>
+        </div>
+
+        <div id="reportResults">
+            <div class="loading">Loading report data</div>
+        </div>
+    </div>
+
+    <!-- Report Modal -->
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📊 Report Viewer</h2>
+                <span class="close-btn" onclick="closeReportModal()">&times;</span>
+            </div>
+            <div id="modalReportContent">
+                <!-- Report content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize date inputs
+        const today = new Date();
+        const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        
+        document.getElementById('startDate').value = firstDayOfMonth.toISOString().split('T')[0];
+        document.getElementById('endDate').value = today.toISOString().split('T')[0];
+
+        // Charts storage
+        let currentCharts = {};
+
+        // Time preset handler
+        document.getElementById('timePreset').addEventListener('change', function() {
+            const preset = this.value;
+            const today = new Date();
+            let startDate, endDate = today;
+
+            switch(preset) {
+                case 'today':
+                    startDate = today;
+                    break;
+                case 'week':
+                    startDate = new Date(today);
+                    startDate.setDate(today.getDate() - 7);
+                    break;
+                case 'month':
+                    startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+                    break;
+                case 'quarter':
+                    const quarter = Math.floor(today.getMonth() / 3);
+                    startDate = new Date(today.getFullYear(), quarter * 3, 1);
+                    break;
+                case 'year':
+                    startDate = new Date(today.getFullYear(), 0, 1);
+                    break;
+                default:
+                    return;
+            }
+
+            document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
+            document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
+        });
+
+        // Generate report
+        async function generateReport() {
+            const reportType = document.getElementById('reportType').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            const resultsContainer = document.getElementById('reportResults');
+            resultsContainer.innerHTML = '<div class="loading">Generating report</div>';
+
+            try {
+                const response = await fetch(`api/reports.php?action=get_${reportType}_report&start_date=${startDate}&end_date=${endDate}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    renderReport(data);
+                } else {
+                    resultsContainer.innerHTML = `<div class="empty-state"><h3>Error loading report</h3><p>${data.error}</p></div>`;
+                }
+            } catch (error) {
+                console.error('Error generating report:', error);
+                resultsContainer.innerHTML = '<div class="empty-state"><h3>Error generating report</h3><p>Please try again later</p></div>';
+            }
+        }
+
+        // Render report based on type
+        function renderReport(data) {
+            const container = document.getElementById('reportResults');
+            
+            switch(data.report_type) {
+                case 'sales':
+                    renderSalesReport(data, container);
+                    break;
+                case 'inventory':
+                    renderInventoryReport(data, container);
+                    break;
+                case 'client_activity':
+                    renderClientActivityReport(data, container);
+                    break;
+                case 'staff_performance':
+                    renderStaffPerformanceReport(data, container);
+                    break;
+                case 'comprehensive':
+                    renderComprehensiveReport(data, container);
+                    break;
+            }
+        }
+
+        // Render sales report
+        function renderSalesReport(data, container) {
+            const summary = data.summary;
+            const fulfillmentRate = summary.total_orders > 0 
+                ? ((summary.fulfilled_orders / summary.total_orders) * 100).toFixed(1) 
+                : 0;
+
+            container.innerHTML = `
+                <div class="stats-grid-3d">
+                    <div class="stat-card-3d">
+                        <div class="stat-label">Total Orders</div>
+                        <div class="stat-value">${summary.total_orders || 0}</div>
+                        <div class="stat-change">📦 All orders in period</div>
+                    </div>
+                    <div class="stat-card-3d green">
+                        <div class="stat-label">Fulfilled Orders</div>
+                        <div class="stat-value">${summary.fulfilled_orders || 0}</div>
+                        <div class="stat-change">✅ ${fulfillmentRate}% completion rate</div>
+                    </div>
+                    <div class="stat-card-3d orange">
+                        <div class="stat-label">Pending Orders</div>
+                        <div class="stat-value">${summary.pending_orders || 0}</div>
+                        <div class="stat-change">⏳ Awaiting fulfillment</div>
+                    </div>
+                    <div class="stat-card-3d blue">
+                        <div class="stat-label">Unique Clients</div>
+                        <div class="stat-value">${summary.unique_clients || 0}</div>
+                        <div class="stat-change">👥 Active customers</div>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="chart-card-3d">
+                        <h3>📈 Daily Order Trends</h3>
+                        <canvas id="dailyTrendsChart"></canvas>
+                    </div>
+                    <div class="chart-card-3d">
+                        <h3>🥧 Order Status Distribution</h3>
+                        <canvas id="statusDistChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="data-table-container">
+                    <h3 style="color: #667eea; margin-bottom: 20px;">📦 Top Products</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Product Name</th>
+                                <th>Order Count</th>
+                            </tr>
+                        </thead>
+                        <tbody id="topProductsTable">
+                            ${data.top_products.map((product, index) => `
+                                <tr>
+                                    <td><strong>#${index + 1}</strong></td>
+                                    <td>${product.products}</td>
+                                    <td><strong>${product.order_count}</strong></td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="data-table-container">
+                    <h3 style="color: #667eea; margin-bottom: 20px;">📅 Daily Statistics</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Total Orders</th>
+                                <th>Fulfilled</th>
+                                <th>Pending</th>
+                                <th>In Progress</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.daily_stats.map(day => `
+                                <tr>
+                                    <td>${day.date}</td>
+                                    <td><strong>${day.total_orders}</strong></td>
+                                    <td>${day.fulfilled}</td>
+                                    <td>${day.pending}</td>
+                                    <td>${day.in_progress}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            // Create charts
+            createDailyTrendsChart(data.daily_stats);
+            createStatusDistributionChart(summary);
+        }
+
+        // Render inventory report
+        function renderInventoryReport(data, container) {
+            const summary = data.summary;
+
+            container.innerHTML = `
+                <div class="stats-grid-3d">
+                    <div class="stat-card-3d">
+                        <div class="stat-label">Total Products</div>
+                        <div class="stat-value">${summary.total_products || 0}</div>
+                        <div class="stat-change">📦 In catalog</div>
+                    </div>
+                    <div class="stat-card-3d orange">
+                        <div class="stat-label">Low Stock Items</div>
+                        <div class="stat-value">${summary.low_stock_items || 0}</div>
+                        <div class="stat-change">⚠️ Needs attention</div>
+                    </div>
+                    <div class="stat-card-3d" style="--card-color: #f5576c;">
+                        <div class="stat-label">Out of Stock</div>
+                        <div class="stat-value">${summary.out_of_stock_items || 0}</div>
+                        <div class="stat-change">🚫 Requires restock</div>
+                    </div>
+                    <div class="stat-card-3d green">
+                        <div class="stat-label">Total Inventory</div>
+                        <div class="stat-value">${summary.total_inventory_value || 0}</div>
+                        <div class="stat-change">📊 Units in stock</div>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="chart-card-3d">
+                        <h3>📊 Inventory Distribution</h3>
+                        <canvas id="inventoryChart"></canvas>
+                    </div>
+                    <div class="chart-card-3d">
+                        <h3>🔥 Most Ordered Products</h3>
+                        <canvas id="popularProductsChart"></canvas>
+                    </div>
+                </div>
+
+                ${data.low_stock.length > 0 ? `
+                    <div class="data-table-container">
+                        <h3 style="color: #f5576c; margin-bottom: 20px;">⚠️ Low Stock Alert</h3>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>SKU</th>
+                                    <th>Category</th>
+                                    <th>Current Stock</th>
+                                    <th>Orders (30d)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.low_stock.map(product => `
+                                    <tr>
+                                        <td><strong>${product.name}</strong></td>
+                                        <td>${product.sku || 'N/A'}</td>
+                                        <td>${product.category || 'N/A'}</td>
+                                        <td style="color: #f5576c;"><strong>${product.inventory}</strong></td>
+                                        <td>${product.orders_last_30_days}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                ` : ''}
+
+                <div class="data-table-container">
+                    <h3 style="color: #667eea; margin-bottom: 20px;">📦 All Products</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Product Name</th>
+                                <th>SKU</th>
+                                <th>Category</th>
+                                <th>Stock Level</th>
+                                <th>Times Ordered</th>
+                                <th>Recent Orders (30d)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.products.slice(0, 50).map(product => `
+                                <tr>
+                                    <td><strong>${product.name}</strong></td>
+                                    <td>${product.sku || 'N/A'}</td>
+                                    <td>${product.category || 'N/A'}</td>
+                                    <td style="color: ${product.inventory <= 0 ? '#f5576c' : product.inventory <= 20 ? '#f093fb' : '#11998e'};">
+                                        <strong>${product.inventory}</strong>
+                                    </td>
+                                    <td>${product.times_ordered}</td>
+                                    <td>${product.orders_last_30_days}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            createInventoryCharts(data);
+        }
+
+        // Render client activity report
+        function renderClientActivityReport(data, container) {
+            const summary = data.summary;
+
+            container.innerHTML = `
+                <div class="stats-grid-3d">
+                    <div class="stat-card-3d">
+                        <div class="stat-label">Active Clients</div>
+                        <div class="stat-value">${summary.active_clients || 0}</div>
+                        <div class="stat-change">👥 With orders in period</div>
+                    </div>
+                    <div class="stat-card-3d green">
+                        <div class="stat-label">New Clients</div>
+                        <div class="stat-value">${summary.new_clients || 0}</div>
+                        <div class="stat-change">✨ Joined in period</div>
+                    </div>
+                    <div class="stat-card-3d blue">
+                        <div class="stat-label">Total Orders</div>
+                        <div class="stat-value">${summary.total_orders_by_clients || 0}</div>
+                        <div class="stat-change">📦 By all clients</div>
+                    </div>
+                    <div class="stat-card-3d orange">
+                        <div class="stat-label">Avg Orders/Client</div>
+                        <div class="stat-value">${summary.avg_orders_per_client || 0}</div>
+                        <div class="stat-change">📊 Average activity</div>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="chart-card-3d">
+                        <h3>👥 Top 10 Active Clients</h3>
+                        <canvas id="topClientsChart"></canvas>
+                    </div>
+                    <div class="chart-card-3d">
+                        <h3>📈 Client Engagement</h3>
+                        <canvas id="clientEngagementChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="data-table-container">
+                    <h3 style="color: #667eea; margin-bottom: 20px;">👥 Client Activity Details</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Client Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Total Orders</th>
+                                <th>Fulfilled</th>
+                                <th>Last Order</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.clients.slice(0, 50).map(client => `
+                                <tr>
+                                    <td><strong>${client.first_name} ${client.last_name}</strong></td>
+                                    <td>${client.email || 'N/A'}</td>
+                                    <td>${client.phone || 'N/A'}</td>
+                                    <td><strong>${client.total_orders}</strong></td>
+                                    <td>${client.fulfilled_orders}</td>
+                                    <td>${client.last_order_date ? new Date(client.last_order_date).toLocaleDateString() : 'N/A'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            createClientActivityCharts(data);
+        }
+
+        // Render staff performance report
+        function renderStaffPerformanceReport(data, container) {
+            const summary = data.summary;
+
+            container.innerHTML = `
+                <div class="stats-grid-3d">
+                    <div class="stat-card-3d">
+                        <div class="stat-label">Total Staff</div>
+                        <div class="stat-value">${summary.total_staff || 0}</div>
+                        <div class="stat-change">👨‍💼 Active members</div>
+                    </div>
+                    <div class="stat-card-3d green">
+                        <div class="stat-label">Total Actions</div>
+                        <div class="stat-value">${summary.total_actions || 0}</div>
+                        <div class="stat-change">⚡ In period</div>
+                    </div>
+                    <div class="stat-card-3d blue">
+                        <div class="stat-label">Orders Created</div>
+                        <div class="stat-value">${summary.total_orders_created || 0}</div>
+                        <div class="stat-change">📝 New orders</div>
+                    </div>
+                    <div class="stat-card-3d orange">
+                        <div class="stat-label">Orders Updated</div>
+                        <div class="stat-value">${summary.total_orders_updated || 0}</div>
+                        <div class="stat-change">🔄 Modifications</div>
+                    </div>
+                </div>
+
+                <div class="charts-container">
+                    <div class="chart-card-3d">
+                        <h3>👨‍💼 Staff Activity Levels</h3>
+                        <canvas id="staffActivityChart"></canvas>
+                    </div>
+                    <div class="chart-card-3d">
+                        <h3>📊 Actions by Type</h3>
+                        <canvas id="actionsTypeChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="data-table-container">
+                    <h3 style="color: #667eea; margin-bottom: 20px;">👨‍💼 Staff Performance Details</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Staff Member</th>
+                                <th>Username</th>
+                                <th>Role</th>
+                                <th>Orders Created</th>
+                                <th>Orders Updated</th>
+                                <th>Client Actions</th>
+                                <th>Total Actions</th>
+                                <th>Last Activity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${data.staff.map(staff => `
+                                <tr>
+                                    <td><strong>${staff.first_name || ''} ${staff.last_name || ''}</strong></td>
+                                    <td>${staff.username}</td>
+                                    <td><span style="background: #667eea; color: white; padding: 4px 12px; border-radius: 12px; font-size: 0.85em;">${staff.role}</span></td>
+                                    <td>${staff.orders_created || 0}</td>
+                                    <td>${staff.orders_updated || 0}</td>
+                                    <td>${staff.client_actions || 0}</td>
+                                    <td><strong>${staff.total_actions || 0}</strong></td>
+                                    <td>${staff.last_activity ? new Date(staff.last_activity).toLocaleDateString() : 'No activity'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            createStaffPerformanceCharts(data);
+        }
+
+        // Render comprehensive report
+        function renderComprehensiveReport(data, container) {
+            container.innerHTML = `
+                <div class="report-tabs">
+                    <button class="tab-btn active" onclick="switchTab(0)">📈 Sales</button>
+                    <button class="tab-btn" onclick="switchTab(1)">📦 Inventory</button>
+                    <button class="tab-btn" onclick="switchTab(2)">👥 Clients</button>
+                    <button class="tab-btn" onclick="switchTab(3)">👨‍💼 Staff</button>
+                </div>
+
+                <div class="report-content active" id="tab-0"></div>
+                <div class="report-content" id="tab-1"></div>
+                <div class="report-content" id="tab-2"></div>
+                <div class="report-content" id="tab-3"></div>
+            `;
+
+            if (data.sales && data.sales.success) {
+                renderSalesReport(data.sales, document.getElementById('tab-0'));
+            }
+            if (data.inventory && data.inventory.success) {
+                renderInventoryReport(data.inventory, document.getElementById('tab-1'));
+            }
+            if (data.clients && data.clients.success) {
+                renderClientActivityReport(data.clients, document.getElementById('tab-2'));
+            }
+            if (data.staff && data.staff.success) {
+                renderStaffPerformanceReport(data.staff, document.getElementById('tab-3'));
+            }
+        }
+
+        // Switch between tabs in comprehensive report
+        function switchTab(index) {
+            document.querySelectorAll('.tab-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+            document.querySelectorAll('.report-content').forEach((content, i) => {
+                content.classList.toggle('active', i === index);
+            });
+        }
+
+        // Chart creation functions
+        function createDailyTrendsChart(dailyStats) {
+            const ctx = document.getElementById('dailyTrendsChart');
+            if (!ctx) return;
+
+            if (currentCharts.dailyTrends) {
+                currentCharts.dailyTrends.destroy();
+            }
+
+            const labels = dailyStats.map(day => new Date(day.date).toLocaleDateString());
+            const totals = dailyStats.map(day => day.total_orders);
+            const fulfilled = dailyStats.map(day => day.fulfilled);
+
+            currentCharts.dailyTrends = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Total Orders',
+                        data: totals,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }, {
+                        label: 'Fulfilled',
+                        data: fulfilled,
+                        borderColor: '#11998e',
+                        backgroundColor: 'rgba(17, 153, 142, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function createStatusDistributionChart(summary) {
+            const ctx = document.getElementById('statusDistChart');
+            if (!ctx) return;
+
+            if (currentCharts.statusDist) {
+                currentCharts.statusDist.destroy();
+            }
+
+            currentCharts.statusDist = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Fulfilled', 'Pending', 'Other'],
+                    datasets: [{
+                        data: [
+                            summary.fulfilled_orders || 0,
+                            summary.pending_orders || 0,
+                            (summary.total_orders || 0) - (summary.fulfilled_orders || 0) - (summary.pending_orders || 0)
+                        ],
+                        backgroundColor: [
+                            '#11998e',
+                            '#f5576c',
+                            '#667eea'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        function createInventoryCharts(data) {
+            // Stock status distribution
+            const ctx1 = document.getElementById('inventoryChart');
+            if (ctx1) {
+                if (currentCharts.inventory) currentCharts.inventory.destroy();
+                
+                currentCharts.inventory = new Chart(ctx1, {
+                    type: 'pie',
+                    data: {
+                        labels: ['In Stock', 'Low Stock', 'Out of Stock'],
+                        datasets: [{
+                            data: [
+                                data.summary.total_products - data.summary.low_stock_items - data.summary.out_of_stock_items,
+                                data.summary.low_stock_items,
+                                data.summary.out_of_stock_items
+                            ],
+                            backgroundColor: ['#11998e', '#f093fb', '#f5576c']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Most ordered products
+            const ctx2 = document.getElementById('popularProductsChart');
+            if (ctx2) {
+                if (currentCharts.popularProducts) currentCharts.popularProducts.destroy();
+                
+                const topProducts = data.products
+                    .sort((a, b) => b.times_ordered - a.times_ordered)
+                    .slice(0, 10);
+
+                currentCharts.popularProducts = new Chart(ctx2, {
+                    type: 'bar',
+                    data: {
+                        labels: topProducts.map(p => p.name),
+                        datasets: [{
+                            label: 'Times Ordered',
+                            data: topProducts.map(p => p.times_ordered),
+                            backgroundColor: '#667eea'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        indexAxis: 'y',
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function createClientActivityCharts(data) {
+            // Top clients by orders
+            const ctx1 = document.getElementById('topClientsChart');
+            if (ctx1) {
+                if (currentCharts.topClients) currentCharts.topClients.destroy();
+                
+                const topClients = data.clients.slice(0, 10);
+
+                currentCharts.topClients = new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: topClients.map(c => `${c.first_name} ${c.last_name}`),
+                        datasets: [{
+                            label: 'Total Orders',
+                            data: topClients.map(c => c.total_orders),
+                            backgroundColor: '#11998e'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        indexAxis: 'y',
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Client engagement levels
+            const ctx2 = document.getElementById('clientEngagementChart');
+            if (ctx2) {
+                if (currentCharts.clientEngagement) currentCharts.clientEngagement.destroy();
+                
+                // Group clients by engagement level
+                const highEngagement = data.clients.filter(c => c.total_orders >= 5).length;
+                const mediumEngagement = data.clients.filter(c => c.total_orders >= 2 && c.total_orders < 5).length;
+                const lowEngagement = data.clients.filter(c => c.total_orders < 2).length;
+
+                currentCharts.clientEngagement = new Chart(ctx2, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['High (5+ orders)', 'Medium (2-4 orders)', 'Low (1 order)'],
+                        datasets: [{
+                            data: [highEngagement, mediumEngagement, lowEngagement],
+                            backgroundColor: ['#11998e', '#667eea', '#f093fb']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function createStaffPerformanceCharts(data) {
+            // Staff activity levels
+            const ctx1 = document.getElementById('staffActivityChart');
+            if (ctx1) {
+                if (currentCharts.staffActivity) currentCharts.staffActivity.destroy();
+                
+                currentCharts.staffActivity = new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: data.staff.map(s => s.username),
+                        datasets: [{
+                            label: 'Total Actions',
+                            data: data.staff.map(s => s.total_actions || 0),
+                            backgroundColor: '#667eea'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Actions by type
+            const ctx2 = document.getElementById('actionsTypeChart');
+            if (ctx2) {
+                if (currentCharts.actionsType) currentCharts.actionsType.destroy();
+                
+                const totalOrdersCreated = data.staff.reduce((sum, s) => sum + (s.orders_created || 0), 0);
+                const totalOrdersUpdated = data.staff.reduce((sum, s) => sum + (s.orders_updated || 0), 0);
+                const totalClientActions = data.staff.reduce((sum, s) => sum + (s.client_actions || 0), 0);
+
+                currentCharts.actionsType = new Chart(ctx2, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Orders Created', 'Orders Updated', 'Client Actions'],
+                        datasets: [{
+                            data: [totalOrdersCreated, totalOrdersUpdated, totalClientActions],
+                            backgroundColor: ['#11998e', '#667eea', '#f093fb']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        // Export functions
+        async function exportToCSV() {
+            const reportType = document.getElementById('reportType').value;
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+
+            try {
+                const response = await fetch(`api/reports.php?action=export_report_data&report_type=${reportType}&format=csv&start_date=${startDate}&end_date=${endDate}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    // Convert data to CSV
+                    const csv = convertToCSV(data.data);
+                    downloadFile(csv, `${reportType}_report_${startDate}_${endDate}.csv`, 'text/csv');
+                } else {
+                    alert('Error exporting report: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Export error:', error);
+                alert('Error exporting report');
+            }
+        }
+
+        function exportToExcel() {
+            // For simplicity, we'll export as CSV with .xlsx extension
+            // In a real implementation, you'd use a library like SheetJS
+            exportToCSV().then(() => {
+                alert('Excel export uses CSV format. For full Excel features, consider using SheetJS library.');
+            });
+        }
+
+        async function exportToPDF() {
+            const reportContent = document.getElementById('reportResults');
+            
+            try {
+                // Use html2canvas to capture the report content
+                const canvas = await html2canvas(reportContent, {
+                    scale: 2,
+                    logging: false,
+                    useCORS: true
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                
+                const imgWidth = 210;
+                const pageHeight = 295;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 0;
+
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                const reportType = document.getElementById('reportType').value;
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                
+                pdf.save(`${reportType}_report_${startDate}_${endDate}.pdf`);
+            } catch (error) {
+                console.error('PDF export error:', error);
+                alert('Error generating PDF. Please try again.');
+            }
+        }
+
+        function convertToCSV(reportData) {
+            let csv = '';
+            
+            // Add summary section
+            if (reportData.summary) {
+                csv += 'Summary\n';
+                Object.entries(reportData.summary).forEach(([key, value]) => {
+                    csv += `${key},${value}\n`;
+                });
+                csv += '\n';
+            }
+
+            // Add main data based on report type
+            if (reportData.daily_stats) {
+                csv += 'Daily Statistics\n';
+                csv += 'Date,Total Orders,Fulfilled,Pending,In Progress\n';
+                reportData.daily_stats.forEach(day => {
+                    csv += `${day.date},${day.total_orders},${day.fulfilled},${day.pending},${day.in_progress}\n`;
+                });
+            } else if (reportData.products) {
+                csv += 'Products\n';
+                csv += 'Name,SKU,Category,Inventory,Times Ordered,Recent Orders\n';
+                reportData.products.forEach(product => {
+                    csv += `"${product.name}","${product.sku || ''}","${product.category || ''}",${product.inventory},${product.times_ordered},${product.orders_last_30_days}\n`;
+                });
+            } else if (reportData.clients) {
+                csv += 'Clients\n';
+                csv += 'Name,Email,Phone,Total Orders,Fulfilled Orders,Last Order\n';
+                reportData.clients.forEach(client => {
+                    csv += `"${client.first_name} ${client.last_name}","${client.email || ''}","${client.phone || ''}",${client.total_orders},${client.fulfilled_orders},"${client.last_order_date || ''}"\n`;
+                });
+            } else if (reportData.staff) {
+                csv += 'Staff Performance\n';
+                csv += 'Name,Username,Role,Orders Created,Orders Updated,Client Actions,Total Actions\n';
+                reportData.staff.forEach(staff => {
+                    csv += `"${staff.first_name || ''} ${staff.last_name || ''}","${staff.username}","${staff.role}",${staff.orders_created || 0},${staff.orders_updated || 0},${staff.client_actions || 0},${staff.total_actions || 0}\n`;
+                });
+            }
+
+            return csv;
+        }
+
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+
+        // Modal functions
+        function openReportModal() {
+            const reportResults = document.getElementById('reportResults');
+            const modalContent = document.getElementById('modalReportContent');
+            const modal = document.getElementById('reportModal');
+            
+            modalContent.innerHTML = reportResults.innerHTML;
+            modal.classList.add('active');
+        }
+
+        function closeReportModal() {
+            const modal = document.getElementById('reportModal');
+            modal.classList.remove('active');
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('reportModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeReportModal();
+            }
+        });
+
+        // Generate initial report on page load
+        window.addEventListener('load', function() {
+            generateReport();
+        });
+    </script>
+</body>
+</html>
