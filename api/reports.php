@@ -12,8 +12,8 @@ $conn = getDBConnection();
 session_start();
 
 // Check if user is authenticated and has admin/manager role
-if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_type'], ['staff', 'Admin', 'Manager'])) {
-    echo json_encode(['success' => false, 'error' => 'Unauthorized']);
+if (!isset($_SESSION['user_id']) || !in_array($_SESSION['user_type'], ['Admin', 'Manager'])) {
+    echo json_encode(['success' => false, 'error' => 'Unauthorized - Admin or Manager role required']);
     exit;
 }
 
@@ -143,6 +143,9 @@ function getSalesReport($conn) {
 
 function getInventoryReport($conn) {
     // Get all products with inventory levels
+    // Note: This uses FIND_IN_SET for product matching which is a temporary solution.
+    // For production use, consider implementing a proper order_items junction table
+    // for better performance and reliability.
     $stmt = $conn->prepare("
         SELECT 
             p.id,

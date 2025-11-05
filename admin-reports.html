@@ -1332,12 +1332,11 @@
             }
         }
 
-        function exportToExcel() {
+        async function exportToExcel() {
             // For simplicity, we'll export as CSV with .xlsx extension
             // In a real implementation, you'd use a library like SheetJS
-            exportToCSV().then(() => {
-                alert('Excel export uses CSV format. For full Excel features, consider using SheetJS library.');
-            });
+            await exportToCSV();
+            alert('Excel export uses CSV format. For full Excel features, consider using SheetJS library.');
         }
 
         async function exportToPDF() {
