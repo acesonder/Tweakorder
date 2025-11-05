@@ -111,7 +111,7 @@
             
             // Filter products based on showOnlyFavorites flag
             let filteredProducts = showOnlyFavorites 
-                ? products.filter(p => p.is_favorite == 1) 
+                ? products.filter(p => p.is_favorite === 1) 
                 : products;
             
             if (filteredProducts.length === 0) {
@@ -126,7 +126,7 @@
                      onclick="selectProduct(${product.id})"
                      style="animation-delay: ${index * 0.05}s">
                     ${product.image ? `<img src="${product.image}" alt="${product.name}">` : ''}
-                    <h3>${product.name}${product.is_favorite == 1 ? ' ★' : ''}</h3>
+                    <h3>${product.name}${product.is_favorite === 1 ? ' ★' : ''}</h3>
                     ${selectedProducts[product.id] ? `<div class="product-count">${selectedProducts[product.id]}</div>` : ''}
                 </div>
             `).join('');
