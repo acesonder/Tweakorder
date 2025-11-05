@@ -6,6 +6,12 @@ A professional, enterprise-grade web application for managing products, workers,
 
 ### 🆕 **NEW in v2.0**
 
+#### Favorite Products
+- **Mark as Favorite** - Admin and staff can mark products as favorites when creating or editing
+- **Quick Filter** - Filter order product selection to show only favorites
+- **Visual Indicator** - Favorite products display with ★ symbol
+- **Easy Access** - Streamlines order creation for frequently used items
+
 #### Staff Authentication & Security
 - **Multi-User Authentication** - Role-based access control (Admin, Manager, Worker, Viewer)
 - **Staff Dashboard** - Personalized portal with quick actions and recent activity
