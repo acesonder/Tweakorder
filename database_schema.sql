@@ -294,6 +294,12 @@ INSERT IGNORE INTO users (id, username, password_hash, role, first_name, last_na
 (3, 'worker', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Worker', 'Worker', 'User', 'worker@tweakorder.com', 1);
 
 -- Note: All demo passwords are "password" - MUST be changed in production!
+-- SECURITY WARNING: These default credentials are for development/demo only.
+-- For production use:
+--   1. Delete these INSERT statements
+--   2. Create users through the admin interface
+--   3. Enforce strong password policies
+--   4. Require password change on first login
 
 -- =============================================
 -- DATABASE SCHEMA COMPLETE

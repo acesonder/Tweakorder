@@ -3,6 +3,9 @@
 
 ICON_DIR="harm-reduction-icons"
 
+# Create directory if it doesn't exist
+mkdir -p "$ICON_DIR"
+
 # Array of icon names needed
 icons=(
     "naloxone"

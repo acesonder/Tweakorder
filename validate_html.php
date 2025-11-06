@@ -3,6 +3,9 @@
 /**
  * Comprehensive HTML and Link Validator
  * Validates all HTML pages, checks for broken links, and verifies form actions
+ * 
+ * Requirements: PHP CLI must be available in PATH
+ * Usage: php validate_html.php
  */
 
 class HTMLValidator {

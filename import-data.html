@@ -706,7 +706,9 @@
                 return;
             }
 
-            if (!confirm('This action cannot be undone. Type YES to confirm.')) {
+            const confirmation = prompt('This action cannot be undone. Type YES in capital letters to confirm:');
+            if (confirmation !== 'YES') {
+                alert('Database clear cancelled. You must type YES exactly to proceed.');
                 return;
             }
 

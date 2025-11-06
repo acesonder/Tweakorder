@@ -83,9 +83,9 @@ try {
     $conn->query("SET FOREIGN_KEY_CHECKS=0");
     
     // Split SQL into individual statements
-    // Remove comments and empty lines
-    $sql = preg_replace('/^--.*$/m', '', $sql); // Remove -- comments
-    $sql = preg_replace('/\/\*.*?\*\//s', '', $sql); // Remove /* */ comments
+    // Note: This is a basic split - complex SQL with string literals may require more sophisticated parsing
+    $sql = preg_replace('/^--.*$/m', '', $sql); // Remove -- comments (simple line comments only)
+    $sql = preg_replace('/\/\*.*?\*\//s', '', $sql); // Remove /* */ comments (block comments)
     
     $statements = array_filter(array_map('trim', explode(';', $sql)));
     
