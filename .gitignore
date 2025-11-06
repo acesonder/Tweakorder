@@ -18,3 +18,8 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.log
+
+# Test files (for development only)
+test_favorite_products.php
+setup_sample_data.php
+test_favorite_integration.sh

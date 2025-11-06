@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS products (
     background_color VARCHAR(100),
     category VARCHAR(100),
     sku VARCHAR(100),
+    is_favorite BOOLEAN DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

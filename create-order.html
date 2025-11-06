@@ -15,6 +15,10 @@
         <!-- Step 1: Select Products -->
         <div id="step1" class="order-step">
             <h2>Step 1: Select Products</h2>
+            <div style="margin-bottom: 15px;">
+                <button class="btn btn-secondary" id="showAllBtn" onclick="showAllProducts()">Show All</button>
+                <button class="btn" id="showFavoritesBtn" onclick="showFavoriteProducts()">★ Show Favorites</button>
+            </div>
             <div class="product-grid" id="productGrid">
                 <div class="loading">Loading products...</div>
             </div>
@@ -86,6 +90,7 @@
         let selectedProducts = {};
         let clients = [];
         let selectedClient = null;
+        let showOnlyFavorites = false;
         
         // Load products
         function loadProducts() {
@@ -103,20 +108,48 @@
         // Display products as widgets
         function displayProducts() {
             const grid = document.getElementById('productGrid');
-            if (products.length === 0) {
-                grid.innerHTML = '<p>No products available. Please add products first.</p>';
+            
+            // Filter products based on showOnlyFavorites flag
+            let filteredProducts = showOnlyFavorites 
+                ? products.filter(p => p.is_favorite === 1) 
+                : products;
+            
+            if (filteredProducts.length === 0) {
+                grid.innerHTML = showOnlyFavorites 
+                    ? '<p>No favorite products found. Please mark some products as favorites first.</p>'
+                    : '<p>No products available. Please add products first.</p>';
                 return;
             }
             
-            grid.innerHTML = products.map((product, index) => `
+            grid.innerHTML = filteredProducts.map((product, index) => `
                 <div class="product-widget ${product.background_color}" 
                      onclick="selectProduct(${product.id})"
                      style="animation-delay: ${index * 0.05}s">
                     ${product.image ? `<img src="${product.image}" alt="${product.name}">` : ''}
-                    <h3>${product.name}</h3>
+                    <h3>${product.name}${product.is_favorite === 1 ? ' ★' : ''}</h3>
                     ${selectedProducts[product.id] ? `<div class="product-count">${selectedProducts[product.id]}</div>` : ''}
                 </div>
             `).join('');
+        }
+        
+        // Show all products
+        function showAllProducts() {
+            showOnlyFavorites = false;
+            displayProducts();
+            document.getElementById('showAllBtn').classList.add('btn-secondary');
+            document.getElementById('showAllBtn').classList.remove('btn');
+            document.getElementById('showFavoritesBtn').classList.remove('btn-secondary');
+            document.getElementById('showFavoritesBtn').classList.add('btn');
+        }
+        
+        // Show only favorite products
+        function showFavoriteProducts() {
+            showOnlyFavorites = true;
+            displayProducts();
+            document.getElementById('showFavoritesBtn').classList.add('btn-secondary');
+            document.getElementById('showFavoritesBtn').classList.remove('btn');
+            document.getElementById('showAllBtn').classList.remove('btn-secondary');
+            document.getElementById('showAllBtn').classList.add('btn');
         }
         
         // Select product

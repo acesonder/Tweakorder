@@ -26,6 +26,7 @@ switch($_SERVER['REQUEST_METHOD']) {
         $description = $_POST['description'] ?? '';
         $inventory = $_POST['inventory'] ?? 100;
         $background_color = $_POST['background_color'] ?? '';
+        $is_favorite = isset($_POST['is_favorite']) ? (int)$_POST['is_favorite'] : 0;
         
         if (empty($name)) {
             echo json_encode(['success' => false, 'message' => 'Product name is required']);
@@ -48,8 +49,8 @@ switch($_SERVER['REQUEST_METHOD']) {
             }
         }
         
-        $stmt = $conn->prepare("INSERT INTO products (name, description, image, inventory, background_color) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("sssis", $name, $description, $image, $inventory, $background_color);
+        $stmt = $conn->prepare("INSERT INTO products (name, description, image, inventory, background_color, is_favorite) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssisi", $name, $description, $image, $inventory, $background_color, $is_favorite);
         
         if ($stmt->execute()) {
             echo json_encode(['success' => true, 'message' => 'Product added successfully', 'id' => $stmt->insert_id]);
@@ -73,9 +74,10 @@ switch($_SERVER['REQUEST_METHOD']) {
         $description = $_PUT['description'] ?? '';
         $inventory = $_PUT['inventory'] ?? 100;
         $background_color = $_PUT['background_color'] ?? '';
+        $is_favorite = isset($_PUT['is_favorite']) ? (int)$_PUT['is_favorite'] : 0;
         
-        $stmt = $conn->prepare("UPDATE products SET name=?, description=?, inventory=?, background_color=? WHERE id=?");
-        $stmt->bind_param("ssisi", $name, $description, $inventory, $background_color, $id);
+        $stmt = $conn->prepare("UPDATE products SET name=?, description=?, inventory=?, background_color=?, is_favorite=? WHERE id=?");
+        $stmt->bind_param("sssiii", $name, $description, $inventory, $background_color, $is_favorite, $id);
         
         if ($stmt->execute()) {
             echo json_encode(['success' => true, 'message' => 'Product updated successfully']);
