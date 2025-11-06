@@ -6,6 +6,19 @@ A professional, enterprise-grade web application for managing products, workers,
 
 ### 🆕 **NEW in v2.0**
 
+#### Database Import Manager 🚀
+- **Web-Based Import Interface** - User-friendly HTML interface for SQL imports at `import-data.html`
+- **Connection Testing** - Test database credentials before importing
+- **File Validation** - Verify SQL files exist and syntax is correct
+- **Quick Actions** - One-click buttons to verify, test, import, and troubleshoot
+- **Comprehensive SQL Files**:
+  - `database_schema.sql` - Complete database structure with all tables
+  - `harm_reduction_products.sql` - 80+ harm reduction products catalog
+  - `demo_data.sql` - Sample data with 12 clients, 20 orders, locations, schedules
+- **Smart Import Order** - Guided import process with recommended file sequence
+- **Database Management** - Clear database, change credentials, troubleshoot issues
+- **Status Feedback** - Real-time import status and error reporting
+
 #### Favorite Products
 - **Mark as Favorite** - Admin and staff can mark products as favorites when creating or editing
 - **Quick Filter** - Filter order product selection to show only favorites
@@ -154,6 +167,39 @@ A professional, enterprise-grade web application for managing products, workers,
 
 ### Setup Instructions
 
+#### Quick Setup with Web Interface (Recommended) 🚀
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/acesonder/Tweakorder.git
+   cd Tweakorder
+   ```
+
+2. **Start your web server**
+   ```bash
+   php -S localhost:8000
+   ```
+
+3. **Use the Database Import Manager**
+   - Navigate to: `http://localhost:8000/import-data.html`
+   - Enter your database credentials
+   - Test connection
+   - Import files in recommended order:
+     1. **database_schema.sql** - Creates all tables
+     2. **harm_reduction_products.sql** - Adds 80+ harm reduction products
+     3. **demo_data.sql** - Loads sample data for testing
+   - Or click "Import All (In Order)" for automatic import
+
+4. **Access the application**
+   - **Staff Login**: `http://localhost:8000/staff-login.html` (admin/password)
+   - **Staff Portal**: `http://localhost:8000/index.html`
+   - **Client Portal**: `http://localhost:8000/client-portal.html`
+   - **Database Import**: `http://localhost:8000/import-data.html`
+   - **Mobile Order**: `http://localhost:8000/mobile-order.html`
+   - **Analytics**: `http://localhost:8000/analytics.html`
+
+#### Manual Command Line Setup
+
 1. **Clone the repository**
    ```bash
    git clone https://github.com/acesonder/Tweakorder.git
@@ -162,57 +208,41 @@ A professional, enterprise-grade web application for managing products, workers,
 
 2. **Create the database**
    ```bash
-   mysql -u root -p < database.sql
+   mysql -u root -p < database_schema.sql
    ```
 
-3. **Load case management templates**
+3. **Load harm reduction products**
    ```bash
-   mysql -u root -p tweakorder < case_templates_data.sql
+   mysql -u root -p tweakorder < harm_reduction_products.sql
    ```
 
-4. **Set up customizable dashboard** (NEW)
+4. **Load demo data (optional)**
    ```bash
-   mysql -u root -p tweakorder < dashboard_customization.sql
-   ```
-   
-   Or use the automated setup script:
-   ```bash
-   bash setup_new_features.sh
+   mysql -u root -p tweakorder < demo_data.sql
    ```
 
-5. **Add sample data (optional)**
-   ```bash
-   mysql -u root -p < sample_data.sql
-   ```
-
-6. **Configure database connection**
+5. **Configure database connection**
    - Edit `config/database.php` with your MySQL credentials
    - Default settings: host=localhost, user=root, password='', database=tweakorder
 
-7. **Grant database privileges**
-   ```bash
-   mysql -u root -p -e "GRANT ALL PRIVILEGES ON tweakorder.* TO 'root'@'localhost'; FLUSH PRIVILEGES;"
-   ```
-
-8. **Set up file permissions**
+6. **Set up file permissions**
    ```bash
    chmod 755 assets/uploads
+   chmod 755 harm-reduction-icons
    ```
 
-9. **Start your web server**
+7. **Start your web server**
    - Point your web server document root to the project directory
    - For development, you can use PHP's built-in server:
      ```bash
      php -S localhost:8000
      ```
 
-9. **Access the application**
+8. **Access the application**
+   - **Staff Login**: `http://localhost:8000/staff-login.html`
+   - **Database Import**: `http://localhost:8000/import-data.html`
    - **Staff Portal**: `http://localhost:8000/index.html`
-   - **Mobile Order**: `http://localhost:8000/mobile-order.html`
-   - **Case Management**: `http://localhost:8000/case-management.html`
-   - **Error Logs**: `http://localhost:8000/error-logs.html`
    - **Client Portal**: `http://localhost:8000/client-portal.html`
-   - **Customizable Dashboard**: `http://localhost:8000/dashboard-custom.html`
 
 ## Database Configuration
 
@@ -288,10 +318,30 @@ The application is fully responsive and works seamlessly on:
 
 ## User Guides
 
+- 🆕 [**Welcome Guide**](WELCOME_GUIDE.md) - **START HERE!** Complete user guide with screenshots and step-by-step instructions
 - [**Dashboard Customization Guide**](DASHBOARD_CUSTOMIZATION_GUIDE.md) - Complete guide for customizing your dashboard
 - [**Mobile Features Guide**](MOBILE_FEATURES_GUIDE.md) - Complete guide for new mobile and case management features
 - [**Client Portal User Guide**](CLIENT_PORTAL_GUIDE.md) - Complete guide for customers
 - [**Staff Workflow Guide**](WORKFLOW_GUIDE.md) - Guide for staff users
+- [**HTML Validation Report**](HTML_VALIDATION_REPORT.md) - System validation results
+
+## Database Setup
+
+### Quick Web-Based Setup
+1. Navigate to `import-data.html` in your browser
+2. Enter database credentials
+3. Click "Test Connection"
+4. Click "Import All (In Order)" - imports all three SQL files automatically
+
+### SQL Files
+- `database_schema.sql` - Complete database structure (300+ lines)
+- `harm_reduction_products.sql` - 80+ harm reduction products with SKUs
+- `demo_data.sql` - 12 demo clients, 20 orders, 6 locations, sample data
+
+### Assets Included
+- 25 harm reduction product icons (SVG) in `harm-reduction-icons/`
+- 16 demo product images in `assets/uploads/`
+- All assets have placeholder graphics ready for customization
 
 ## API Endpoints
 
