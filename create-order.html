@@ -125,6 +125,7 @@
                 <div class="product-widget ${product.background_color}" 
                      onclick="selectProduct(${product.id})"
                      style="animation-delay: ${index * 0.05}s">
+                    ${selectedProducts[product.id] ? `<button class="product-remove-btn" onclick="event.stopPropagation(); removeProductItem(${product.id})" title="Remove item">−</button>` : ''}
                     ${product.image ? `<img src="${product.image}" alt="${product.name}">` : ''}
                     <h3>${product.name}${product.is_favorite === 1 ? ' ★' : ''}</h3>
                     ${selectedProducts[product.id] ? `<div class="product-count">${selectedProducts[product.id]}</div>` : ''}
@@ -159,6 +160,17 @@
             }
             selectedProducts[productId]++;
             displayProducts();
+        }
+        
+        // Remove product item
+        function removeProductItem(productId) {
+            if (selectedProducts[productId]) {
+                selectedProducts[productId]--;
+                if (selectedProducts[productId] <= 0) {
+                    delete selectedProducts[productId];
+                }
+                displayProducts();
+            }
         }
         
         // Go to step 2

@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Order Demo - Unified View</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* Mobile-first unified design */
+        body {
+            margin: 0;
+            padding: 0;
+            background: #f5f7fa;
+        }
+
+        .mobile-container {
+            max-width: 100%;
+            min-height: 100vh;
+            padding: 15px;
+            padding-bottom: 100px;
+            background: #f5f7fa;
+        }
+
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        /* Client Section */
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .client-selector-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .client-dropdown {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+        }
+
+        .client-dropdown:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .add-client-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-size: 28px;
+            font-weight: 300;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+            transition: transform 0.2s;
+        }
+
+        .add-client-btn:active {
+            transform: scale(0.95);
+        }
+
+        .client-info {
+            margin-top: 12px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .client-info.visible {
+            display: block;
+        }
+
+        .client-info-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .client-info-value {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* Products Section */
+        .product-grid-mobile {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .product-widget-mobile {
+            position: relative;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .product-widget-mobile:active {
+            transform: scale(0.95);
+        }
+
+        .product-widget-mobile img {
+            max-width: 50px;
+            max-height: 50px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+        }
+
+        .product-widget-mobile h3 {
+            font-size: 14px;
+            color: white;
+            margin: 0;
+            font-weight: 600;
+            text-align: center;
+            word-wrap: break-word;
+        }
+
+        .product-count-badge {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: white;
+            color: #667eea;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .product-remove-btn-mobile {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #e74c3c;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            z-index: 10;
+            line-height: 1;
+        }
+
+        /* Order Summary Section */
+        .order-summary-list {
+            margin-top: 12px;
+        }
+
+        .empty-summary {
+            text-align: center;
+            padding: 30px;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .order-item-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .order-item-qty {
+            color: #667eea;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .total-items {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 2px solid #e0e0e0;
+            font-weight: 700;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 15px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+
+        .confirm-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .confirm-btn:disabled {
+            background: #ccc;
+            box-shadow: none;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <h1 class="page-title">Create New Order</h1>
+        
+        <!-- Section 1: Client Selection -->
+        <div class="section-card">
+            <h3 class="section-title">
+                <span class="section-number">1</span>
+                Select Client
+            </h3>
+            <div class="client-selector-header">
+                <select id="clientDropdown" class="client-dropdown">
+                    <option value="">Select a client...</option>
+                </select>
+                <button class="add-client-btn">+</button>
+            </div>
+            <div id="clientInfo" class="client-info">
+                <div class="client-info-label">Selected Client:</div>
+                <div class="client-info-value" id="clientName"></div>
+            </div>
+        </div>
+
+        <!-- Section 2: Product Selection -->
+        <div class="section-card">
+            <h3 class="section-title">
+                <span class="section-number">2</span>
+                Select Products
+            </h3>
+            <div class="product-grid-mobile" id="productGrid"></div>
+        </div>
+
+        <!-- Section 3: Order Summary -->
+        <div class="section-card">
+            <h3 class="section-title">
+                <span class="section-number">3</span>
+                Order Summary
+            </h3>
+            <div id="orderSummary" class="order-summary-list">
+                <div class="empty-summary">
+                    <div class="empty-icon">📦</div>
+                    <p>No items selected yet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <button id="confirmBtn" class="confirm-btn" disabled>
+            Confirm Order
+        </button>
+    </div>
+
+    <script src="assets/js/app.js"></script>
+    <script>
+        // Mock data
+        const products = [
+            { id: 1, name: 'Naloxone Kit', background_color: 'gradient-1' },
+            { id: 2, name: 'Clean Needles', background_color: 'gradient-2' },
+            { id: 3, name: 'Fentanyl Test Strips', background_color: 'gradient-3' },
+            { id: 4, name: 'Sharps Container', background_color: 'gradient-4' },
+            { id: 5, name: 'Alcohol Swabs', background_color: 'gradient-1' },
+            { id: 6, name: 'Bandages', background_color: 'gradient-2' }
+        ];
+
+        const clients = [
+            { id: 1, first_name: 'John', last_name: 'Doe' },
+            { id: 2, first_name: 'Jane', last_name: 'Smith' },
+            { id: 3, first_name: 'Bob', last_name: 'Johnson' }
+        ];
+
+        let selectedProducts = {};
+        let selectedClientId = null;
+
+        // Initialize client dropdown
+        function initClients() {
+            const dropdown = document.getElementById('clientDropdown');
+            dropdown.innerHTML = '<option value="">Select a client...</option>' +
+                clients.map(client => 
+                    `<option value="${client.id}">${client.first_name} ${client.last_name}</option>`
+                ).join('');
+
+            dropdown.onchange = function() {
+                selectedClientId = this.value;
+                updateClientInfo();
+                updateConfirmButton();
+            };
+        }
+
+        function updateClientInfo() {
+            const clientInfo = document.getElementById('clientInfo');
+            const clientName = document.getElementById('clientName');
+            
+            if (selectedClientId) {
+                const client = clients.find(c => c.id == selectedClientId);
+                if (client) {
+                    clientName.textContent = `${client.first_name} ${client.last_name}`;
+                    clientInfo.classList.add('visible');
+                }
+            } else {
+                clientInfo.classList.remove('visible');
+            }
+        }
+
+        function displayProducts() {
+            const grid = document.getElementById('productGrid');
+            
+            grid.innerHTML = products.map(product => `
+                <div class="product-widget-mobile ${product.background_color}" 
+                     onclick="selectProduct(${product.id})">
+                    ${selectedProducts[product.id] ? 
+                        `<button class="product-remove-btn-mobile" onclick="event.stopPropagation(); removeProductItem(${product.id})">−</button>` : ''}
+                    <h3>${product.name}</h3>
+                    ${selectedProducts[product.id] ? 
+                        `<div class="product-count-badge">${selectedProducts[product.id]}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function selectProduct(productId) {
+            if (!selectedProducts[productId]) {
+                selectedProducts[productId] = 0;
+            }
+            selectedProducts[productId]++;
+            displayProducts();
+            updateOrderSummary();
+            updateConfirmButton();
+        }
+
+        function removeProductItem(productId) {
+            if (selectedProducts[productId]) {
+                selectedProducts[productId]--;
+                if (selectedProducts[productId] <= 0) {
+                    delete selectedProducts[productId];
+                }
+                displayProducts();
+                updateOrderSummary();
+                updateConfirmButton();
+            }
+        }
+
+        function updateOrderSummary() {
+            const summary = document.getElementById('orderSummary');
+            const items = Object.entries(selectedProducts).filter(([id, qty]) => qty > 0);
+
+            if (items.length === 0) {
+                summary.innerHTML = `
+                    <div class="empty-summary">
+                        <div class="empty-icon">📦</div>
+                        <p>No items selected yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const totalItems = items.reduce((sum, [id, qty]) => sum + qty, 0);
+
+            summary.innerHTML = items.map(([productId, quantity]) => {
+                const product = products.find(p => p.id == productId);
+                return `
+                    <div class="order-item">
+                        <span class="order-item-name">${product.name}</span>
+                        <span class="order-item-qty">x${quantity}</span>
+                    </div>
+                `;
+            }).join('') + `
+                <div class="total-items">
+                    <span>Total Items:</span>
+                    <span>${totalItems}</span>
+                </div>
+            `;
+        }
+
+        function updateConfirmButton() {
+            const btn = document.getElementById('confirmBtn');
+            const hasProducts = Object.keys(selectedProducts).some(id => selectedProducts[id] > 0);
+            const hasClient = selectedClientId && selectedClientId !== '';
+
+            btn.disabled = !hasProducts || !hasClient;
+        }
+
+        // Initialize
+        initClients();
+        displayProducts();
+    </script>
+</body>
+</html>

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Order Demo - Remove Feature</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <button class="btn btn-back" onclick="window.location.href='index.html'">← Back to Home</button>
+        
+        <h1>Create New Order - Demo</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 20px;">Demonstrating the new remove item feature</p>
+        
+        <!-- Step 1: Select Products -->
+        <div id="step1" class="order-step">
+            <h2>Step 1: Select Products</h2>
+            <p style="margin-bottom: 20px; color: #666;">Click on a product to add it. Click the minus button (-) on the top-left to remove items.</p>
+            <div class="product-grid" id="productGrid"></div>
+        </div>
+    </div>
+    
+    <script src="assets/js/app.js"></script>
+    <script>
+        // Mock product data
+        const products = [
+            { id: 1, name: 'Naloxone Kit', background_color: 'gradient-1', image: 'assets/images/naloxone.png' },
+            { id: 2, name: 'Clean Needles', background_color: 'gradient-2', image: 'assets/images/needles.png' },
+            { id: 3, name: 'Fentanyl Test Strips', background_color: 'gradient-3', image: '' },
+            { id: 4, name: 'Sharps Container', background_color: 'gradient-4', image: '' },
+            { id: 5, name: 'Alcohol Swabs', background_color: 'gradient-1', image: '' },
+            { id: 6, name: 'Bandages', background_color: 'gradient-2', image: '' },
+            { id: 7, name: 'Cotton Balls', background_color: 'gradient-3', image: '' },
+            { id: 8, name: 'Tourniquets', background_color: 'gradient-4', image: '' }
+        ];
+        
+        let selectedProducts = {};
+        
+        // Display products
+        function displayProducts() {
+            const grid = document.getElementById('productGrid');
+            
+            grid.innerHTML = products.map((product, index) => `
+                <div class="product-widget ${product.background_color}" 
+                     onclick="selectProduct(${product.id})"
+                     style="animation-delay: ${index * 0.05}s">
+                    ${selectedProducts[product.id] ? `<button class="product-remove-btn" onclick="event.stopPropagation(); removeProductItem(${product.id})" title="Remove item">−</button>` : ''}
+                    ${product.image ? `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'">` : ''}
+                    <h3>${product.name}</h3>
+                    ${selectedProducts[product.id] ? `<div class="product-count">${selectedProducts[product.id]}</div>` : ''}
+                </div>
+            `).join('');
+        }
+        
+        // Select product
+        function selectProduct(productId) {
+            if (!selectedProducts[productId]) {
+                selectedProducts[productId] = 0;
+            }
+            selectedProducts[productId]++;
+            displayProducts();
+            showAlert(`Added ${products.find(p => p.id === productId).name}. Count: ${selectedProducts[productId]}`, 'success');
+        }
+        
+        // Remove product item
+        function removeProductItem(productId) {
+            if (selectedProducts[productId]) {
+                const productName = products.find(p => p.id === productId).name;
+                selectedProducts[productId]--;
+                if (selectedProducts[productId] <= 0) {
+                    delete selectedProducts[productId];
+                    showAlert(`Removed all ${productName} from order`, 'info');
+                } else {
+                    showAlert(`Removed one ${productName}. Count: ${selectedProducts[productId]}`, 'info');
+                }
+                displayProducts();
+            }
+        }
+        
+        // Initialize
+        displayProducts();
+    </script>
+</body>
+</html>
