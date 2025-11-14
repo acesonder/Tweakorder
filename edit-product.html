@@ -3,16 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Product - Tweak Order Online</title>
+    <title>Edit Product - Tweak Order Online</title>
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
     <div class="container">
         <button class="btn btn-back" onclick="navigateTo('index.html')">← Back to Home</button>
         
-        <h1>Add New Product</h1>
+        <h1>Edit Product</h1>
         
-        <form id="productForm" enctype="multipart/form-data">
+        <div id="loadingMessage" class="loading">Loading product...</div>
+        
+        <form id="productForm" enctype="multipart/form-data" style="display: none;">
+            <input type="hidden" id="productId" name="id">
+            <input type="hidden" name="_method" value="PUT">
+            
             <div class="form-group">
                 <label for="name">Product Name *</label>
                 <input type="text" id="name" name="name" required>
@@ -24,13 +29,19 @@
             </div>
             
             <div class="form-group">
-                <label for="imageOption">Product Image Option</label>
+                <label>Current Image</label>
+                <div id="currentImage" style="margin-bottom: 10px;"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="imageOption">Update Product Image</label>
                 <select id="imageOption" style="margin-bottom: 10px;">
+                    <option value="keep">Keep Current Image</option>
                     <option value="upload">Upload New Image</option>
                     <option value="local">Use Local Image Path</option>
                 </select>
                 
-                <div id="uploadOption">
+                <div id="uploadOption" style="display: none;">
                     <input type="file" id="image" name="image" accept="image/*">
                 </div>
                 
@@ -76,29 +87,99 @@
                 <input type="hidden" id="background_color" name="background_color" value="gradient-1">
             </div>
             
-            <button type="submit" class="btn">Add Product</button>
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" class="btn">Update Product</button>
+                <button type="button" class="btn btn-secondary" onclick="navigateTo('index.html')">Cancel</button>
+            </div>
         </form>
     </div>
     
     <script src="assets/js/app.js"></script>
     <script>
         let selectedColor = 'gradient-1';
+        let currentProduct = null;
+        
+        // Get product ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+        
+        if (!productId) {
+            showAlert('No product ID provided', 'error');
+            setTimeout(() => navigateTo('index.html'), 1500);
+        } else {
+            loadProduct(productId);
+        }
+        
+        // Load product data
+        function loadProduct(id) {
+            ajax('api/products.php', 'GET', null, function(err, response) {
+                if (err || !response.success) {
+                    showAlert('Error loading product', 'error');
+                    return;
+                }
+                
+                const product = response.data.find(p => p.id == id);
+                if (!product) {
+                    showAlert('Product not found', 'error');
+                    setTimeout(() => navigateTo('index.html'), 1500);
+                    return;
+                }
+                
+                currentProduct = product;
+                populateForm(product);
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('productForm').style.display = 'block';
+            });
+        }
+        
+        // Populate form with product data
+        function populateForm(product) {
+            document.getElementById('productId').value = product.id;
+            document.getElementById('name').value = product.name;
+            document.getElementById('description').value = product.description || '';
+            document.getElementById('inventory').value = product.inventory;
+            document.getElementById('is_favorite').checked = product.is_favorite == 1;
+            
+            // Set background color
+            selectedColor = product.background_color || 'gradient-1';
+            document.getElementById('background_color').value = selectedColor;
+            document.querySelectorAll('.color-option').forEach(option => {
+                if (option.getAttribute('data-color') === selectedColor) {
+                    option.classList.add('selected');
+                }
+            });
+            
+            // Show current image
+            if (product.image) {
+                document.getElementById('currentImage').innerHTML = 
+                    `<img src="${product.image}" style="max-width: 200px; border-radius: 10px;" onerror="this.parentElement.innerHTML='<p>Image not found</p>'">
+                     <p style="color: #666; font-size: 12px; margin-top: 5px;">${product.image}</p>`;
+            } else {
+                document.getElementById('currentImage').innerHTML = '<p style="color: #666;">No image set</p>';
+            }
+        }
         
         // Image option toggle
         document.getElementById('imageOption').addEventListener('change', function(e) {
             const uploadOption = document.getElementById('uploadOption');
             const localOption = document.getElementById('localOption');
+            const imagePreview = document.getElementById('imagePreview');
             
             if (e.target.value === 'local') {
                 uploadOption.style.display = 'none';
                 localOption.style.display = 'block';
                 document.getElementById('image').value = '';
-            } else {
+            } else if (e.target.value === 'upload') {
                 uploadOption.style.display = 'block';
                 localOption.style.display = 'none';
                 document.getElementById('localImagePath').value = '';
+            } else {
+                uploadOption.style.display = 'none';
+                localOption.style.display = 'none';
+                document.getElementById('image').value = '';
+                document.getElementById('localImagePath').value = '';
             }
-            document.getElementById('imagePreview').innerHTML = '';
+            imagePreview.innerHTML = '';
         });
         
         // Image upload preview
@@ -135,9 +216,6 @@
             });
         });
         
-        // Set default selection
-        document.querySelector('.color-option').classList.add('selected');
-        
         // Form submission
         document.getElementById('productForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -153,17 +231,18 @@
                 }
             }
             
-            ajax('api/products.php', 'POST', formData, function(err, response) {
+            // Use POST with _method=PUT for multipart form data
+            ajax('api/products.php', 'PUT', formData, function(err, response) {
                 if (err) {
-                    showAlert('Error adding product', 'error');
+                    showAlert('Error updating product', 'error');
                     return;
                 }
                 
                 if (response.success) {
-                    showAlert('Product added successfully!', 'success');
+                    showAlert('Product updated successfully!', 'success');
                     setTimeout(() => navigateTo('index.html'), 1500);
                 } else {
-                    showAlert(response.message || 'Failed to add product', 'error');
+                    showAlert(response.message || 'Failed to update product', 'error');
                 }
             });
         });

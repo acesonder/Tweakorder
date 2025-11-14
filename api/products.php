@@ -33,12 +33,21 @@ switch($_SERVER['REQUEST_METHOD']) {
             exit;
         }
         
-        // Handle image upload
+        // Handle image - either upload or local path
         $image = '';
-        if (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
-            $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+        
+        // Check for local image path first
+        if (!empty($_POST['local_image_path'])) {
+            $image = $_POST['local_image_path'];
+        }
+        // Otherwise handle file upload
+        elseif (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+            $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
             if (in_array($_FILES['image']['type'], $allowed_types)) {
                 $upload_dir = '../assets/uploads/';
+                if (!is_dir($upload_dir)) {
+                    mkdir($upload_dir, 0755, true);
+                }
                 $file_ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
                 $filename = uniqid() . '.' . $file_ext;
                 $upload_path = $upload_dir . $filename;
@@ -61,30 +70,91 @@ switch($_SERVER['REQUEST_METHOD']) {
         break;
         
     case 'PUT':
-        // Update product
-        parse_str(file_get_contents("php://input"), $_PUT);
-        $id = $_PUT['id'] ?? 0;
-        $name = $_PUT['name'] ?? '';
-        
-        if (empty($id) || empty($name)) {
-            echo json_encode(['success' => false, 'message' => 'Product ID and name are required']);
-            exit;
-        }
-        
-        $description = $_PUT['description'] ?? '';
-        $inventory = $_PUT['inventory'] ?? 100;
-        $background_color = $_PUT['background_color'] ?? '';
-        $is_favorite = isset($_PUT['is_favorite']) ? (int)$_PUT['is_favorite'] : 0;
-        
-        $stmt = $conn->prepare("UPDATE products SET name=?, description=?, inventory=?, background_color=?, is_favorite=? WHERE id=?");
-        $stmt->bind_param("sssiii", $name, $description, $inventory, $background_color, $is_favorite, $id);
-        
-        if ($stmt->execute()) {
-            echo json_encode(['success' => true, 'message' => 'Product updated successfully']);
+        // Update product (for form-based updates with image support)
+        // Check if this is a multipart form update (has _method field)
+        if (isset($_POST['_method']) && $_POST['_method'] === 'PUT') {
+            $id = $_POST['id'] ?? 0;
+            $name = $_POST['name'] ?? '';
+            
+            if (empty($id) || empty($name)) {
+                echo json_encode(['success' => false, 'message' => 'Product ID and name are required']);
+                exit;
+            }
+            
+            $description = $_POST['description'] ?? '';
+            $inventory = $_POST['inventory'] ?? 100;
+            $background_color = $_POST['background_color'] ?? '';
+            $is_favorite = isset($_POST['is_favorite']) ? (int)$_POST['is_favorite'] : 0;
+            
+            // Handle image update
+            $image = null;
+            $update_image = false;
+            
+            // Check for local image path
+            if (!empty($_POST['local_image_path'])) {
+                $image = $_POST['local_image_path'];
+                $update_image = true;
+            }
+            // Otherwise handle file upload
+            elseif (isset($_FILES['image']) && $_FILES['image']['error'] == 0) {
+                $allowed_types = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+                if (in_array($_FILES['image']['type'], $allowed_types)) {
+                    $upload_dir = '../assets/uploads/';
+                    if (!is_dir($upload_dir)) {
+                        mkdir($upload_dir, 0755, true);
+                    }
+                    $file_ext = pathinfo($_FILES['image']['name'], PATHINFO_EXTENSION);
+                    $filename = uniqid() . '.' . $file_ext;
+                    $upload_path = $upload_dir . $filename;
+                    
+                    if (move_uploaded_file($_FILES['image']['tmp_name'], $upload_path)) {
+                        $image = 'assets/uploads/' . $filename;
+                        $update_image = true;
+                    }
+                }
+            }
+            
+            // Build update query based on whether image is being updated
+            if ($update_image) {
+                $stmt = $conn->prepare("UPDATE products SET name=?, description=?, image=?, inventory=?, background_color=?, is_favorite=? WHERE id=?");
+                $stmt->bind_param("ssssiii", $name, $description, $image, $inventory, $background_color, $is_favorite, $id);
+            } else {
+                $stmt = $conn->prepare("UPDATE products SET name=?, description=?, inventory=?, background_color=?, is_favorite=? WHERE id=?");
+                $stmt->bind_param("sssiii", $name, $description, $inventory, $background_color, $is_favorite, $id);
+            }
+            
+            if ($stmt->execute()) {
+                echo json_encode(['success' => true, 'message' => 'Product updated successfully']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Failed to update product']);
+            }
+            $stmt->close();
         } else {
-            echo json_encode(['success' => false, 'message' => 'Failed to update product']);
+            // Traditional PUT request parsing
+            parse_str(file_get_contents("php://input"), $_PUT);
+            $id = $_PUT['id'] ?? 0;
+            $name = $_PUT['name'] ?? '';
+            
+            if (empty($id) || empty($name)) {
+                echo json_encode(['success' => false, 'message' => 'Product ID and name are required']);
+                exit;
+            }
+            
+            $description = $_PUT['description'] ?? '';
+            $inventory = $_PUT['inventory'] ?? 100;
+            $background_color = $_PUT['background_color'] ?? '';
+            $is_favorite = isset($_PUT['is_favorite']) ? (int)$_PUT['is_favorite'] : 0;
+            
+            $stmt = $conn->prepare("UPDATE products SET name=?, description=?, inventory=?, background_color=?, is_favorite=? WHERE id=?");
+            $stmt->bind_param("sssiii", $name, $description, $inventory, $background_color, $is_favorite, $id);
+            
+            if ($stmt->execute()) {
+                echo json_encode(['success' => true, 'message' => 'Product updated successfully']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Failed to update product']);
+            }
+            $stmt->close();
         }
-        $stmt->close();
         break;
         
     case 'DELETE':
