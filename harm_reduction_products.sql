@@ -4,6 +4,22 @@
 
 USE tweakorder;
 
+-- Ensure products table has all required columns for compatibility with older schemas
+-- Add category column if it doesn't exist
+ALTER TABLE products 
+ADD COLUMN IF NOT EXISTS category VARCHAR(100) 
+AFTER background_color;
+
+-- Add sku column if it doesn't exist
+ALTER TABLE products 
+ADD COLUMN IF NOT EXISTS sku VARCHAR(100) 
+AFTER category;
+
+-- Add is_favorite column if it doesn't exist
+ALTER TABLE products 
+ADD COLUMN IF NOT EXISTS is_favorite BOOLEAN DEFAULT 0 
+AFTER sku;
+
 -- Clear existing sample products if needed (optional, comment out if you want to keep existing products)
 -- DELETE FROM products WHERE category = 'Harm Reduction';
 
