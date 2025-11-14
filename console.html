@@ -564,6 +564,7 @@
                     </div>
                     
                     <button class="btn-console" onclick="loadProductsList()">🔄 Refresh Products</button>
+                    <button class="btn-console" onclick="openProductEditor()">🖼️ Open Full Editor (with Images)</button>
                     
                     <div id="editProductForm" style="display: none; margin-top: 20px;">
                         <div class="form-group">
@@ -992,6 +993,18 @@ Username: ${document.getElementById('dbUser').value}`;
             } else {
                 document.getElementById('editProductForm').style.display = 'none';
             }
+        }
+        
+        function openProductEditor() {
+            const select = document.getElementById('editProductSelect');
+            const selectedValue = select.value;
+            
+            if (!selectedValue) {
+                alert('Please select a product first');
+                return;
+            }
+            
+            window.location.href = 'edit-product.html?id=' + selectedValue;
         }
         
         function addProduct() {

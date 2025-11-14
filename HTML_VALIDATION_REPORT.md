@@ -1,11 +1,11 @@
 # Tweakorder HTML Validation Report
 
-Generated: 2025-11-06 04:13:10
+Generated: 2025-11-14 15:45:15
 
 ## Summary
 
-- ✅ Passed: 42
-- ⚠️ Warnings: 3
+- ✅ Passed: 49
+- ⚠️ Warnings: 10
 - ❌ Errors: 1
 
 ## Errors
@@ -15,6 +15,13 @@ Generated: 2025-11-06 04:13:10
 ## Warnings
 
 - Missing resource in add-product.html: ${e.target.result}
+- Missing resource in add-product.html: ${path}
+- Missing resource in create-order-custom.html: ${product.image}
 - Missing resource in create-order.html: ${product.image}
+- Missing resource in demo-remove-feature.html: ${product.image}
+- Missing resource in edit-product.html: ${product.image}
+- Missing resource in edit-product.html: ${e.target.result}
+- Missing resource in edit-product.html: ${path}
+- Missing resource in mobile-order-unified.html: ${product.image}
 - Missing resource in mobile-order.html: ${product.image}
 
