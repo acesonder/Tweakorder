@@ -6,6 +6,19 @@
 
 USE tweakorder;
 
+-- Ensure products table has all required columns for compatibility
+ALTER TABLE products 
+ADD COLUMN IF NOT EXISTS category VARCHAR(100) 
+AFTER background_color;
+
+ALTER TABLE products 
+ADD COLUMN IF NOT EXISTS sku VARCHAR(100) 
+AFTER category;
+
+ALTER TABLE products 
+ADD COLUMN IF NOT EXISTS is_favorite BOOLEAN DEFAULT 0 
+AFTER sku;
+
 -- =============================================
 -- DEMO PRODUCTS (General Inventory)
 -- =============================================

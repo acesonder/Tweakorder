@@ -2,6 +2,15 @@
 
 USE tweakorder;
 
+-- Ensure products table has required columns for compatibility
+ALTER TABLE products 
+ADD COLUMN IF NOT EXISTS category VARCHAR(100) 
+AFTER background_color;
+
+ALTER TABLE products 
+ADD COLUMN IF NOT EXISTS sku VARCHAR(100) 
+AFTER category;
+
 -- Insert sample products
 INSERT INTO products (name, description, inventory, background_color, category) VALUES
 ('Premium Widget', 'High-quality widget for professional use', 50, 'gradient-1', 'Tools'),
